@@ -181,5 +181,13 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 .title-screen h1{font-size:19.6cqw}
 .title-screen h1 span+span{font-size:23.6cqw}
 .start-button{font-size:7.4cqw}
+.stage[data-background="lobby-sleeping"] .scene-layer>img{position:absolute;top:-18%;left:0;width:100%;height:100%;object-fit:cover}
+.stage[data-background] .character.cat,
+.stage[data-background] .character.staff{
+  --character-outline:clamp(2px,.55cqw,3px);
+  filter:drop-shadow(var(--character-outline) 0 0 white) drop-shadow(calc(-1 * var(--character-outline)) 0 0 white) drop-shadow(0 var(--character-outline) 0 white) drop-shadow(0 calc(-1 * var(--character-outline)) 0 white);
+}
+.character.staff{overflow:visible}
+.location-marker{clip-path:circle(48.5% at 50% 50%)}
 @media(max-width:850px){.app-shell:has(.review-panel:not([hidden])){flex-direction:column}.review-panel{width:min(100%,500px)}.reference-panel{align-self:center}}
 @media(orientation:landscape) and (max-height:520px){.stage{width:100%}.game-column{width:min(100vw,500px)}}

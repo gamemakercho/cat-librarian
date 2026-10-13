@@ -12,6 +12,7 @@ for(const s of chapters.flatMap(c=>c.scenes)){
 }
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);
   if(statSync(file).size!==manifest[key].bytes)throw Error('자산 크기 불일치 '+key);
+  if(manifest[key].render?.clip)statSync(resolve(root,manifest[key].render.clip));
 }
 const html=readFileSync(resolve(root,'index.html'),'utf8');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);

@@ -55,3 +55,20 @@ test('되돌아가기와 초기화는 ID 및 정답 상태를 복원·제거한�
  r.submit('고양이와 사서가 뒤바뀌었다');r.advance();r.reset();
  assert.equal(r.currentId,'opening-title');assert.equal(r.solved.size,0);assert.equal(r.history.length,0);
 });
+
+test('회상 대사는 고정되고 다음 클릭 한 번에 만화 한 컷씩 진행한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('opening-memory');
+ const text=r.scene.text;const group=r.scene.textGroup;
+ for(let comic=1;comic<=4;comic++){
+  r.advance();assert.equal(r.scene.comic,comic);assert.equal(r.scene.text,text);
+  assert.equal(r.scene.textGroup,group);assert.equal(r.scene.textMode,'static');
+ }
+ r.advance();assert.equal(r.currentId,'opening-swapped');
+});
+test('사서가 잠든 로비는 배경에 포함하고 깨어난 뒤에는 빈 로비다',()=>{
+ const scenes=chapters.flatMap(c=>c.scenes);
+ for(const s of scenes.filter(s=>s.sourceNumber>=17&&s.sourceNumber<=21)){
+  assert.equal(s.background,'lobby-sleeping');assert(!s.sleeping);
+ }
+ for(const s of scenes.filter(s=>s.sourceNumber===22||s.sourceNumber===23))assert.equal(s.background,'lobby');
+});

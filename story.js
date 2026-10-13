@@ -1,6 +1,6 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
-export const STORY_VERSION = 'opening-source-24-v3-20261013';
+export const STORY_VERSION = 'opening-source-24-v4-20261013';
 export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
     title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'opening-busy' },
@@ -10,11 +10,11 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     layout: 'meet', text: '말하는 고양이는 처음 보지?', next: 'opening-librarian' },
   { id: 'opening-librarian', sourceNumber: 4, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     layout: 'meet', text: '나는 사실 이 도서관 사서야', next: 'opening-memory' },
-  { id: 'opening-memory', sourceNumber: 5, type: 'dialogue', background: null,
+  { id: 'opening-memory', sourceNumber: 5, type: 'dialogue', background: null, textGroup:'morning-memory',
     text: '오늘 아침에도 평소처럼 도서관\n에 출근 중이었어', next: 'opening-comic-1' },
   ...[6,7,8,9].map((number, i) => ({
     id: `opening-comic-${i+1}`, sourceNumber: number, type: 'comic', background: null,
-    comic: i+1, text: '오늘 아침에도 평소처럼 도서관\n에 출근 중이었어',
+    comic: i+1, textGroup:'morning-memory', textMode:'static', text: '오늘 아침에도 평소처럼 도서관\n에 출근 중이었어',
     effect: number === 9 ? 'collision' : null,
     next: number === 9 ? 'opening-swapped' : `opening-comic-${i+2}`
   })),
@@ -32,20 +32,20 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '완벽하네\n나도 오늘 처음 고양이가 됐거든', next: 'lobby-transition' },
   { id: 'lobby-transition', sourceNumber: 16, type: 'dialogue', background: null, location: '도서관 로비',
     text: '내 몸을 가진 저 고양이가 도서관\n을 다 망쳐버리기 전에 잡아야 해', next: 'lobby-staff' },
-  { id: 'lobby-staff', sourceNumber: 17, type: 'dialogue', background: 'lobby', location: '도서관 로비',
-    sleeping: true, staff: true, speaker: '직원', panelTone: 'blue',
+  { id: 'lobby-staff', sourceNumber: 17, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
+    staff: true, speaker: '직원', panelTone: 'blue',
     text: '선생님... 왜 데스크 위에 올라가\n계세요?', next: 'lobby-see' },
-  { id: 'lobby-see', sourceNumber: 18, type: 'dialogue', background: 'lobby', location: '도서관 로비',
-    sleeping: true, cat: 'resigned', layout: 'side', dim: true,
+  { id: 'lobby-see', sourceNumber: 18, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
+    cat: 'resigned', layout: 'side', dim: true,
     text: '봤지?', next: 'lobby-social-life' },
-  { id: 'lobby-social-life', sourceNumber: 19, type: 'dialogue', background: 'lobby', location: '도서관 로비',
-    sleeping: true, cat: 'resigned', layout: 'side', dim: true,
+  { id: 'lobby-social-life', sourceNumber: 19, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
+    cat: 'resigned', layout: 'side', dim: true,
     text: '내 사회생활이 실시간으로 끝나\n고 있어', next: 'lobby-wake-plan' },
-  { id: 'lobby-wake-plan', sourceNumber: 20, type: 'dialogue', background: 'lobby', location: '도서관 로비',
-    sleeping: true, cat: 'resigned', layout: 'side', dim: true,
+  { id: 'lobby-wake-plan', sourceNumber: 20, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
+    cat: 'resigned', layout: 'side', dim: true,
     text: '일단 자고 있는 녀석을 깨워야 할\n것 같아. 책으로 톡톡 쳐볼까?', next: 'lobby-postcard' },
-  { id: 'lobby-postcard', sourceNumber: 21, type: 'puzzle', background: 'lobby', location: '도서관 로비',
-    sleeping: true, puzzleId: 'postcard-heading', illustration: 'postcard',
+  { id: 'lobby-postcard', sourceNumber: 21, type: 'puzzle', background: 'lobby-sleeping', location: '도서관 로비',
+    puzzleId: 'postcard-heading', illustration: 'postcard',
     text: '가지고 있는 엽서를 활용해서\n자고 있는 고양이(?)를 깨우자',
     instruction: '엽서 상단에 있는 글을 그대로 입력해주세요\n(물음표제외, 띄어쓰기 상관 없음)', next: 'lobby-escape' },
   { id: 'lobby-escape', sourceNumber: 22, type: 'dialogue', background: 'lobby', location: '도서관 로비',
@@ -110,7 +110,7 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.fontSize=30;
   scene.lineHeight=1.48;
   scene.flipCat=[18,19,20].includes(scene.sourceNumber);
-  scene.backgroundFrame=scene.background==='lobby' ? (scene.sleeping?'sleeping':'empty') : 'normal';
+  scene.backgroundFrame=scene.background==='lobby-sleeping'?'sleeping':scene.background==='lobby'?'empty':'normal';
   scene.dimOpacity=scene.dim ? 0.24 : 0;
   scene.backgroundOpacity=scene.background==='meeting'?0.78:(scene.dim?0.74:0.93);
   scene.nextLabel='다음';

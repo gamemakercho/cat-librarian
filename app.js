@@ -24,22 +24,41 @@ let textTimer=null;
 let textComplete=true;
 let activeText='';
 let renderSerial=0;
+let renderedScene=null;
 const imageCache=new Map();
 const elementCache=new Map();
+const clipCache=new Map();
 const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}}
 function imageURL(key){if(!assets[key])throw Error(`자산 없음: ${key}`);return assets[key].src;}
 function loadImage(key){
   const src=imageURL(key);
-  if(!imageCache.has(src))imageCache.set(src,new Promise((resolve,reject)=>{
-    const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('이미지를 읽을 수 없어요.'));im.src=src;
-  }));
+  if(!imageCache.has(src)){
+    const raster=new Promise((resolve,reject)=>{
+      const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('이미지를 읽을 수 없어요.'));im.src=src;
+    });
+    const clip=assets[key].render?.clip;
+    if(clip&&!clipCache.has(clip))clipCache.set(clip,fetch(clip).then(r=>{if(!r.ok)throw Error('직원 마스크 로딩 오류');return r.text();}).then(text=>{
+      const doc=new DOMParser().parseFromString(text,'image/svg+xml');
+      const d=doc.querySelector('path')?.getAttribute('d');if(!d)throw Error('직원 마스크 오류');return d;
+    }));
+    imageCache.set(src,clip?Promise.all([raster,clipCache.get(clip)]).then(([im,d])=>{assets[key].render.clipPath=d;return im;}):raster);
+  }
   return imageCache.get(src);
 }
 function createImage(key,className,alt=''){
   const cacheKey=key+'|'+className;
   if(elementCache.has(cacheKey))return elementCache.get(cacheKey);
+  const render=assets[key].render;
+  if(render){
+    const ns='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox',render.viewBox.join(' '));svg.setAttribute('preserveAspectRatio','xMidYMax meet');svg.setAttribute('class',className);svg.setAttribute('aria-hidden','true');
+    const defs=document.createElementNS(ns,'defs');const clip=document.createElementNS(ns,'clipPath');clip.id='passing-staff-clip';clip.setAttribute('clipPathUnits','userSpaceOnUse');
+    const path=document.createElementNS(ns,'path');path.setAttribute('d',render.clipPath);clip.append(path);defs.append(clip);svg.append(defs);
+    const source=document.createElementNS(ns,'image');source.setAttribute('href',imageURL(key));source.setAttribute('width',assets[key].width);source.setAttribute('height',assets[key].height);source.setAttribute('clip-path','url(#passing-staff-clip)');svg.append(source);
+    elementCache.set(cacheKey,svg);return svg;
+  }
   const im=document.createElement('img');im.src=imageURL(key);im.alt=alt;im.className=className;im.draggable=false;
   elementCache.set(cacheKey,im);return im;
 }
@@ -74,7 +93,7 @@ function typeText(s){
   const segments=typeof Intl.Segmenter==='function'
     ? [...new Intl.Segmenter('ko',{granularity:'grapheme'}).segment(activeText)].map(x=>x.segment)
     : [...activeText];
-  if(prefersReducedMotion||s.type==='puzzle'||s.type==='move'||s.type==='continuation'){textComplete=true;emphasize(activeText,s);return;}
+  if(prefersReducedMotion||s.textMode==='static'||s.type==='puzzle'||s.type==='move'||s.type==='continuation'){textComplete=true;emphasize(activeText,s);return;}
   textComplete=false;let index=0;$('dialogueText').textContent='';
   textTimer=setInterval(()=>{
     index+=1;emphasize(segments.slice(0,index).join(''),s);
@@ -88,6 +107,7 @@ function advance(opts={}){
 
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
+  const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;hintLevel=0;
   const stage=$('stage');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
@@ -96,9 +116,10 @@ async function render(){
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
   for(const name of ['dialogue','nextButton','locationBanner','answerForm'])applyRect($(name),s.geometry[name]);
-  $('loading').hidden=false;
+  $('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
+    $('loading').hidden=false;
     $('loading').textContent='이미지를 읽지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.';
     return;
   }
@@ -138,7 +159,8 @@ async function render(){
   $('hintButton').hidden=s.type!=='puzzle';
   $('answer').placeholder='';
   if(s.type==='puzzle')$('answer').setAttribute('aria-label',puzzles[s.puzzleId].placeholder);
-  typeText(s);updateReview(s);
+  if(!preserveText)typeText(s);
+  renderedScene=s;updateReview(s);
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
   if(s.next && !['puzzle','move','continuation'].includes(s.type)){
