@@ -1,0 +1,213 @@
+{
+  "designWidth": 500,
+  "designHeight": 900,
+  "coordinateBasis": "원본 JPG 픽셀. 비율로 환산해 렌더링. 실제 픽셀 읽기로 근사 측정.",
+  "common": {
+    "dialogue": [
+      32,
+      436,
+      436,
+      210
+    ],
+    "nextButton": [
+      155,
+      684,
+      194,
+      63
+    ],
+    "locationBanner": [
+      31,
+      64,
+      438,
+      81
+    ],
+    "inputBar": [
+      29,
+      672,
+      442,
+      100
+    ]
+  },
+  "layouts": {
+    "title": {
+      "titleArea": [
+        22,
+        170,
+        456,
+        225
+      ],
+      "cat": [
+        181,
+        500,
+        140,
+        136
+      ],
+      "startText": [
+        110,
+        735,
+        280,
+        55
+      ]
+    },
+    "meet-02-04": {
+      "cat": [
+        185,
+        284,
+        130,
+        140
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ],
+      "nextButton": [
+        155,
+        779,
+        194,
+        63
+      ]
+    },
+    "comic-06-09": {
+      "comic": [
+        10,
+        98,
+        480,
+        320
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ]
+    },
+    "normal-10-15": {
+      "cat": [
+        175,
+        232,
+        150,
+        190
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ]
+    },
+    "staff-17": {
+      "sleeping": [
+        160,
+        225,
+        185,
+        149
+      ],
+      "staff": [
+        315,
+        217,
+        150,
+        221
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ],
+      "tone": "blue"
+    },
+    "side-18-20-22": {
+      "cat": [
+        35,
+        284,
+        145,
+        148
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ]
+    },
+    "postcard-21": {
+      "dialogue": [
+        32,
+        167,
+        436,
+        479
+      ],
+      "postcard": [
+        87,
+        297,
+        324,
+        237
+      ],
+      "inputBar": [
+        29,
+        672,
+        442,
+        100
+      ]
+    },
+    "marker-23": {
+      "marker": [
+        193,
+        251,
+        227,
+        244
+      ],
+      "dialogue": [
+        32,
+        436,
+        436,
+        210
+      ],
+      "inputBar": [
+        29,
+        672,
+        442,
+        100
+      ]
+    },
+    "arrival-24": {
+      "cat": [
+        25,
+        391,
+        155,
+        154
+      ],
+      "dialogue": [
+        32,
+        548,
+        436,
+        210
+      ],
+      "nextButton": [
+        155,
+        684,
+        194,
+        63
+      ]
+    }
+  },
+  "palette": {
+    "ink": "#221b14",
+    "dialogueCream": "#fff8df",
+    "staffBlue": "#d1eff0",
+    "buttonPeach": "#ffce96",
+    "buttonOutline": "#418caf",
+    "inputMint": "#71b987",
+    "bannerYellow": "#f6df69",
+    "bannerPink": "#f8bdbd"
+  },
+  "font": {
+    "bundledSubstitute": "Jua (subset)",
+    "originalFontIdentity": "원본 서체명 미제공",
+    "dialogueApproxPx": 25,
+    "lineHeightApprox": 1.68,
+    "externalFontRequests": false
+  }
+}

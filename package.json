@@ -1,0 +1,11 @@
+{
+  "name": "cat-librarian-opening",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test scripts/engine.test.mjs",
+    "check": "node scripts/check-assets.mjs",
+    "serve": "node server.mjs"
+  }
+}

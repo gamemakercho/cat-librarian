@@ -1,0 +1,254 @@
+[
+  {
+    "id": "happy",
+    "label": "행복",
+    "runtimeAsset": "assets/cats/happy.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      12,
+      140,
+      306,
+      484
+    ]
+  },
+  {
+    "id": "joy",
+    "label": "기쁨",
+    "runtimeAsset": "assets/cats/joy.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      305,
+      130,
+      592,
+      484
+    ]
+  },
+  {
+    "id": "disappointed",
+    "label": "실망",
+    "runtimeAsset": "assets/cats/disappointed.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      593,
+      145,
+      855,
+      484
+    ]
+  },
+  {
+    "id": "disgusted",
+    "label": "질색",
+    "runtimeAsset": "assets/cats/disgusted.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      850,
+      140,
+      1143,
+      484
+    ]
+  },
+  {
+    "id": "worried",
+    "label": "큰일",
+    "runtimeAsset": "assets/cats/worried.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      1145,
+      140,
+      1439,
+      484
+    ]
+  },
+  {
+    "id": "excited",
+    "label": "대박",
+    "runtimeAsset": "assets/cats/excited.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      15,
+      560,
+      303,
+      914
+    ]
+  },
+  {
+    "id": "shocked",
+    "label": "헉",
+    "runtimeAsset": "assets/cats/shocked.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      306,
+      558,
+      572,
+      914
+    ]
+  },
+  {
+    "id": "doomed",
+    "label": "망함",
+    "runtimeAsset": "assets/cats/doomed.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      574,
+      620,
+      863,
+      917
+    ]
+  },
+  {
+    "id": "sad",
+    "label": "슬픔",
+    "runtimeAsset": "assets/cats/sad.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      863,
+      590,
+      1134,
+      917
+    ]
+  },
+  {
+    "id": "despair",
+    "label": "절망",
+    "runtimeAsset": "assets/cats/despair.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_03_34(1).png",
+    "sourceCrop": [
+      1135,
+      620,
+      1441,
+      917
+    ]
+  },
+  {
+    "id": "self-mockery",
+    "label": "자조",
+    "runtimeAsset": "assets/cats/self-mockery.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      10,
+      140,
+      307,
+      486
+    ]
+  },
+  {
+    "id": "cynical",
+    "label": "냉소",
+    "runtimeAsset": "assets/cats/cynical.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      307,
+      141,
+      579,
+      486
+    ]
+  },
+  {
+    "id": "depressed",
+    "label": "우울",
+    "runtimeAsset": "assets/cats/depressed.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      578,
+      140,
+      851,
+      486
+    ]
+  },
+  {
+    "id": "bewildered",
+    "label": "어이없음",
+    "runtimeAsset": "assets/cats/bewildered.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      850,
+      140,
+      1124,
+      486
+    ]
+  },
+  {
+    "id": "ignore",
+    "label": "못본척",
+    "runtimeAsset": "assets/cats/ignore.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      1139,
+      130,
+      1443,
+      486
+    ]
+  },
+  {
+    "id": "resigned",
+    "label": "체념",
+    "runtimeAsset": "assets/cats/resigned.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      12,
+      598,
+      309,
+      920
+    ]
+  },
+  {
+    "id": "hollow",
+    "label": "허탈",
+    "runtimeAsset": "assets/cats/hollow.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      309,
+      575,
+      580,
+      920
+    ]
+  },
+  {
+    "id": "embarrassed",
+    "label": "민망",
+    "runtimeAsset": "assets/cats/embarrassed.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      580,
+      605,
+      852,
+      920
+    ]
+  },
+  {
+    "id": "sulking",
+    "label": "삐짐",
+    "runtimeAsset": "assets/cats/sulking.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      850,
+      605,
+      1140,
+      920
+    ]
+  },
+  {
+    "id": "troubled",
+    "label": "심란",
+    "runtimeAsset": "assets/cats/troubled.webp",
+    "sourceFile": "ChatGPT 이미지 2026년 9월 27일 오후 05_04_22(1).png",
+    "sourceCrop": [
+      1140,
+      590,
+      1443,
+      920
+    ]
+  },
+  {
+    "id": "neutral",
+    "label": "중립 (원본 01 추출)",
+    "runtimeAsset": "assets/cats/neutral.webp",
+    "sourceFile": "screens/01.jpg",
+    "sourceCrop": [
+      176,
+      495,
+      326,
+      643
+    ]
+  }
+]

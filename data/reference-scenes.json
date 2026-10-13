@@ -1,0 +1,194 @@
+[
+  {
+    "number": 1,
+    "role": "시작 화면",
+    "sourceText": "제목 「고양이가 된 사서」 / 터치해서 시작",
+    "composition": "만남 배경 + 앉아 있는 고양이",
+    "implementation": "타이틀은 실제 텍스트. 원본 01에서 분리한 neutral 고양이 사용.",
+    "originalImage": "source-reference/screens/01.jpg"
+  },
+  {
+    "number": 2,
+    "role": "첫 대화",
+    "sourceText": "혹시 오늘 바빠?",
+    "composition": "만남 / 실망 / 중앙",
+    "implementation": "2~4번은 고양이가 조금 작고, 다음 버튼이 화면 아래 약 86% 지점에 있다. 이를 meet 레이아웃으로 분리한다.",
+    "originalImage": "source-reference/screens/02.jpg"
+  },
+  {
+    "number": 3,
+    "role": "첫 대화",
+    "sourceText": "말하는 고양이는 처음 보지?",
+    "composition": "만남 / 실망 / 중앙",
+    "implementation": "2번과 같은 배경·표정. 글자만 바뀌며 새 배경 다운로드가 필요 없다.",
+    "originalImage": "source-reference/screens/03.jpg"
+  },
+  {
+    "number": 4,
+    "role": "정체 공개",
+    "sourceText": "나는 사실 이 도서관 사서야",
+    "composition": "만남 / 실망 / 중앙",
+    "implementation": "동일한 대화 화면. 사서의 몸이 고양이임을 먼저 알려 준다.",
+    "originalImage": "source-reference/screens/04.jpg"
+  },
+  {
+    "number": 5,
+    "role": "회상 도입",
+    "sourceText": "오늘 아침에도 평소처럼 도서관에 출근 중이었어",
+    "composition": "흰 화면 / 캐릭터 없음",
+    "implementation": "흰 화면은 첨부 자체의 구성이다. 흰 이미지를 만들지 않고 배경색으로 구현한다.",
+    "originalImage": "source-reference/screens/05.jpg"
+  },
+  {
+    "number": 6,
+    "role": "회상 만화 1",
+    "sourceText": "어, 오늘도 왔네! / 아래 대화 상자는 5번과 같은 문장",
+    "composition": "흰 화면 위에 도서관 앞 만화",
+    "implementation": "만화 부분만 잘라 표시한다. 전체 UI까지 그림으로 넣지 않는다. 말풍선 속 글은 현재 만화에 합쳐져 있다.",
+    "originalImage": "source-reference/screens/06.jpg"
+  },
+  {
+    "number": 7,
+    "role": "회상 만화 2",
+    "sourceText": "츄르 줄게~ 조금만 기다려! 천천히 와~ / 아래는 5번과 같은 문장",
+    "composition": "츄르를 꺼내는 사서",
+    "implementation": "첨부 만화는 츄르 버전이다. 앞서 논의한 깃털 책갈피를 쓰려면 이 네 컷만 교체하면 된다.",
+    "originalImage": "source-reference/screens/07.jpg"
+  },
+  {
+    "number": 8,
+    "role": "회상 만화 3",
+    "sourceText": "어어! 천천히~ / 다다다! / 아래는 5번과 같은 문장",
+    "composition": "달려오는 고양이",
+    "implementation": "속도선을 포함한 사건 컷. 별도의 러너 미니게임으로 해석하지 않는다.",
+    "originalImage": "source-reference/screens/08.jpg"
+  },
+  {
+    "number": 9,
+    "role": "회상 만화 4",
+    "sourceText": "쾅! / 아래는 5번과 같은 문장",
+    "composition": "사서와 고양이의 머리 충돌",
+    "implementation": "충돌 때 짧은 화면 반짝임과 흔들림을 넣되, 시스템의 동작 줄이기 설정을 존중한다.",
+    "originalImage": "source-reference/screens/09.jpg"
+  },
+  {
+    "number": 10,
+    "role": "몸 바뀜 설명",
+    "sourceText": "그 후 눈을 떴더니, 내가 고양이 몸 속에 들어와 있지 뭐야! 그리고 고양이가 내 몸 속에 들어간 것 같아",
+    "composition": "만남 / 어이없음 / 중앙",
+    "implementation": "다시 만남 배경. 2~4번보다 큰 고양이, 아래쪽 다음 버튼은 약 76% 지점. 대화 길이가 길어 작은 화면에서 확인해야 한다.",
+    "originalImage": "source-reference/screens/10.jpg"
+  },
+  {
+    "number": 11,
+    "role": "도움이 필요한 이유",
+    "sourceText": "내 몸에 들어간 녀석은 계속 사고를 치고 다니는데, 이 고양이 손으로는 책도 꽂을 수가 없어",
+    "composition": "만남 / 어이없음",
+    "implementation": "교육 내용은 손/앞발로 할 수 없는 도서관 일에 자연스럽게 연결된다. 초등용 최종 대사에서는 ‘이 앞발로는’으로 바꾸는 것도 가능하다.",
+    "originalImage": "source-reference/screens/11.jpg"
+  },
+  {
+    "number": 12,
+    "role": "도움 요청",
+    "sourceText": "그래서 말인데… 네가 날 좀 도와주지 않을래?",
+    "composition": "만남 / 대박(반짝이는 눈)",
+    "implementation": "배경은 고정, 표정만 반짝이는 눈으로 교체. 아직 예/아니오 분기는 없다.",
+    "originalImage": "source-reference/screens/12.jpg"
+  },
+  {
+    "number": 13,
+    "role": "플레이어 설정",
+    "sourceText": "뭐? 도서관 일은 처음이라고?",
+    "composition": "만남 / 헉",
+    "implementation": "플레이어가 처음 도서관 일을 돕는 사람이라는 설정. 고양이의 놀란 표정이 개그 타이밍이다.",
+    "originalImage": "source-reference/screens/13.jpg"
+  },
+  {
+    "number": 14,
+    "role": "개그 전반",
+    "sourceText": "완벽하네",
+    "composition": "만남 / 실망",
+    "implementation": "짧은 한 문장으로 쉬었다 가는 컷이다. 자동 넘김으로 생략하지 않는다.",
+    "originalImage": "source-reference/screens/14.jpg"
+  },
+  {
+    "number": 15,
+    "role": "개그 후반",
+    "sourceText": "완벽하네. 나도 오늘 처음 고양이가 됐거든",
+    "composition": "만남 / 체념",
+    "implementation": "14번의 문장이 첫 줄에 반복되는 것은 첨부 내용이다. 유머의 마무리로 유지한다.",
+    "originalImage": "source-reference/screens/15.jpg"
+  },
+  {
+    "number": 16,
+    "role": "로비로 전환",
+    "sourceText": "내 몸을 가진 저 고양이가 도서관을 다 망쳐버리기 전에 잡아야 해",
+    "composition": "흰 화면 / 노란 도서관 로비 띠",
+    "implementation": "첨부는 그림 없는 전환 화면. 실제 장소 이동 여부를 묻는 예/아니오 확인을 이 뒤에 추가했다.",
+    "originalImage": "source-reference/screens/16.jpg"
+  },
+  {
+    "number": 17,
+    "role": "사서 몸의 고양이 발견",
+    "sourceText": "선생님… 왜 데스크 위에 올라가 계세요?",
+    "composition": "로비 / 데스크에서 자는 사서 + 직원",
+    "implementation": "푸른 대화 상자는 직원 대사. 배경은 빈 로비, 잠자는 사람과 직원을 각각 별도 레이어로 표시한다. 직원은 17번 원본에서 추출했다.",
+    "originalImage": "source-reference/screens/17.jpg"
+  },
+  {
+    "number": 18,
+    "role": "고양이 사서 반응",
+    "sourceText": "봤지?",
+    "composition": "로비 / 체념 고양이 왼쪽 / 자는 사람 뒤",
+    "implementation": "뒤의 장면을 연하게 하고 말하는 고양이를 전면에 둔다. 인물 레이어와 배경을 함께 연하게 처리하는 차이는 최종 디자인에서 조절할 수 있다.",
+    "originalImage": "source-reference/screens/18.jpg"
+  },
+  {
+    "number": 19,
+    "role": "코믹 대사",
+    "sourceText": "내 사회생활이 실시간으로 끝나고 있어",
+    "composition": "18번과 같은 화면",
+    "implementation": "표정·배경은 고정. 본문만 바뀐다. 쉬운 말 대안은 ‘다들 내가 이상해졌다고 생각하겠어…’지만 시안에서는 원문을 유지했다.",
+    "originalImage": "source-reference/screens/19.jpg"
+  },
+  {
+    "number": 20,
+    "role": "엽서 문제의 예고",
+    "sourceText": "일단 자고 있는 녀석을 깨워야 할 것 같아. 책으로 톡톡 쳐볼까?",
+    "composition": "18번과 같은 화면",
+    "implementation": "실제로 사람을 책으로 치게 하는 지시가 아니라 이야기 속 행동임을 최종 게임 문구에서 분명히 해야 한다. 다음 엽서 조작과 어떻게 연결되는지는 미정이다.",
+    "originalImage": "source-reference/screens/20.jpg"
+  },
+  {
+    "number": 21,
+    "role": "첫 엽서 문제",
+    "sourceText": "가지고 있는 엽서를 활용해서 자고 있는 고양이(?)를 깨우자. 엽서 상단에 있는 글을 그대로 입력해주세요 (물음표제외, 띄어쓰기 상관 없음)",
+    "composition": "로비 / 위로 확장한 크림색 문제 상자 / 엽서 참고 그림 / 초록 입력 띠",
+    "implementation": "원본 문제 패널과 문구 유지. 확정 정답 고양이와 사서가 뒤바뀌었다. 공백·물음표·느낌표 무시.",
+    "originalImage": "source-reference/screens/21.jpg"
+  },
+  {
+    "number": 22,
+    "role": "문제 해결 후 사건",
+    "sourceText": "다행히 데스크에서 깨우는 데 성공했는데, 갑자기 평생학습실 쪽으로 뛰어가버렸네",
+    "composition": "빈 로비 / 어이없음 고양이 왼쪽",
+    "implementation": "잠자는 사람 레이어를 숨긴다. 평생학습실을 강조색으로 표시. 실제 달리는 인물은 첨부에 없으므로 이번 시안에는 만들지 않았다.",
+    "originalImage": "source-reference/screens/22.jpg"
+  },
+  {
+    "number": 23,
+    "role": "현장 도착 확인 문제",
+    "sourceText": "따라가보자! 평생학습실 앞에 도착했다면 문 앞에 있는 고양이 마크 옆에 쓰여있는 글자를 적어줘",
+    "composition": "로비 / 고양이 왼쪽 / 사람+고양이 얼굴 마크 / 입력 띠",
+    "implementation": "원본의 마크·대사·입력띠 유지. 현장 마크 글자는 미정. 제작자 미리보기에서만 우회.",
+    "originalImage": "source-reference/screens/23.jpg"
+  },
+  {
+    "number": 24,
+    "role": "평생학습실 사건 도입",
+    "sourceText": "평생학습실 바닥이 물감자국… 저거 내 몸으로 한 거야",
+    "composition": "물감 있는 평생학습실 / 분홍 장소 띠 / 고양이 왼쪽 아래",
+    "implementation": "고양이와 대사 상자가 아래로 내려가므로 arrival 레이아웃을 쓴다. 물감 색·방향을 활용할 다음 문제와 미니게임은 이 이후 추가할 내용이다.",
+    "originalImage": "source-reference/screens/24.jpg"
+  }
+]

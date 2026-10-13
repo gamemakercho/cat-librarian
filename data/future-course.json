@@ -1,0 +1,42 @@
+{
+  "implementedInThisKit": false,
+  "route": [
+    "로비",
+    "평생학습실",
+    "유아자료실",
+    "1.5층 책소독기",
+    "2층 종합자료실",
+    "신간코너 (선택)",
+    "1층 로비"
+  ],
+  "confirmedAnswers": {
+    "first": "고양이와 사서가 뒤바뀌었다",
+    "learningOverlay": "물감",
+    "final": "고양이와 사서가 돌아왔다"
+  },
+  "answerNormalization": "NFC 후 공백·?·! 제거",
+  "pending": [
+    "23번 현장 마크의 실제 글자",
+    "유아자료실 문제·정답",
+    "책소독기 문제·정답",
+    "종합자료실 문제·정답",
+    "신간코너 포함 여부",
+    "미니게임별 최종 클리어 키워드"
+  ],
+  "miniGameFlow": [
+    "중앙 게임 버튼 + 하단 키워드 입력칸",
+    "같은 탭에서 미니게임 크게 표시",
+    "성공 화면에서 키워드 확인",
+    "상단 이야기로 돌아가기",
+    "메인 화면 키워드 입력",
+    "정답이면 다음 대사"
+  ],
+  "bookCatchExampleKeyword": "뿌듯 (예시, 확정 아님)",
+  "urls": {
+    "cleaning": "https://gamemakercho.github.io/cleaning-game/",
+    "bookCatch": "https://gamemakercho.github.io/library-game1/",
+    "reshelving": "https://gamemakercho.github.io/bookband/",
+    "ending": "https://gamemakercho.github.io/library/"
+  },
+  "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 충돌 자동 연출."
+}

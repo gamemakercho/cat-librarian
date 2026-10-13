@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf3df">
+  <title>고양이가 된 사서</title>
+  <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 1~24번 화면을 분리된 배경과 표정, 실제 대사로 구현한 초반부 시안입니다.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <div class="game-column">
+    <section id="stage" class="stage" aria-label="고양이가 된 사서 게임 화면">
+      <div class="scene-layer" id="sceneLayer" aria-hidden="true"></div>
+      <div class="dim-layer" id="dimLayer" aria-hidden="true"></div>
+      <div id="characterLayer" class="character-layer" aria-hidden="true"></div>
+      <div id="effectLayer" class="effect-layer" aria-hidden="true"></div>
+
+      <div id="locationBanner" class="location-banner" hidden></div>
+      <section id="titleScreen" class="title-screen" hidden>
+        <h1><span>고양이가 된</span><span>사서</span></h1>
+        <button id="startButton" class="start-button" type="button">터치해서 시작</button>
+      </section>
+      <section id="dialogue" class="dialogue" hidden aria-label="대사">
+        <p id="dialogueText"></p>
+        <img id="puzzleIllustration" class="puzzle-illustration" alt="문제에서 참고할 엽서 그림" hidden>
+        <p id="instruction" class="instruction" hidden></p>
+      </section>
+      <button id="nextButton" class="next-button" type="button" hidden>다음</button>
+      <section id="movementControls" class="movement-controls" hidden>
+        <button id="arrivedButton" class="next-button" type="button">예, 도착했어요</button>
+        <button id="notYetButton" class="secondary-button" type="button">아직 이동 중이에요</button>
+        <p id="movementFeedback" role="status"></p>
+      </section>
+      <form id="answerForm" class="answer-form" hidden autocomplete="off">
+        <label for="answer">입력</label>
+        <input id="answer" type="text" inputmode="text" enterkeyhint="done" maxlength="80" aria-describedby="answerFeedback">
+        <button id="checkButton" type="submit">확인</button>
+        <p id="answerFeedback" role="status"></p>
+      </form>
+      <section id="continuationControls" class="continuation-controls" hidden>
+        <button id="restartButton" class="next-button" type="button">처음부터 다시 보기</button>
+        <a href="?review=1" class="secondary-button">제작자 화면 확인</a>
+      </section>
+      <dialog id="helpDialog" class="help-dialog">
+        <h2>잠깐, 안내할게요!</h2>
+        <p>화면을 읽고 ‘다음’을 눌러 주세요. 글이 나오는 중에 누르면 남은 글이 한 번에 보여요.</p>
+        <p>20번의 책으로 톡톡 치기는 이야기 속 대사입니다.</p>
+        <p>문제는 실제 엽서와 도서관의 표지를 보고 풀어요. 이동할 때는 스마트폰을 잠시 내려놓아요.</p>
+        <p id="helpPreviewNote" class="preview-note" hidden>현재는 초반부 제작 시안입니다. 21번 엽서 정답은 설정되어 있습니다. 23번 현장 마크 글자는 아직 미정입니다.</p>
+        <div class="help-actions"><button id="resumeButton" type="button">계속 보기</button><button id="helpRestartButton" type="button">처음부터</button></div>
+      </dialog>
+      <div id="loading" class="loading" role="status" hidden>장면을 불러오고 있어요…</div>
+    </section>
+          <nav class="player-tools" aria-label="진행 도구">
+        <button id="backButton" type="button" class="small-control" aria-label="이전 장면">이전 화면</button>
+        <button id="hintButton" class="hint-button" type="button" hidden>힌트 보기</button>
+        <button id="menuButton" type="button" class="small-control" aria-label="도움말과 다시 시작">메뉴</button>
+      </nav>
+    </div>
+    <aside id="reviewPanel" class="review-panel" hidden aria-label="제작자 화면 확인">
+      <p class="eyebrow">초반부 · 제작자 미리보기</p>
+      <h2>고양이가 된 사서</h2>
+      <p class="review-intro">첨부 1~24번을 실제 대사와 표정으로 재현했어요. 장면을 골라 확인해 보세요.</p>
+      <label for="sceneSelect">화면 선택</label>
+      <select id="sceneSelect"></select>
+      <div class="review-actions"><button id="reviewBack" type="button">이전 화면</button><button id="reviewNext" type="button">다음 화면</button></div>
+      <p id="sceneMeta" class="scene-meta"></p>
+      <p id="reviewWarning" class="review-warning" hidden></p>
+      <button id="bypassButton" class="bypass-button" type="button" hidden>정답 없이 다음 장면 확인</button>
+      <details class="reference-details"><summary>첨부 원본과 비교</summary><p>제공된 원본의 압축 비교본을 같은 비율로 표시합니다.</p><p id="noReference" hidden>24장 뒤의 정지 지점입니다.</p></details>
+      <details><summary>이번 시안의 범위</summary><p>처음 만남, 네 컷 회상, 로비의 엽서 문제, 평생학습실 도착까지. 다음 문제와 미니게임은 아직 추가하지 않았어요.</p><p>정답이 미정인 23번 문제는 제작자 도구로만 넘길 수 있어요. 정답을 맞힌 것으로 저장되지 않습니다.</p></details>
+      <div class="review-links"><a href="?">게임 화면만 보기</a></div>
+      <p id="assetStats" class="asset-stats"></p>
+    </aside>
+    <aside id="referencePanel" class="reference-panel" hidden><p id="referenceCaption">원본 비교</p><img id="referenceImage" alt="해당 번호의 원본 압축 비교본" hidden></aside>
+  </main>
+  <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
