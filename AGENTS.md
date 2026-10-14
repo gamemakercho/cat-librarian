@@ -16,3 +16,4 @@
 - GitHub Pages 저장소 하위 경로를 지원하기 위해 자산과 모듈 경로는 상대 경로로 유지한다. 최상위 index.html 및 .nojekyll을 유지한다.
 - 진행 로직을 수정하면 npm test, 경로·자산을 수정하면 npm run check를 실행한다. 화면·입력을 수정하면 필요한 브라우저 확인을 한다. 실제 검증과 미확인 항목을 구분해 보고한다.
 - 사용자가 별도로 요청하지 않은 후속 문제·미니게임·엔딩을 임의로 추가하지 않는다.
+- 폰트는 제공 Jua 원본의 전체 지원 글자를 압축한 assets/fonts/jua-complete.woff를 사용한다. 초반 축약본으로 되돌리지 않는다. scripts/check-font.mjs가 화면 문구의 한글 누락을 검사하며 check-assets에 포함된다.

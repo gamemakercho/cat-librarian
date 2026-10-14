@@ -28,3 +28,4 @@ const allJpg=readFileSync(resolve(root,'reference-metadata.json'),'utf8');
 const raw=JSON.parse(allJpg).totalBytes;
 console.log(JSON.stringify({usedImageCount:used.size,openingImageBytes:sum,originalScreenBytes:raw,imageBytesReductionPercent:(1-sum/raw)*100,
   checked:'장면 연결·이미지 경로/크기·UI id. 실제 모바일 브라우저 검증은 별도.'},null,2));
+await import('./check-font.mjs');

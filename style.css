@@ -112,9 +112,9 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 }
 @media(orientation:landscape) and (max-height:520px){.stage{width:calc(100svh * 5 / 9)}.review-panel{max-height:95svh}}
 
-/* Source screens use rounded Korean lettering. This bundled substitute is
-   editable text, not rasterized lettering, and is loaded from this project. */
-@font-face{font-family:HaemiJua;src:url('./assets/fonts/jua-opening-subset.woff') format('woff');font-weight:400 900;font-display:swap}
+/* Bundle every glyph supported by the provided Jua font so new copy does not
+   mix the opening-only subset with the device's fallback font. */
+@font-face{font-family:HaemiJua;src:url('./assets/fonts/jua-complete.woff') format('woff');font-weight:400 900;font-display:swap}
 .stage[data-type="title"] .character.cat{left:36.2%;top:55.6%;width:28%;height:15.1%}
 .stage[data-layout="side"] .character.cat,
 .stage[data-layout="arrival"] .character.cat{filter:drop-shadow(1.2px 0 white) drop-shadow(-1.2px 0 white) drop-shadow(0 1.2px white) drop-shadow(0 -1.2px white)}
