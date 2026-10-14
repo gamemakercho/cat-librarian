@@ -1,4 +1,5 @@
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
+import {isMinigameClear} from './minigame-bridge.js';
 
 export function normalizeAnswer(value) {
   return String(value ?? '').normalize('NFC').replace(/[\s?？!！]/gu, '').toLowerCase();
@@ -39,7 +40,12 @@ export class StoryRuntime {
       if(puzzles[id]?.answerMode==='icons')this.puzzleStates[id]=initializePuzzle(saved,rng);
     }
     this.currentId = this.index.has(snapshot.currentId) ? snapshot.currentId : this.scenes[0].id;
-    this.solved = new Set((snapshot.solved ?? []).filter(id => puzzles[id]?.answerMode==='icons'?this.puzzleStates[id]?.completed:puzzles[id]?.acceptedAnswers?.length));
+    this.minigameResults={};
+    for(const [id,result] of Object.entries(snapshot.minigameResults||{})){
+      if(puzzles[id]?.completionMode==='result'&&isMinigameClear(result,puzzles[id]))this.minigameResults[id]={...result};
+    }
+    this.solved = new Set((snapshot.solved ?? []).filter(id => puzzles[id]?.answerMode==='icons'?this.puzzleStates[id]?.completed:
+      puzzles[id]?.completionMode==='result'?Boolean(this.minigameResults[id]):puzzles[id]?.acceptedAnswers?.length));
     this.history = (snapshot.history ?? []).filter(id => this.index.has(id)).slice(-200);
     this.pendingSuccess = null;
     const pending = snapshot.pendingSuccess;
@@ -79,13 +85,20 @@ export class StoryRuntime {
     return {fromSceneId:s.id,nextSceneId:s.next,puzzleId:s.puzzleId,
       popup:{...this.successDefaults,...this.puzzles[s.puzzleId]?.successPopup,...s.successPopup}};
   }
-  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates }; }
+  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults }; }
+  completeMinigame(result) {
+    const s=this.scene,p=this.puzzles[s.puzzleId];
+    if(s.type!=='minigame'||p?.completionMode!=='result'||!isMinigameClear(result,p))return {ok:false,reason:'game-clear-required'};
+    this.minigameResults[s.puzzleId]={...result};this.solved.add(s.puzzleId);
+    return {ok:true};
+  }
   advance({ review = false, arrived = false, minigameReturned = false } = {}) {
     const s = this.scene;
     if(this.pendingSuccessId===s.id&&!review)return {ok:false,reason:'success-confirmation-required'};
     if (s.type === 'puzzle' && !this.solved.has(s.puzzleId) && !review) return {ok:false,reason:'answer-required'};
     if (s.type === 'move' && !arrived && !review) return {ok:false,reason:'arrival-required'};
     if(s.type==='minigame'&&!review&&!this.solved.has(s.puzzleId)){
+      if(this.puzzles[s.puzzleId].completionMode==='result')return {ok:false,reason:'game-clear-required'};
       if(this.puzzles[s.puzzleId].acceptedAnswers?.length)return {ok:false,reason:'answer-required'};
       if(!minigameReturned)return {ok:false,reason:'game-button-required'};
     }
@@ -138,5 +151,5 @@ export class StoryRuntime {
     if (!this.history.length) return false;
     this.clearPending();this.currentId=this.history.pop();return true;
   }
-  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={}; }
+  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={};this.minigameResults={}; }
 }

@@ -1,7 +1,7 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {iconCatalog} from './icon-catalog.js';
-export const STORY_VERSION = 'opening-source-24-icons-v9-20261014';
+export const STORY_VERSION = 'opening-source-24-minigame-clear-v10-20261014';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -163,7 +163,8 @@ export const puzzles = {
     successPopup:{title:'와! 맞았어!',body:'잘했어!\n안내문을 잘 살펴봤구나!',buttonLabel:'다음으로',cat:'happy',tone:'gold'}
   },
   'cleaning-keyword':{
-    status:'pending',acceptedAnswers:[],minigameClearKeyword:null,
+    status:'confirmed',acceptedAnswers:[],minigameClearKeyword:null,
+    completionMode:'result',minimumRatio:.7,allowedGrades:['A','B'],
     placeholder:'클리어 키워드',hints:[],missing:'청소 게임의 클리어 키워드는 아직 미정입니다',
     successPopup:{title:'훌륭해!',body:'잘했어!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
   }
