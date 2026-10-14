@@ -189,5 +189,39 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 }
 .character.staff{overflow:visible}
 .location-marker{clip-path:circle(48.5% at 50% 50%)}
+.location-marker{overflow:visible}
+.marker-art{display:block;width:100%;height:100%;object-fit:contain}
+.marker-number{position:absolute;top:24%;right:11%;color:white;font-size:5.7cqw;font-weight:900;line-height:1;font-family:HaemiJua,"Arial Rounded MT Bold",system-ui,sans-serif;letter-spacing:-.02em;pointer-events:none}
+.stage[data-type="move"] .dialogue{text-align:center;padding:4.8cqw 5.1cqw}
+.stage[data-type="move"] .location-banner{font-size:7.5cqw}
+.movement-controls{padding:0;display:flex;flex-direction:column;gap:4cqw;text-align:center}
+.movement-controls h2{margin:0;font-size:6.5cqw;font-weight:400;line-height:1.4;text-shadow:1px 1px #fff,-1px -1px #fff}
+.arrival-buttons{display:grid;grid-template-columns:1fr 1fr;gap:2.8cqw}
+.arrival-button{min-height:14cqw;padding:2cqw 1.5cqw;border:1cqw solid #317a68;border-radius:3.8cqw;background:#398c6c;color:white;font-size:5.5cqw;line-height:1.2;box-shadow:0 1cqw 0 #27614c}
+.arrival-button:active{transform:translateY(1px)}
+.lost-button{background:#62777e;border-color:#52626b;box-shadow:0 1cqw 0 #425059}
+.success-dialog,.location-hint-dialog{width:min(calc(100vw - 32px),360px);max-height:calc(100dvh - 32px);margin:auto;padding:22px;overflow-y:auto;overscroll-behavior:contain;border:2px solid #e8ba60;border-radius:24px;background:#fff8df;color:#382a1f;box-shadow:0 12px 50px #33241155;text-align:center}
+.success-dialog::backdrop,.location-hint-dialog::backdrop{background:#35281999}
+.success-dialog h2{margin:0 0 8px;font-size:42px;line-height:1.15;color:#ba7420;font-weight:400;text-shadow:1px 1px white,-1px -1px white}
+.success-sparkles{color:#efb545;font-size:27px;line-height:1;letter-spacing:18px;padding-left:18px;margin-bottom:8px}
+.success-sparkles span{color:#59b9a6}
+.success-illustration{height:166px;display:grid;place-items:center;margin:8px 0}
+.success-cat{width:150px;height:166px;object-fit:contain;filter:drop-shadow(2px 0 white) drop-shadow(-2px 0 white) drop-shadow(0 2px white) drop-shadow(0 -2px white)}
+.success-dialog p{margin:12px 0 18px;font-size:23px;line-height:1.4;white-space:pre-line}
+.dialog-action{display:block;width:100%;min-height:52px;border:2px solid #187c78;border-radius:15px;background:#239c92;color:white;font-size:23px;line-height:1.3;padding:10px 14px;box-shadow:0 3px 0 #146e68}
+.success-dialog[data-tone="rose"]{background:#fff0f2;border-color:#efa2b1}
+.success-dialog[data-tone="rose"] h2{color:#df5279}
+.success-dialog[data-tone="rose"] .dialog-action{background:#df5279;border-color:#c74065;box-shadow:0 3px 0 #aa3456}
+.success-dialog[data-tone="mint"]{background:#f0fbf4;border-color:#76c3ae}
+.success-dialog[data-tone="mint"] h2{color:#278770}
+.success-dialog[data-tone="blue"]{background:#edf9ff;border-color:#79bdda}
+.success-dialog[data-tone="blue"] h2{color:#318caf}
+.location-hint-dialog{background:#fffaf0;border-color:#5d9d96;text-align:left}
+.location-hint-dialog h2{margin:0 0 18px;text-align:center;font-size:27px;line-height:1.3;color:#326f69;font-weight:400}
+.location-hint-card{padding:14px;margin-bottom:12px;border:1px solid #d4ded0;border-radius:15px;background:#fff}
+.location-hint-card h3{display:inline-block;margin:0 0 9px;padding:3px 12px;background:#239c92;border-radius:14px;color:white;font-size:17px;font-weight:400}
+.location-hint-card p{margin:0;font-size:21px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.hint-more-button{width:100%;min-height:44px;margin:0 0 12px;border:1px solid #87aaa1;border-radius:12px;background:#edf8ef;color:#29685d;font-size:19px;padding:8px}
+@media(max-height:500px){.success-dialog,.location-hint-dialog{padding:16px}.success-dialog h2{font-size:32px}.success-sparkles{display:none}.success-illustration,.success-cat{height:105px}.success-dialog p{font-size:19px;margin:8px 0 12px}.dialog-action{min-height:46px;font-size:20px}.location-hint-dialog h2{font-size:24px;margin-bottom:10px}.location-hint-card{padding:10px}.location-hint-card p{font-size:18px}}
 @media(max-width:850px){.app-shell:has(.review-panel:not([hidden])){flex-direction:column}.review-panel{width:min(100%,500px)}.reference-panel{align-self:center}}
 @media(orientation:landscape) and (max-height:520px){.stage{width:100%}.game-column{width:min(100vw,500px)}}

@@ -1,6 +1,11 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
-export const STORY_VERSION = 'opening-source-24-v4-20261013';
+export const STORY_VERSION = 'opening-source-24-v5-20261014';
+export const uiText = {
+  arrivalQuestion:'도착하였습니까?', arrivedLabel:'도착했지!', lostLabel:'못 찾겠어…',
+  locationHintTitle:'아직 못 찾았구나?', moreHintLabel:'힌트 하나 더', closeHintLabel:'다시 찾아볼게!',
+  successPopup:{title:'정답이야!', body:'잘했어!\n다음 장소로 가보자!', buttonLabel:'다음으로', cat:'excited', tone:'gold'}
+};
 export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
     title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'opening-busy' },
@@ -52,10 +57,15 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     cat: 'bewildered', layout: 'side',
     text: '다행히 데스크에서 깨우는데\n성공했는데, 갑자기 평생학습실\n쪽으로 뛰어가버렸네',
     emphasis: ['평생학습실'], next: 'learning-marker' },
-  { id: 'learning-marker', sourceNumber: 23, type: 'puzzle', background: 'lobby', location: '도서관 로비',
-    cat: 'bewildered', layout: 'side', puzzleId: 'learning-marker', marker: true,
-    text: '따라가보자!\n평생학습실 앞에 도착했다면\n문 앞에 있는 고양이 마크 옆에\n쓰여있는 글자를 적어줘',
-    emphasis: ['평생학습실','고양이 마크'], next: 'learning-paint' },
+  { id: 'learning-marker', sourceNumber: 23, type: 'move', background: 'lobby', location: '평생학습실로 이동',
+    cat: 'bewildered', layout: 'move', marker: true, markerNumber:1,
+    destination:'평생학습실(강의실1)',
+    guideText:'{destination} 앞에 있는\n{markerNumber}번 고양이 마크를 찾아줘!',
+    locationHints:[
+      '{destination}은 도서관 1층에 있어! 1층의 강의실 안내를 찾아봐.',
+      '{destination} 문 주변에서 {markerNumber}번 고양이 마크를 찾아봐!'
+    ],
+    emphasis:['평생학습실','01번'], next: 'learning-paint' },
   { id: 'learning-paint', sourceNumber: 24, type: 'dialogue', background: 'learning-paint', location: '평생학습실',
     cat: 'bewildered', layout: 'arrival',
     text: '평생학습실 바닥이 물감자국..\n저거 내 몸으로 한 거야', next: 'opening-continuation' },
@@ -64,22 +74,16 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '초반부는 여기까지입니다.\n후속 장면은 준비 중입니다.', next: null }
 ]}];
 
-// 원본 24장의 시나리오를 우선합니다. 첫 엽서 답은 확정값으로 설정했습니다. 23번 현장 마크 답만 비워 두었습니다.
-// 제작자 보기에서 장면 이동으로 우회하는 것은 정답 성공 처리와 다릅니다.
+// 첫 엽서 답은 확정값입니다. 23번은 현장 마크를 찾는 이동/도착 확인으로 변경했습니다.
+// 도착 확인과 제작자 장면 이동은 퍼즐 정답 성공 기록을 만들지 않습니다.
 export const puzzles = {
   'postcard-heading': {
     status: 'confirmed', acceptedAnswers: ['고양이와 사서가 뒤바뀌었다'],
     placeholder: '엽서 상단 문구',
     hints: ['화면 속 그림이 아니라, 가지고 있는 실제 엽서를 살펴보세요.',
       '엽서 가장 위에 적힌 문장을 입력해요. 물음표·느낌표와 띄어쓰기는 빼도 돼요.'],
-    missing: ''
-  },
-  'learning-marker': {
-    status: 'needs-confirmation', acceptedAnswers: [],
-    placeholder: '고양이 마크 옆 글자',
-    hints: ['실제 평생학습실 문 앞에서 고양이 마크를 찾아보세요.',
-      '그 마크 옆에 적힌 글자를 입력해요. 화면에 보이는 장소 이름을 입력하는 문제가 아니에요.'],
-    missing: '현장에 설치할 고양이 마크 옆의 실제 글자를 확정해야 합니다.'
+    missing: '',
+    successPopup:{title:'정답이야!', body:'잘했어!\n다음 이야기를 이어가 보자!', buttonLabel:'다음으로', cat:'excited', tone:'gold'}
   }
 };
 
@@ -91,7 +95,10 @@ export const baseGeometry = {
   dialogue:[32,436,436,210], nextButton:[155,684,194,63],
   locationBanner:[31,64,438,81], answerForm:[29,672,442,100],
   cat:[173,225,162,194], sleeping:[154,226,198,148], staff:[315,217,150,221],
-  comic:[10,98,480,320], marker:[193,251,227,244]
+  comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190]
+};
+export const movementGeometry = {
+  cat:[43,377,135,152], dialogue:[32,167,436,175], marker:[205,360,225,225], movementControls:[32,625,436,190]
 };
 const overrides = {
   1:{cat:[181,500,140,136]},
@@ -102,11 +109,11 @@ const overrides = {
   14:{cat:[185,284,130,140]}, 15:{cat:[180,280,137,145]},
   18:{cat:[40,284,140,148]}, 19:{cat:[40,284,140,148]}, 20:{cat:[40,284,140,148]},
   21:{dialogue:[32,167,436,479]},
-  22:{cat:[40,284,140,148]}, 23:{cat:[40,284,140,148]},
+  22:{cat:[40,284,140,148]},
   24:{cat:[38,391,145,154], dialogue:[32,548,436,210]}
 };
 for (const scene of chapters.flatMap(c=>c.scenes)) {
-  scene.geometry={...baseGeometry,...overrides[scene.sourceNumber]};
+  scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};
   scene.fontSize=30;
   scene.lineHeight=1.48;
   scene.flipCat=[18,19,20].includes(scene.sourceNumber);
@@ -115,4 +122,5 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.backgroundOpacity=scene.background==='meeting'?0.78:(scene.dim?0.74:0.93);
   scene.nextLabel='다음';
   if(scene.sourceNumber===21){scene.fontSize=33;scene.lineHeight=1.35;}
+  if(scene.type==='move'){scene.fontSize=28;scene.lineHeight=1.5;scene.textMode='static';}
 }

@@ -1,5 +1,5 @@
-import { chapters, puzzles, STORY_VERSION, palette } from './story.js';
-import { StoryRuntime } from './engine.js';
+import { chapters, puzzles, STORY_VERSION, palette, uiText } from './story.js';
+import { StoryRuntime, formatMarkerNumber } from './engine.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -14,9 +14,10 @@ const runtime=new StoryRuntime(chapters,puzzles,snapshot);
 const sourceScenes=runtime.scenes.filter(s=>s.sourceNumber);
 if(review&&params.has('scene')){
   const requested=sourceScenes.find(s=>s.sourceNumber===Number(params.get('scene')));
-  if(requested)runtime.jump(requested.id);
+  if(requested&&requested.id!==runtime.currentId)runtime.jump(requested.id);
 }
 let hintLevel=0;
+let locationHintLevel=0;
 let composing=false;
 let compositionEndedAt=-Infinity;
 let sceneReady=false;
@@ -73,6 +74,17 @@ function sceneAssetKeys(s){
   if(s.marker)keys.push('prop:marker');
   return keys;
 }
+function sceneMessage(s,text=s.guideText??s.text??''){
+  return text.replaceAll('{destination}',s.destination||'').replaceAll('{markerNumber}',formatMarkerNumber(s.markerNumber));
+}
+function createMarker(s){
+  const marker=document.createElement('div');marker.className='location-marker';
+  const im=createImage('prop:marker','marker-art');marker.append(im);
+  const number=formatMarkerNumber(s.markerNumber);
+  if(number){const label=document.createElement('span');label.className='marker-number';label.textContent=number;marker.append(label);}
+  marker.setAttribute('role','img');marker.setAttribute('aria-label',number?`${number}번 책 읽는 고양이 마크`:'책 읽는 고양이 마크');
+  return marker;
+}
 function emphasize(text,s){
   const el=$('dialogueText');el.replaceChildren();
   const terms=s.emphasis||[];
@@ -89,7 +101,7 @@ function finishText(){
   emphasize(activeText,runtime.scene);$('nextButton').textContent=runtime.scene.nextLabel||'다음';
 }
 function typeText(s){
-  clearInterval(textTimer);textTimer=null;activeText=s.text||'';
+  clearInterval(textTimer);textTimer=null;activeText=sceneMessage(s);
   const segments=typeof Intl.Segmenter==='function'
     ? [...new Intl.Segmenter('ko',{granularity:'grapheme'}).segment(activeText)].map(x=>x.segment)
     : [...activeText];
@@ -109,13 +121,14 @@ async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
-  clearInterval(textTimer);textTimer=null;hintLevel=0;
+  clearInterval(textTimer);textTimer=null;hintLevel=0;locationHintLevel=0;
+  $('locationHintDialog').close();$('successDialog').close();
   const stage=$('stage');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
   stage.dataset.frame=s.backgroundFrame||'normal';
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
-  for(const name of ['dialogue','nextButton','locationBanner','answerForm'])applyRect($(name),s.geometry[name]);
+  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls'])applyRect($(name),s.geometry[name]);
   $('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -136,7 +149,7 @@ async function render(){
   if(s.staff){const im=createImage('actor:staff','character staff');applyRect(im,s.geometry.staff);cl.append(im);}
   if(s.cat){const im=createImage(`cat:${s.cat}`,'character cat');applyRect(im,s.geometry.cat);im.style.transform=s.flipCat?'scaleX(-1)':'';cl.append(im);}
   if(s.comic){const im=createImage(`comic:${s.comic}`,'comic-panel'+(s.effect?' bump':''));applyRect(im,s.geometry.comic);cl.append(im);}
-  if(s.marker){const im=createImage('prop:marker','location-marker');applyRect(im,s.geometry.marker);$('effectLayer').append(im);}
+  if(s.marker){const marker=createMarker(s);applyRect(marker,s.geometry.marker);$('effectLayer').append(marker);}
   $('effectLayer').className='effect-layer';
   if(s.effect&&!prefersReducedMotion){void $('effectLayer').offsetWidth;$('effectLayer').classList.add(s.effect);}
   $('locationBanner').hidden=!s.location;$('locationBanner').textContent=s.location||'';$('locationBanner').style.background=palette[s.layout==='arrival'?'pink':'yellow'];
@@ -152,7 +165,10 @@ async function render(){
   if(s.illustration)$('puzzleIllustration').src=imageURL(`prop:${s.illustration}`);
   $('nextButton').hidden=!['dialogue','comic'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
   $('answerForm').hidden=s.type!=='puzzle';
-  $('movementControls').hidden=s.type!=='move';$('movementFeedback').textContent='';
+  $('movementControls').hidden=s.type!=='move';
+  $('arrivalQuestion').textContent=s.arrivalQuestion||uiText.arrivalQuestion;
+  $('arrivedButton').textContent=s.arrivedLabel||uiText.arrivedLabel;
+  $('notYetButton').textContent=s.lostLabel||uiText.lostLabel;
   $('continuationControls').hidden=s.type!=='continuation';
   $('backButton').disabled=!runtime.history.length;
   composing=false;$('answer').blur();$('answer').value='';$('answerFeedback').textContent='';
@@ -161,11 +177,44 @@ async function render(){
   if(s.type==='puzzle')$('answer').setAttribute('aria-label',puzzles[s.puzzleId].placeholder);
   if(!preserveText)typeText(s);
   renderedScene=s;updateReview(s);
+  if(runtime.pendingSuccessId===s.id)showSuccess();
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
   if(s.next && !['puzzle','move','continuation'].includes(s.type)){
     const next=runtime.index.get(s.next);
     if(next?.type!=='move')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
+  }
+}
+
+function showLocationHints(){
+  if(runtime.scene.type!=='move')return;
+  const s=runtime.scene,hints=s.locationHints||[];
+  if(!hints.length)return;
+  locationHintLevel=Math.max(1,locationHintLevel);
+  $('locationHintTitle').textContent=s.locationHintTitle||uiText.locationHintTitle;
+  const list=$('locationHintList');list.replaceChildren();
+  hints.slice(0,Math.min(locationHintLevel,2)).forEach((text,i)=>{
+    const card=document.createElement('section');card.className='location-hint-card';
+    const title=document.createElement('h3');title.textContent=`힌트 ${i+1}`;
+    const body=document.createElement('p');body.textContent=sceneMessage(s,text);card.append(title,body);list.append(card);
+  });
+  $('moreLocationHint').textContent=s.moreHintLabel||uiText.moreHintLabel;
+  $('moreLocationHint').hidden=locationHintLevel>=Math.min(hints.length,2);
+  $('closeLocationHint').textContent=s.closeHintLabel||uiText.closeHintLabel;
+  if(!$('locationHintDialog').open)$('locationHintDialog').showModal();
+}
+async function showSuccess(){
+  const s=runtime.scene;
+  if(runtime.pendingSuccessId!==s.id)return;
+  const config={...uiText.successPopup,...puzzles[s.puzzleId]?.successPopup,...s.successPopup};
+  $('answer').blur();
+  $('successTitle').textContent=config.title;$('successBody').textContent=config.body;
+  $('successNextButton').textContent=config.buttonLabel;$('successNextButton').disabled=false;
+  $('successDialog').dataset.tone=config.tone;
+  $('successIllustration').replaceChildren();
+  if(!$('successDialog').open)$('successDialog').showModal();
+  if(config.cat){
+    try{await loadImage(`cat:${config.cat}`);if(runtime.currentId===s.id&&$('successDialog').open)$('successIllustration').append(createImage(`cat:${config.cat}`,'success-cat'));}catch{}
   }
 }
 
@@ -192,11 +241,19 @@ $('nextButton').addEventListener('click',()=>textComplete?advance():finishText()
 $('dialogue').addEventListener('click',()=>{if(!textComplete)finishText();});
 $('backButton').addEventListener('click',()=>{if(runtime.back()){save();render();}});
 $('arrivedButton').addEventListener('click',()=>advance({arrived:true}));
-$('notYetButton').addEventListener('click',()=>{$('movementFeedback').textContent='천천히 이동해 주세요. 도착한 뒤 눌러 주세요.';});
+$('notYetButton').addEventListener('click',showLocationHints);
+$('moreLocationHint').addEventListener('click',()=>{locationHintLevel+=1;showLocationHints();});
+$('closeLocationHint').addEventListener('click',()=>{$('locationHintDialog').close();$('notYetButton').focus();});
+$('successDialog').addEventListener('cancel',e=>e.preventDefault());
+$('successNextButton').addEventListener('click',()=>{
+  if(!sceneReady)return;
+  const result=runtime.confirmSuccess();
+  if(result.ok){$('successNextButton').disabled=true;$('successDialog').close();save();render();}
+});
 $('answerForm').addEventListener('submit',e=>{
   e.preventDefault();if(!sceneReady||composing||performance.now()-compositionEndedAt<80)return;
   const result=runtime.submit($('answer').value);
-  if(result.ok){save();$('answerFeedback').textContent='맞았어요! 다음 장면으로 갈게요.';advance();return;}
+  if(result.ok){save();$('answerFeedback').textContent='';showSuccess();return;}
   $('answerFeedback').textContent={empty:'글자를 입력해 주세요.',incorrect:'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
     'not-configured':'이 시안은 실제 정답을 설정하기 전이에요. 제작자 보기에서 다음 장면을 확인해 주세요.'}[result.reason]||'다시 확인해 주세요.';
 });

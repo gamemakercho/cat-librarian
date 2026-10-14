@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {StoryRuntime,normalizeAnswer,validateStory} from '../engine.js';
+import {StoryRuntime,normalizeAnswer,validateStory,formatMarkerNumber} from '../engine.js';
 import {chapters,puzzles} from '../story.js';
 
 test('원본 01~24가 번호순으로 한 번씩 유지된다',()=>{
@@ -13,12 +13,14 @@ test('21번의 확정 문장은 공백과 양쪽 물음표·느낌표를 무시�
  assert.equal(normalizeAnswer('？ 고양이와 사서가 뒤바뀌었다！'),'고양이와사서가뒤바뀌었다');
  assert.equal(r.submit('사서와 고양이가 뒤바뀌었다').reason,'incorrect');
  assert.equal(r.submit('').reason,'empty');
- assert.equal(r.advance().scene.id,'lobby-escape');
+ assert.equal(r.advance().reason,'success-confirmation-required');
+ assert.equal(r.confirmSuccess().scene.id,'lobby-escape');
 });
-test('23번은 답을 추측해 입력해도 통과되지 않는다',()=>{
+test('23번 이동은 입력을 받지 않고 도착 확인으로만 진행한다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('learning-marker');
- for(const answer of ['물감','평생학습실','고양이'])assert.equal(r.submit(answer).reason,'not-configured');
- assert.equal(r.advance().reason,'answer-required');
+ for(const answer of ['물감','평생학습실','고양이'])assert.equal(r.submit(answer).reason,'not-a-puzzle');
+ assert.equal(r.advance().reason,'arrival-required');
+ assert.equal(r.advance({arrived:true}).scene.id,'learning-paint');
  assert.equal(r.solved.size,0);
 });
 test('미리보기 우회는 정답 기록을 만들지 않는다',()=>{
@@ -45,9 +47,9 @@ test('NFD 한글은 NFC로 정규화하며 다른 표현은 인정하지 않는�
  assert.equal(r.submit('고양이와 사서가 뒤바꼈다').reason,'incorrect');
  assert.equal(r.submit(' ？ !\n').reason,'empty');
 });
-test('미정 문제의 오래된 정답 기록을 복원하지 않는다',()=>{
+test('옛 23번 문제 기록은 도착 확인 장면으로 안전하게 복원된다',()=>{
  const r=new StoryRuntime(chapters,puzzles,{currentId:'learning-marker',solved:['learning-marker']});
- assert.equal(r.solved.size,0);assert.equal(r.advance().reason,'answer-required');
+ assert.equal(r.solved.size,0);assert.equal(r.scene.type,'move');assert.equal(r.advance().reason,'arrival-required');
 });
 test('되돌아가기와 초기화는 ID 및 정답 상태를 복원·제거한다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.advance();assert.equal(r.back(),true);
@@ -71,4 +73,22 @@ test('사서가 잠든 로비는 배경에 포함하고 깨어난 뒤에는 빈 
   assert.equal(s.background,'lobby-sleeping');assert(!s.sleeping);
  }
  for(const s of scenes.filter(s=>s.sourceNumber===22||s.sourceNumber===23))assert.equal(s.background,'lobby');
+});
+
+test('정답 팝업 대기 상태는 새로고침 후 복원되고 확인 후 한 번만 진행한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('lobby-postcard');r.submit('고양이와 사서가 뒤바뀌었다');
+ assert.equal(r.currentId,'lobby-postcard');assert.equal(r.pendingSuccessId,'lobby-postcard');
+ const restored=new StoryRuntime(chapters,puzzles,r.snapshot());
+ assert.equal(restored.pendingSuccessId,'lobby-postcard');assert.equal(restored.advance().reason,'success-confirmation-required');
+ assert.equal(restored.confirmSuccess().scene.id,'lobby-escape');assert.equal(restored.pendingSuccessId,null);
+ assert.equal(restored.confirmSuccess().reason,'no-pending-success');assert.equal(restored.currentId,'lobby-escape');
+});
+test('마크 번호는 데이터의 숫자를 두 자리로 표시한다',()=>{
+ for(const [input,output] of [[1,'01'],['2','02'],['03','03'],[10,'10'],[null,'']])assert.equal(formatMarkerNumber(input),output);
+});
+test('같은 시스템으로 다른 목적지·번호·도착 후 문제를 연결할 수 있다',()=>{
+ const custom=[{id:'test',scenes:[{id:'arrive',type:'move',destination:'유아자료실',markerNumber:2,locationHints:['첫 힌트','두 번째 힌트'],next:'puzzle'},{id:'puzzle',type:'puzzle',puzzleId:'configured',next:'end'},{id:'end',type:'continuation',next:null}]}];
+ const r=new StoryRuntime(custom,{configured:{acceptedAnswers:['확정답']}});
+ assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'puzzle');assert.equal(r.solved.size,0);
+ r.submit('확정답');assert.equal(r.advance().reason,'success-confirmation-required');assert.equal(r.confirmSuccess().scene.id,'end');
 });

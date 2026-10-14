@@ -2,6 +2,11 @@ export function normalizeAnswer(value) {
   return String(value ?? '').normalize('NFC').replace(/[\s?？!！]/gu, '').toLowerCase();
 }
 
+export function formatMarkerNumber(value) {
+  const number=String(value??'').trim();
+  return /^\d+$/.test(number)?number.padStart(2,'0'):number;
+}
+
 export function validateStory(chapters, puzzles) {
   const scenes = chapters.flatMap(c => c.scenes);
   const ids = new Set();
@@ -24,15 +29,18 @@ export class StoryRuntime {
     this.currentId = this.index.has(snapshot.currentId) ? snapshot.currentId : this.scenes[0].id;
     this.solved = new Set((snapshot.solved ?? []).filter(id => puzzles[id]?.acceptedAnswers?.length));
     this.history = (snapshot.history ?? []).filter(id => this.index.has(id)).slice(-200);
+    this.pendingSuccessId = snapshot.pendingSuccessId===this.currentId && this.scene.type==='puzzle' && this.solved.has(this.scene.puzzleId) ? this.currentId : null;
     this.lastResult = null;
   }
   get scene() { return this.index.get(this.currentId); }
-  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history }; }
-  advance({ review = false, arrived = false } = {}) {
+  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId }; }
+  advance({ review = false, arrived = false, confirmSuccess = false } = {}) {
     const s = this.scene;
+    if(this.pendingSuccessId===s.id&&!review&&!confirmSuccess)return {ok:false,reason:'success-confirmation-required'};
     if (s.type === 'puzzle' && !this.solved.has(s.puzzleId) && !review) return {ok:false,reason:'answer-required'};
     if (s.type === 'move' && !arrived && !review) return {ok:false,reason:'arrival-required'};
     if (!s.next) return {ok:false,reason:'end-of-preview'};
+    this.pendingSuccessId=null;
     this.history.push(this.currentId); this.currentId=s.next;
     return {ok:true,scene:this.scene};
   }
@@ -46,15 +54,20 @@ export class StoryRuntime {
       return {ok:false,reason:'incorrect'};
     }
     this.solved.add(s.puzzleId);
+    this.pendingSuccessId=s.id;
     return {ok:true,reason:'correct'};
+  }
+  confirmSuccess() {
+    if(this.pendingSuccessId!==this.currentId)return {ok:false,reason:'no-pending-success'};
+    return this.advance({confirmSuccess:true});
   }
   jump(id) {
     if (!this.index.has(id)) return false;
-    this.currentId=id; this.history=[]; return true;
+    this.currentId=id; this.history=[];this.pendingSuccessId=null; return true;
   }
   back() {
     if (!this.history.length) return false;
-    this.currentId=this.history.pop();return true;
+    this.currentId=this.history.pop();this.pendingSuccessId=null;return true;
   }
-  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[]; }
+  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccessId=null; }
 }
