@@ -75,6 +75,7 @@ function sceneAssetKeys(s){
   if(s.comic)keys.push(`comic:${s.comic}`);
   if(s.illustration)keys.push(`prop:${s.illustration}`);
   if(s.decoration)keys.push(`prop:${s.decoration}`);
+  if(s.cipher)keys.push(`prop:${s.cipher}`);
   if(s.marker)keys.push('prop:marker');
   if(puzzles[s.puzzleId]?.answerMode==='icons'){
     const state=runtime.puzzleStates[s.puzzleId];
@@ -131,14 +132,15 @@ async function render(){
   closeMinigame();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
-  clearInterval(textTimer);textTimer=null;hintLevel=0;locationHintLevel=0;
+  clearInterval(textTimer);textTimer=null;
+  hintLevel=runtime.sceneState.hintLevel||0;locationHintLevel=runtime.sceneState.locationHintLevel||0;
   $('locationHintDialog').close();$('puzzleHintDialog').close();closeEnglishKeypad();$('successDialog').close();
   const stage=$('stage');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
   stage.dataset.frame=s.backgroundFrame||'normal';
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
-  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls'])applyRect($(name),s.geometry[name]);
+  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls','machineStatus','cipherPanel'])applyRect($(name),s.geometry[name]);
   $('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -163,6 +165,10 @@ async function render(){
   $('effectLayer').className='effect-layer';
   if(s.effect&&!prefersReducedMotion){void $('effectLayer').offsetWidth;$('effectLayer').classList.add(s.effect);}
   $('locationBanner').hidden=!s.location;$('locationBanner').textContent=s.location||'';$('locationBanner').style.background=palette[s.layout==='arrival'?'pink':'yellow'];
+  $('machineStatus').hidden=!s.machineState;$('machineStatus').dataset.state=s.machineState||'';
+  $('machineStatus').textContent=s.machineState==='repaired'?'수리 완료':'작동 멈춤';
+  $('cipherPanel').hidden=!s.cipher;
+  if(s.cipher){$('sterilizerCipher').src=imageURL(`prop:${s.cipher}`);$('sterilizerCipher').alt=s.cipherAlt;$('cipherGuide').textContent=s.puzzleGuide;}
   $('titleScreen').hidden=s.type!=='title';
   if(s.type==='title'){
     const heading=$('titleScreen').querySelector('h1');heading.replaceChildren();
@@ -194,9 +200,11 @@ async function render(){
     Object.assign(im.style,{left:-x/w*100+'%',top:-y/h*100+'%',width:asset.width/w*100+'%',height:asset.height/h*100+'%'});
     decoration.append(im);
   }
-  $('nextButton').hidden=!['dialogue','comic','tutorial'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
+  const repairDone=Boolean(puzzles[s.puzzleId]?.repairFlag&&runtime.flags[puzzles[s.puzzleId].repairFlag]);
+  $('nextButton').hidden=!s.next||(!['dialogue','comic','tutorial'].includes(s.type)&&!repairDone);$('nextButton').textContent=repairDone?'다음으로':s.nextLabel||'다음';
   const puzzle=puzzles[s.puzzleId],isIcons=puzzle?.answerMode==='icons';
-  $('answerForm').hidden=!((s.type==='puzzle'&&!isIcons)||(s.type==='minigame'&&puzzle.acceptedAnswers?.length));
+  $('answerForm').hidden=repairDone||!((s.type==='puzzle'&&!isIcons)||(s.type==='minigame'&&puzzle.acceptedAnswers?.length));
+  if(repairDone){applyRect($('nextButton'),[138,790,224,63]);$('machineStatus').dataset.state='repaired';$('machineStatus').textContent='수리 완료';}
   $('iconPuzzle').hidden=!isIcons;
   if(isIcons)renderIconPuzzle();
   $('minigameControls').hidden=s.type!=='minigame';
@@ -209,8 +217,9 @@ async function render(){
   $('notYetButton').textContent=s.lostLabel||uiText.lostLabel;
   $('continuationControls').hidden=s.type!=='continuation';
   $('backButton').disabled=!runtime.history.length;
-  composing=false;$('answer').blur();$('answer').value='';$('answerFeedback').textContent='';
+  composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent='';
   $('hintButton').hidden=s.type!=='puzzle';
+  $('hintButton').textContent=puzzle?.hintLabel||'힌트 보기';
   const p=puzzles[s.puzzleId],english=p?.answerMode==='english-three';
   $('answerForm').dataset.english=String(Boolean(english));
   $('englishKeypadButton').hidden=!english;
@@ -280,6 +289,7 @@ function showLocationHints(){
   const s=runtime.scene,hints=s.locationHints||[];
   if(!hints.length)return;
   locationHintLevel=Math.max(1,locationHintLevel);
+  runtime.updateSceneState({locationHintLevel});save();
   $('locationHintTitle').textContent=s.locationHintTitle||uiText.locationHintTitle;
   const list=$('locationHintList');list.replaceChildren();
   hints.slice(0,Math.min(locationHintLevel,2)).forEach((text,i)=>{
@@ -301,6 +311,7 @@ function showPuzzleHints(){
   const hints=puzzles[runtime.scene.puzzleId].hints||[];
   if(!hints.length)return;
   hintLevel=Math.max(1,hintLevel);
+  runtime.updateSceneState({hintLevel});save();
   const list=$('puzzleHintList');list.replaceChildren();
   hints.slice(0,Math.min(hintLevel,2)).forEach((text,i)=>{
     const card=document.createElement('section');card.className='location-hint-card';
@@ -386,6 +397,7 @@ $('successNextButton').addEventListener('click',()=>{
 });
 function submitAnswer(){
   if(!sceneReady||composing||runtime.pendingSuccessId||performance.now()-compositionEndedAt<80)return;
+  runtime.updateSceneState({answer:$('answer').value});save();
   const result=runtime.submit($('answer').value);
   if(result.ok){save();$('answerFeedback').textContent='';showSuccess();return;}
   const message={empty:'글자를 입력해 주세요.',incorrect:puzzles[runtime.scene.puzzleId]?.incorrectMessage||'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
@@ -393,6 +405,7 @@ function submitAnswer(){
   $('answerFeedback').textContent=message;$('keypadFeedback').textContent=message;
 }
 $('answerForm').addEventListener('submit',e=>{e.preventDefault();submitAnswer();});
+$('answer').addEventListener('input',()=>{runtime.updateSceneState({answer:$('answer').value});save();});
 $('answer').addEventListener('compositionstart',()=>{composing=true;});
 $('answer').addEventListener('compositionend',()=>{composing=false;compositionEndedAt=performance.now();});
 $('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&(composing||e.isComposing||e.keyCode===229||performance.now()-compositionEndedAt<80))e.preventDefault();});

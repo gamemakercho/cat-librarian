@@ -1,7 +1,7 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {iconCatalog} from './icon-catalog.js';
-export const STORY_VERSION = 'opening-source-24-minigame-clear-v10-20261014';
+export const STORY_VERSION = 'opening-source-24-sterilizer-v11-20261014';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -13,6 +13,8 @@ export const uiText = {
   locationHintTitle:'아직 못 찾았구나?', moreHintLabel:'힌트 하나 더', closeHintLabel:'다시 찾아볼게!',
   successPopup:{title:'정답이야!', body:'잘했어!\n다음 장소로 가보자!', buttonLabel:'다음으로', cat:'happy', tone:'gold'}
 };
+const followDialogueGeometry={cat:[38,345,145,154],dialogue:[32,515,436,230],nextButton:[138,790,224,63]};
+const followMovementGeometry={dialogue:[32,158,436,250],cat:[43,428,135,152],marker:[205,425,225,225],movementControls:[32,685,436,180]};
 export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
     title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'guide-structure' },
@@ -132,9 +134,47 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     gameUrl:'https://gamemakercho.github.io/cleaning-game/',gameStartLabel:'물감 청소하기',minigameClearKeyword:null,
     next:'opening-continuation',
     geometry:{cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,100],answerForm:[29,730,442,100]} },
-  { id: 'opening-continuation', sourceNumber: null, type: 'continuation', background: 'infant-mess',
-    cat: 'neutral', location: locations.infant.name, layout: 'arrival',
-    text: '초반부는 여기까지입니다\n후속 장면은 준비 중입니다', next: null }
+  // Keep the previous post-cleaning holding ID so existing saves resume here.
+  { id:'opening-continuation',sourceNumber:null,role:'C05',type:'dialogue',background:'infant-clean',
+    cat:'happy',location:locations.infant.name,layout:'arrival',
+    text:'휴, 바닥에 물감이 거의 안 남았네!',nextLabel:'다음으로',next:'travel-to-sterilizer',geometry:followDialogueGeometry },
+  { id:'travel-to-sterilizer',sourceNumber:null,role:'C06',type:'move',background:'infant-clean',
+    cat:'neutral',location:'1.5층 책소독기',layout:'move',fontSize:23,marker:true,markerNumber:locations.sterilizer.markerNumber,
+    destination:'1.5층 책소독기',
+    guideText:'그런데 물감 자국이 계단으로 이어져\n저 녀석을 따라가자 서둘러!\n\n물감 자국을 따라 {destination}로 이동하세요\n고양이 마크 {markerNumber}을 찾아줘!',
+    locationHints:['1층에서 2층으로 올라가는 계단 중간에 있는 책소독기를 찾아보세요'],
+    next:'sterilizer-intro',geometry:followMovementGeometry },
+  { id:'sterilizer-intro',sourceNumber:null,role:'S01',type:'dialogue',background:'sterilizer-mess',
+    cat:'neutral',location:'1.5층 책소독기',layout:'arrival',
+    text:'이 기계는 책을 소독해서\n깨끗하게 관리해 줘',nextLabel:'다음으로',next:'sterilizer-box-attempt',geometry:followDialogueGeometry },
+  { id:'sterilizer-box-attempt',sourceNumber:null,role:'S02',type:'dialogue',background:'sterilizer-mess',
+    cat:'shocked',location:'1.5층 책소독기',layout:'arrival',
+    text:'야! 거긴 상자가 아니야!\n내 몸으로 들어가지 마!',nextLabel:'다음으로',next:'sterilizer-escape',geometry:followDialogueGeometry },
+  { id:'sterilizer-escape',sourceNumber:null,role:'S03',type:'dialogue',background:'sterilizer-clean',
+    cat:'bewildered',location:'1.5층 책소독기',layout:'arrival',
+    text:'상자만 보면 들어가고 싶나 봐\n앗, 2층으로 도망갔어!',nextLabel:'다음으로',next:'sterilizer-failure',geometry:followDialogueGeometry },
+  { id:'sterilizer-failure',sourceNumber:null,role:'S04',type:'dialogue',background:'sterilizer-clean',
+    cat:'worried',location:'1.5층 책소독기',layout:'arrival',machineState:'stopped',
+    text:'잠깐, 소독기가 멈췄어\n저 녀석이 고장 낸 것 같아!',nextLabel:'다음으로',next:'sterilizer-color-puzzle',geometry:followDialogueGeometry },
+  { id:'sterilizer-color-puzzle',sourceNumber:null,role:'S05',type:'puzzle',puzzleId:'sterilizer-color-command-v1',
+    background:'sterilizer-clean',cat:'worried',location:'1.5층 책소독기',layout:'sterilizer',fontSize:25,machineState:'stopped',
+    cipher:'sterilizer-command',cipherAlt:'첫 묶음은 위 초록, 아래 하늘색. 둘째 묶음은 왼쪽 빨강, 오른쪽 보라. 셋째 묶음은 왼쪽 초록, 오른쪽 보라',
+    text:'색깔 신호가 떴어\n이름표가 단서인가 봐!',
+    puzzleGuide:'책소독기 이름표의 색을 보고,\n색깔 신호를 글자로 바꿔 줘!',
+    onSuccess:{sterilizerRepaired:true},next:'sterilizer-repaired',
+    geometry:{locationBanner:[31,50,438,66],cat:[38,145,140,130],dialogue:[32,284,436,119],cipherPanel:[32,419,436,213],answerForm:[29,650,442,175]} },
+  { id:'sterilizer-repaired',sourceNumber:null,role:'S06',type:'dialogue',background:'sterilizer-clean',
+    cat:'happy',location:'1.5층 책소독기',layout:'arrival',machineState:'repaired',
+    text:'고쳤다! 이제 다시 쓸 수 있겠어',nextLabel:'다음으로',next:'travel-to-general',geometry:followDialogueGeometry },
+  { id:'travel-to-general',sourceNumber:null,role:'S07',type:'move',background:'sterilizer-clean',
+    cat:'neutral',location:'2층 종합자료실',layout:'move',fontSize:23,marker:true,markerNumber:locations.general.markerNumber,
+    destination:'2층 종합자료실',
+    guideText:'이번엔 {destination}이야\n또 사고 치기 전에 따라가자!\n\n계단을 올라 {destination}로 이동하세요\n고양이 마크 {markerNumber}를 찾아줘!',
+    locationHints:['계단을 마저 올라가면 2층이에요 종합자료실의 {markerNumber}번 마크를 찾아보세요'],
+    next:'general-room-intro',geometry:followMovementGeometry },
+  { id:'general-room-intro',sourceNumber:null,role:'G01',type:'dialogue',background:'general-clean',
+    cat:'neutral',location:'2층 종합자료실',layout:'arrival',
+    text:'여기는 여러 분야의 책을\n찾아 읽고 빌리는 곳이야',next:null,geometry:followDialogueGeometry }
 ]}];
 
 // 첫 엽서 답은 확정값입니다. 23번은 현장 마크를 찾는 이동/도착 확인으로 변경했습니다.
@@ -167,6 +207,14 @@ export const puzzles = {
     completionMode:'result',minimumRatio:.7,allowedGrades:['A','B'],
     placeholder:'클리어 키워드',hints:[],missing:'청소 게임의 클리어 키워드는 아직 미정입니다',
     successPopup:{title:'훌륭해!',body:'잘했어!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
+  },
+  'sterilizer-color-command-v1':{
+    status:'confirmed',acceptedAnswers:['고치기'],repairFlag:'sterilizerRepaired',
+    answerLabel:'한글 3글자',placeholder:'정답 입력',ariaLabel:'정답: 한글 3글자',checkLabel:'정답 확인',hintLabel:'힌트',
+    incorrectMessage:'조금 달라! 이름표의 색을 다시 확인해 봐',
+    hints:['책소독기에 붙은 이름표에서 같은 색의 자모를 찾아봐',
+      '첫 칸은 위에서 아래로, 둘째와 셋째 칸은 왼쪽에서 오른쪽으로 읽어봐'],
+    successPopup:{title:'찾아냈다!',body:'잘했어! 이제 소독기를 고쳐 보자!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
   }
 };
 
@@ -180,7 +228,8 @@ export const baseGeometry = {
   cat:[173,225,162,194], sleeping:[154,226,198,148], staff:[315,217,150,221],
   comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190],
   tutorialPanel:[32,280,436,493],
-  iconPuzzle:[26,284,448,590],minigameControls:[40,715,420,120]
+  iconPuzzle:[26,284,448,590],minigameControls:[40,715,420,120],
+  machineStatus:[300,158,168,48],cipherPanel:[32,419,436,213]
 };
 export const movementGeometry = {
   cat:[43,377,135,152], dialogue:[32,167,436,195], marker:[205,370,225,225], movementControls:[32,625,436,190]

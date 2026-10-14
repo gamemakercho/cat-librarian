@@ -46,6 +46,12 @@ export class StoryRuntime {
     }
     this.solved = new Set((snapshot.solved ?? []).filter(id => puzzles[id]?.answerMode==='icons'?this.puzzleStates[id]?.completed:
       puzzles[id]?.completionMode==='result'?Boolean(this.minigameResults[id]):puzzles[id]?.acceptedAnswers?.length));
+    this.flags={...snapshot.flags};
+    this.sceneStates={};
+    for(const [id,state] of Object.entries(snapshot.sceneStates||{})){
+      if(!this.index.has(id)||!state||typeof state!=='object')continue;
+      this.sceneStates[id]=this.normalizeSceneState(state);
+    }
     this.history = (snapshot.history ?? []).filter(id => this.index.has(id)).slice(-200);
     this.pendingSuccess = null;
     const pending = snapshot.pendingSuccess;
@@ -61,10 +67,19 @@ export class StoryRuntime {
       else if(!this.pendingSuccess)this.pendingSuccess=this.createPendingSuccess();
     }
     if(this.pendingSuccess)this.solved.delete(this.pendingSuccess.puzzleId);
+    for(const [id,puzzle] of Object.entries(puzzles))if(puzzle.repairFlag)this.flags[puzzle.repairFlag]=this.solved.has(id);
     this.lastResult = null;
   }
   get scene() { return this.index.get(this.currentId); }
   get pendingSuccessId() { return this.pendingSuccess?.fromSceneId ?? null; }
+  get sceneState() { return this.sceneStates[this.currentId]||{}; }
+  normalizeSceneState(state) {
+    return {answer:typeof state.answer==='string'?state.answer.slice(0,80):'',
+      hintLevel:Number.isInteger(state.hintLevel)?Math.max(0,Math.min(2,state.hintLevel)):0,
+      locationHintLevel:Number.isInteger(state.locationHintLevel)?Math.max(0,Math.min(2,state.locationHintLevel)):0,
+      arrived:state.arrived===true};
+  }
+  updateSceneState(patch) { this.sceneStates[this.currentId]=this.normalizeSceneState({...this.sceneState,...patch}); }
   clearPending() {
     const state=this.puzzleStates[this.pendingSuccess?.puzzleId];
     if(state?.pendingSuccess)this.puzzleStates[this.pendingSuccess.puzzleId]={...state,pendingSuccess:false,successText:null};
@@ -85,7 +100,7 @@ export class StoryRuntime {
     return {fromSceneId:s.id,nextSceneId:s.next,puzzleId:s.puzzleId,
       popup:{...this.successDefaults,...this.puzzles[s.puzzleId]?.successPopup,...s.successPopup}};
   }
-  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults }; }
+  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults, flags:this.flags,sceneStates:this.sceneStates }; }
   completeMinigame(result) {
     const s=this.scene,p=this.puzzles[s.puzzleId];
     if(s.type!=='minigame'||p?.completionMode!=='result'||!isMinigameClear(result,p))return {ok:false,reason:'game-clear-required'};
@@ -103,6 +118,7 @@ export class StoryRuntime {
       if(!minigameReturned)return {ok:false,reason:'game-button-required'};
     }
     if (!s.next) return {ok:false,reason:'end-of-preview'};
+    if(s.type==='move'&&arrived&&!review)this.updateSceneState({arrived:true});
     this.clearPending();
     this.history.push(this.currentId); this.currentId=s.next;
     return {ok:true,scene:this.scene};
@@ -111,6 +127,8 @@ export class StoryRuntime {
     const s = this.scene;
     if (!['puzzle','minigame'].includes(s.type)) return {ok:false,reason:'not-a-puzzle'};
     const p = this.puzzles[s.puzzleId];
+    if(p.repairFlag&&this.flags[p.repairFlag])return {ok:false,reason:'already-repaired'};
+    if(p.repairFlag&&typeof value!=='string')return {ok:false,reason:'incorrect'};
     if(p.answerMode==='icons'){
       const state=this.getIconState();
       if(state.completed)return {ok:false,reason:'already-completed'};
@@ -139,6 +157,7 @@ export class StoryRuntime {
       this.puzzleStates[pending.puzzleId]=confirmIcons(state);
     }
     this.solved.add(pending.puzzleId);
+    Object.assign(this.flags,this.scene.onSuccess||{});
     this.pendingSuccess=null;
     this.history.push(this.currentId);this.currentId=pending.nextSceneId;
     return {ok:true,scene:this.scene};
@@ -151,5 +170,5 @@ export class StoryRuntime {
     if (!this.history.length) return false;
     this.clearPending();this.currentId=this.history.pop();return true;
   }
-  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={};this.minigameResults={}; }
+  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={};this.minigameResults={};this.flags={};this.sceneStates={}; }
 }

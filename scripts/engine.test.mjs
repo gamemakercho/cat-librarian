@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {StoryRuntime,normalizeAnswer,normalizeArtAnswer,validateStory,formatMarkerNumber} from '../engine.js';
 import {chapters,puzzles} from '../story.js';
 import {isMinigameReturn,MINIGAME_RETURN} from '../minigame-bridge.js';
+import {readFileSync} from 'node:fs';
 
 test('원본 01~24가 번호순으로 한 번씩 유지된다',()=>{
  const scenes=validateStory(chapters,puzzles);
@@ -29,10 +30,10 @@ test('미리보기 우회는 정답 기록을 만들지 않는다',()=>{
  assert.equal(r.advance({review:true}).scene.id,'learning-intro');
  assert.equal(r.solved.has('learning-marker'),false);
 });
-test('검토 경로는 ART와 유아자료실 이동 뒤의 준비 화면에서 끝난다',()=>{
+test('검토 경로는 종합자료실 소개까지만 연결되고 엔딩/처음부터 처리가 없다',()=>{
  const r=new StoryRuntime(chapters,puzzles);let n=0;
  while(r.scene.next){assert.equal(r.advance({review:true}).ok,true);if(++n>=r.scenes.length)throw Error('진행 루프');}
- assert.equal(r.currentId,'opening-continuation');
+ assert.equal(r.currentId,'general-room-intro');assert.equal(r.scene.type,'dialogue');
  assert.equal(r.advance().reason,'end-of-preview');
 });
 test('새 장면을 추가해도 ID로 진행 위치와 이전 화면을 복구한다',()=>{
@@ -227,4 +228,63 @@ test('명시적 새 플레이는 아이콘 배치를 버리고 다음 입장에�
  let calls=0;const rng=()=>{calls++;return .5;};const r=new StoryRuntime(chapters,puzzles,{}, {},rng);
  r.jump('infant-icon-puzzle');r.getIconState();const before=calls;r.reset();assert.equal(calls,before);assert.deepEqual(r.puzzleStates,{});
  r.jump('infant-icon-puzzle');r.getIconState();assert(calls>before);
+});
+
+test('청소 뒤 기존 저장 ID에서 C05·03 도착·사고·퍼즐까지 실제 순서로 이어진다',()=>{
+ const r=new StoryRuntime(chapters,puzzles,{currentId:'opening-continuation',solved:['learning-room-art']});
+ assert.equal(r.scene.role,'C05');assert.equal(r.scene.background,'infant-clean');
+ assert.equal(r.solved.has('learning-room-art'),true);r.advance();assert.equal(r.scene.role,'C06');
+ assert.equal(r.advance().reason,'arrival-required');assert.equal(r.submit('고치기').reason,'not-a-puzzle');
+ r.updateSceneState({locationHintLevel:1});assert.equal(r.currentId,'travel-to-sterilizer');
+ r.advance({arrived:true});assert.equal(r.scene.role,'S01');assert.equal(r.sceneStates['travel-to-sterilizer'].arrived,true);
+ assert.equal(r.scene.background,'sterilizer-mess');r.advance();assert.equal(r.scene.role,'S02');assert.equal(r.scene.staff,undefined);
+ r.advance();assert.equal(r.scene.role,'S03');assert.equal(r.scene.background,'sterilizer-clean');
+ r.advance();assert.equal(r.scene.role,'S04');r.advance();assert.equal(r.scene.role,'S05');
+});
+test('고치기만 허용하고 NFC·공백·물음표/느낌표 처리와 기존 ART 규칙을 분리한다',()=>{
+ for(const value of ['고치기',' 고 치 기 ','고치기!','고치기？！','고치기'.normalize('NFD')]){
+  const r=new StoryRuntime(chapters,puzzles);r.jump('sterilizer-color-puzzle');assert.equal(r.submit(value).ok,true);
+ }
+ const r=new StoryRuntime(chapters,puzzles);r.jump('sterilizer-color-puzzle');
+ for(const value of ['고기','수리','소독','대기','고치기는','고치기.','고치기123','ㄱㅗㅊㅣㄱㅣ',['고치기'],42])assert.equal(r.submit(value).ok,false);
+ assert.equal(r.currentId,'sterilizer-color-puzzle');assert.equal(r.flags.sterilizerRepaired,false);
+ r.jump('learning-room-art');assert.equal(r.submit('ART').ok,true);assert.equal(r.submit('art!').ok,false);
+});
+test('수리는 팝업 다음에서만 완료하며 새로고침·연타·재입장에서 완료를 유지한다',()=>{
+ let r=new StoryRuntime(chapters,puzzles);r.jump('sterilizer-color-puzzle');
+ r.submit('고치기');assert.equal(r.pendingSuccess.popup.title,'찾아냈다!');assert.equal(r.flags.sterilizerRepaired,false);
+ assert.equal(r.advance().reason,'success-confirmation-required');assert.equal(r.solved.has('sterilizer-color-command-v1'),false);
+ r=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));
+ assert.equal(r.scene.role,'S05');assert.equal(r.flags.sterilizerRepaired,false);r.submit('고치기');
+ assert.equal(r.confirmSuccess().scene.role,'S06');assert.equal(r.flags.sterilizerRepaired,true);
+ assert.equal(r.confirmSuccess().reason,'no-pending-success');
+ r=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(r.scene.role,'S06');assert.equal(r.scene.machineState,'repaired');
+ r.back();assert.equal(r.submit('고치기').reason,'already-repaired');assert.equal(r.pendingSuccess,null);r.advance();assert.equal(r.scene.role,'S06');
+ r.reset();assert.deepEqual(r.flags,{});
+});
+test('수리 이후 04 도착 확인에서만 종합자료실 소개가 나오고 도착/힌트/입력을 복원한다',()=>{
+ let r=new StoryRuntime(chapters,puzzles);r.jump('sterilizer-color-puzzle');r.updateSceneState({answer:'고 치 기',hintLevel:2});
+ r=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(r.sceneState.answer,'고 치 기');assert.equal(r.sceneState.hintLevel,2);
+ r.submit(r.sceneState.answer);r.confirmSuccess();r.advance();assert.equal(r.scene.role,'S07');
+ r.updateSceneState({locationHintLevel:1});assert.equal(r.advance().reason,'arrival-required');
+ r=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(r.scene.role,'S07');assert.equal(r.sceneState.locationHintLevel,1);
+ assert.equal(r.advance({arrived:true}).scene.role,'G01');assert.equal(r.sceneStates['travel-to-general'].arrived,true);
+ r=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(r.scene.role,'G01');assert.equal(r.flags.sterilizerRepaired,true);
+ assert.equal(r.scene.type,'dialogue');assert.equal(r.scene.next,null);assert.equal(r.advance().reason,'end-of-preview');
+});
+test('기존 대기 팝업·앞선 정답·아이콘 배치·청소 결과는 새 구간 추가 뒤에도 보존한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('infant-icon-puzzle');const board=r.getIconState();
+ const s=r.snapshot();s.currentId='infant-cleaning-bridge';s.solved=['learning-room-art','cleaning-keyword'];
+ s.minigameResults={'cleaning-keyword':{grade:'B',cleared:true,generated:10,cleaned:7,remaining:3,ratio:.7}};
+ s.pendingSuccess={fromSceneId:'infant-cleaning-bridge',nextSceneId:'opening-continuation',puzzleId:'cleaning-keyword',popup:{title:'저장된 칭찬'}};
+ const restored=new StoryRuntime(chapters,puzzles,s);assert.deepEqual(restored.puzzleStates['infant-room-icons-14'],board);
+ assert.equal(restored.solved.has('learning-room-art'),true);assert.deepEqual(restored.minigameResults,s.minigameResults);
+ assert.equal(restored.confirmSuccess().scene.role,'C05');assert.equal(restored.solved.has('cleaning-keyword'),true);
+});
+test('색 암호 SVG는 원본의 동일 크기6칸·세로/가로 좌표·최신 색·대체 텍스트만 포함한다',()=>{
+ const svg=readFileSync(new URL('../assets/puzzles/sterilizer-color-command.svg',import.meta.url),'utf8');
+ const blocks=[...svg.matchAll(/<rect x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" fill="(#[0-9A-F]+)"/g)].map(m=>m.slice(1));
+ assert.deepEqual(blocks,[['33','26','80','80','#4AA470'],['33','106','80','80','#49A8DA'],
+  ['209','60','80','80','#EA524A'],['289','60','80','80','#A165AF'],['438','60','80','80','#4AA470'],['518','60','80','80','#A165AF']]);
+ assert.match(svg,/viewBox="0 0 634 219"/);assert.doesNotMatch(svg,/고치기|ㄱ|ㅗ|ㅊ|ㅣ/);
 });
