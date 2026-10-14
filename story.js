@@ -1,10 +1,16 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
-export const STORY_VERSION = 'opening-source-24-v5-20261014';
+export const STORY_VERSION = 'opening-source-24-art-v6-20261014';
+export const locations = {
+  learning:{name:'평생학습실(강의실1)',markerNumber:1},
+  infant:{name:'유아자료실',markerNumber:2},
+  sterilizer:{name:'책소독기',markerNumber:3},
+  general:{name:'종합자료실',markerNumber:4}
+};
 export const uiText = {
-  arrivalQuestion:'도착하였습니까?', arrivedLabel:'도착했지!', lostLabel:'못 찾겠어…',
+  arrivalQuestion:'도착했어?', arrivedLabel:'도착했지!', lostLabel:'못 찾겠어…',
   locationHintTitle:'아직 못 찾았구나?', moreHintLabel:'힌트 하나 더', closeHintLabel:'다시 찾아볼게!',
-  successPopup:{title:'정답이야!', body:'잘했어!\n다음 장소로 가보자!', buttonLabel:'다음으로', cat:'excited', tone:'gold'}
+  successPopup:{title:'정답이야!', body:'잘했어!\n다음 장소로 가보자!', buttonLabel:'다음으로', cat:'happy', tone:'gold'}
 };
 export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
@@ -52,25 +58,39 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   { id: 'lobby-postcard', sourceNumber: 21, type: 'puzzle', background: 'lobby-sleeping', location: '도서관 로비',
     puzzleId: 'postcard-heading', illustration: 'postcard',
     text: '가지고 있는 엽서를 활용해서\n자고 있는 고양이(?)를 깨우자',
-    instruction: '엽서 상단에 있는 글을 그대로 입력해주세요\n(물음표제외, 띄어쓰기 상관 없음)', next: 'lobby-escape' },
-  { id: 'lobby-escape', sourceNumber: 22, type: 'dialogue', background: 'lobby', location: '도서관 로비',
+    instruction: '엽서 상단에 있는 글을 그대로 입력해주세요\n(12글자, 물음표 제외, 띄어쓰기 상관 없음)', next: 'lobby-escape' },
+  { id: 'lobby-escape', sourceNumber: 22, type: 'dialogue', background: 'lobby', location: locations.learning.name,
     cat: 'bewildered', layout: 'side',
     text: '다행히 데스크에서 깨우는데\n성공했는데, 갑자기 평생학습실\n쪽으로 뛰어가버렸네',
     emphasis: ['평생학습실'], next: 'learning-marker' },
-  { id: 'learning-marker', sourceNumber: 23, type: 'move', background: 'lobby', location: '평생학습실로 이동',
-    cat: 'bewildered', layout: 'move', marker: true, markerNumber:1,
-    destination:'평생학습실(강의실1)',
-    guideText:'{destination} 앞에 있는\n{markerNumber}번 고양이 마크를 찾아줘!',
+  { id: 'learning-marker', sourceNumber: 23, type: 'move', background: 'lobby', location: locations.learning.name,
+    cat: 'neutral', layout: 'move', marker: true, markerNumber:locations.learning.markerNumber,
+    destination:locations.learning.name,
+    guideText:'{destination} 앞으로 가 보자!\n문 앞의 고양이 마크 {markerNumber}을 찾아주세요.',
     locationHints:[
-      '{destination}은 도서관 1층에 있어! 1층의 강의실 안내를 찾아봐.',
-      '{destination} 문 주변에서 {markerNumber}번 고양이 마크를 찾아봐!'
+      '1층에서 ‘{destination}’이라고 적힌 문을 찾아보세요. 문 앞의 고양이 마크 {markerNumber}이 도착 표시예요.'
     ],
-    emphasis:['평생학습실','01번'], next: 'learning-paint' },
-  { id: 'learning-paint', sourceNumber: 24, type: 'dialogue', background: 'learning-paint', location: '평생학습실',
+    emphasis:[locations.learning.name,'01'], next: 'learning-intro' },
+  { id:'learning-intro', sourceNumber:null, type:'dialogue', background:'learning-clean', location:locations.learning.name,
+    cat:'neutral', layout:'arrival', text:'여기는 어린이부터 어른까지\n새로운 걸 배우는 곳이야.', next:'learning-paint',
+    geometry:{cat:[38,391,145,154],dialogue:[32,548,436,210]} },
+  { id: 'learning-paint', sourceNumber: 24, type: 'dialogue', background: 'learning-paint', location: locations.learning.name,
     cat: 'bewildered', layout: 'arrival',
-    text: '평생학습실 바닥이 물감자국..\n저거 내 몸으로 한 거야', next: 'opening-continuation' },
+    text: '평생학습실 바닥이 물감자국..\n저거 내 몸으로 한 거야', next: 'learning-room-art' },
+  { id:'learning-room-art', sourceNumber:null, type:'puzzle', puzzleId:'learning-room-art', background:'learning-paint',
+    location:locations.learning.name, cat:'neutral', layout:'art',
+    text:'엽서를 돌려 네 귀퉁이의 물감 모양을\n안내문에 맞춰 보세요.\n아래쪽에 완성된 영어를 입력하세요.',
+    instruction:'영어 3자리(소문자)',next:'learning-room-trail',
+    geometry:{cat:[40,175,140,154],dialogue:[32,340,436,245],answerForm:[29,605,442,230]} },
+  { id:'learning-room-trail',sourceNumber:null,type:'dialogue',background:'learning-paint',location:locations.learning.name,
+    cat:'bewildered',layout:'arrival',text:'주황색이랑 초록색 자국이\n유아자료실로 이어져!',next:'infant-marker',
+    geometry:{cat:[38,391,145,154],dialogue:[32,548,436,210]} },
+  { id:'infant-marker',sourceNumber:null,type:'move',background:'learning-paint',location:locations.infant.name,
+    cat:'neutral',layout:'move',marker:true,markerNumber:locations.infant.markerNumber,destination:locations.infant.name,
+    guideText:'{destination}로 이동해 주세요.\n고양이 마크 {markerNumber}를 찾아주세요.',
+    locationHints:['‘{destination}’이라고 적힌 안내와 고양이 마크 {markerNumber}를 찾아보세요.'],next:'opening-continuation' },
   { id: 'opening-continuation', sourceNumber: null, type: 'continuation', background: 'learning-paint',
-    cat: 'bewildered', location: '평생학습실', layout: 'arrival',
+    cat: 'neutral', location: locations.infant.name, layout: 'arrival',
     text: '초반부는 여기까지입니다.\n후속 장면은 준비 중입니다.', next: null }
 ]}];
 
@@ -83,7 +103,15 @@ export const puzzles = {
     hints: ['화면 속 그림이 아니라, 가지고 있는 실제 엽서를 살펴보세요.',
       '엽서 가장 위에 적힌 문장을 입력해요. 물음표·느낌표와 띄어쓰기는 빼도 돼요.'],
     missing: '',
-    successPopup:{title:'정답이야!', body:'잘했어!\n다음 이야기를 이어가 보자!', buttonLabel:'다음으로', cat:'excited', tone:'gold'}
+    successPopup:{title:'정답이야!', body:'잘했어!\n다음 이야기를 이어가 보자!', buttonLabel:'다음으로', cat:'happy', tone:'gold'}
+  },
+  'learning-room-art':{
+    status:'confirmed',answerMode:'english-three',acceptedAnswers:['art'],placeholder:'소문자 3자리',
+    answerLabel:'영어 3자리(소문자)',ariaLabel:'정답: 영어 3자리, 소문자',checkLabel:'정답 확인',
+    hints:['네 컷 만화가 있는 면에서 네 귀퉁이의 물감 모양을 찾아보세요.',
+      '같은 색과 모양끼리 맞대세요. 엽서 아래쪽의 글자 조각이 이어져요.'],
+    incorrectMessage:'조금만 다시 볼까? 아래쪽에 이어진 영어를 확인해 봐.',missing:'',
+    successPopup:{title:'찾아냈다!',body:'엽서와 안내문이 딱 맞았네!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
   }
 };
 
@@ -98,7 +126,7 @@ export const baseGeometry = {
   comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190]
 };
 export const movementGeometry = {
-  cat:[43,377,135,152], dialogue:[32,167,436,175], marker:[205,360,225,225], movementControls:[32,625,436,190]
+  cat:[43,377,135,152], dialogue:[32,167,436,195], marker:[205,370,225,225], movementControls:[32,625,436,190]
 };
 const overrides = {
   1:{cat:[181,500,140,136]},
@@ -114,7 +142,7 @@ const overrides = {
 };
 for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};
-  scene.fontSize=30;
+  scene.fontSize=scene.layout==='art'?26:30;
   scene.lineHeight=1.48;
   scene.flipCat=[18,19,20].includes(scene.sourceNumber);
   scene.backgroundFrame=scene.background==='lobby-sleeping'?'sleeping':scene.background==='lobby'?'empty':'normal';
@@ -122,5 +150,5 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.backgroundOpacity=scene.background==='meeting'?0.78:(scene.dim?0.74:0.93);
   scene.nextLabel='다음';
   if(scene.sourceNumber===21){scene.fontSize=33;scene.lineHeight=1.35;}
-  if(scene.type==='move'){scene.fontSize=28;scene.lineHeight=1.5;scene.textMode='static';}
+  if(scene.type==='move'){scene.fontSize=24;scene.lineHeight=1.5;scene.textMode='static';}
 }

@@ -1,5 +1,5 @@
 import { chapters, puzzles, STORY_VERSION, palette, uiText } from './story.js';
-import { StoryRuntime, formatMarkerNumber } from './engine.js';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -10,7 +10,7 @@ try{assets=await fetch('./assets.json').then(r=>{if(!r.ok)throw Error('자산 �
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
-const runtime=new StoryRuntime(chapters,puzzles,snapshot);
+const runtime=new StoryRuntime(chapters,puzzles,snapshot,uiText.successPopup);
 const sourceScenes=runtime.scenes.filter(s=>s.sourceNumber);
 if(review&&params.has('scene')){
   const requested=sourceScenes.find(s=>s.sourceNumber===Number(params.get('scene')));
@@ -26,6 +26,7 @@ let textComplete=true;
 let activeText='';
 let renderSerial=0;
 let renderedScene=null;
+let keypadInputState=null;
 const imageCache=new Map();
 const elementCache=new Map();
 const clipCache=new Map();
@@ -122,7 +123,7 @@ async function render(){
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;hintLevel=0;locationHintLevel=0;
-  $('locationHintDialog').close();$('successDialog').close();
+  $('locationHintDialog').close();$('puzzleHintDialog').close();closeEnglishKeypad();$('successDialog').close();
   const stage=$('stage');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
   stage.dataset.frame=s.backgroundFrame||'normal';
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
@@ -160,7 +161,7 @@ async function render(){
     $('startButton').textContent=s.startLabel||'터치해서 시작';
   }
   $('dialogue').hidden=s.type==='title';$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
-  $('instruction').hidden=!s.instruction;$('instruction').textContent=s.instruction||'';
+  $('instruction').hidden=!s.instruction||s.layout==='art';$('instruction').textContent=s.instruction||'';
   $('puzzleIllustration').hidden=!s.illustration;
   if(s.illustration)$('puzzleIllustration').src=imageURL(`prop:${s.illustration}`);
   $('nextButton').hidden=!['dialogue','comic'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
@@ -173,8 +174,18 @@ async function render(){
   $('backButton').disabled=!runtime.history.length;
   composing=false;$('answer').blur();$('answer').value='';$('answerFeedback').textContent='';
   $('hintButton').hidden=s.type!=='puzzle';
-  $('answer').placeholder='';
-  if(s.type==='puzzle')$('answer').setAttribute('aria-label',puzzles[s.puzzleId].placeholder);
+  const p=puzzles[s.puzzleId],english=p?.answerMode==='english-three';
+  $('answerForm').dataset.english=String(Boolean(english));
+  $('englishKeypadButton').hidden=!english;
+  $('answerLabel').textContent=p?.answerLabel||'입력';
+  $('checkButton').textContent=p?.checkLabel||'확인';
+  $('answer').placeholder=p?.placeholder||'';
+  $('answer').setAttribute('aria-label',p?.ariaLabel||p?.placeholder||'정답');
+  $('answer').lang=english?'en':'ko';
+  $('answer').inputMode='text';$('answer').readOnly=false;
+  $('answer').setAttribute('autocapitalize','none');$('answer').setAttribute('autocorrect','off');
+  $('answer').autocomplete='off';$('answer').spellcheck=false;$('answer').enterKeyHint='done';
+  if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
   renderedScene=s;updateReview(s);
   if(runtime.pendingSuccessId===s.id)showSuccess();
@@ -202,11 +213,31 @@ function showLocationHints(){
   $('moreLocationHint').hidden=locationHintLevel>=Math.min(hints.length,2);
   $('closeLocationHint').textContent=s.closeHintLabel||uiText.closeHintLabel;
   if(!$('locationHintDialog').open)$('locationHintDialog').showModal();
+  showGuideCat('locationHintIllustration','locationHintDialog');
+}
+async function showGuideCat(target,dialog){
+  try{await loadImage('cat:neutral');if($(dialog).open)$(target).replaceChildren(createImage('cat:neutral',`hint-cat ${target}`));}catch{}
+}
+function showPuzzleHints(){
+  if(runtime.scene.type!=='puzzle')return;
+  const hints=puzzles[runtime.scene.puzzleId].hints||[];
+  if(!hints.length)return;
+  hintLevel=Math.max(1,hintLevel);
+  const list=$('puzzleHintList');list.replaceChildren();
+  hints.slice(0,Math.min(hintLevel,2)).forEach((text,i)=>{
+    const card=document.createElement('section');card.className='location-hint-card';
+    const title=document.createElement('h3');title.textContent=`힌트 ${i+1}`;
+    const body=document.createElement('p');body.textContent=text;card.append(title,body);list.append(card);
+  });
+  $('morePuzzleHint').hidden=hintLevel>=Math.min(hints.length,2);
+  if(!$('puzzleHintDialog').open)$('puzzleHintDialog').showModal();
+  showGuideCat('puzzleHintIllustration','puzzleHintDialog');
 }
 async function showSuccess(){
   const s=runtime.scene;
   if(runtime.pendingSuccessId!==s.id)return;
-  const config={...uiText.successPopup,...puzzles[s.puzzleId]?.successPopup,...s.successPopup};
+  const config=runtime.pendingSuccess.popup;
+  closeEnglishKeypad();
   $('answer').blur();
   $('successTitle').textContent=config.title;$('successBody').textContent=config.body;
   $('successNextButton').textContent=config.buttonLabel;$('successNextButton').disabled=false;
@@ -245,18 +276,21 @@ $('notYetButton').addEventListener('click',showLocationHints);
 $('moreLocationHint').addEventListener('click',()=>{locationHintLevel+=1;showLocationHints();});
 $('closeLocationHint').addEventListener('click',()=>{$('locationHintDialog').close();$('notYetButton').focus();});
 $('successDialog').addEventListener('cancel',e=>e.preventDefault());
+$('successDialog').addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
 $('successNextButton').addEventListener('click',()=>{
   if(!sceneReady)return;
   const result=runtime.confirmSuccess();
   if(result.ok){$('successNextButton').disabled=true;$('successDialog').close();save();render();}
 });
-$('answerForm').addEventListener('submit',e=>{
-  e.preventDefault();if(!sceneReady||composing||performance.now()-compositionEndedAt<80)return;
+function submitAnswer(){
+  if(!sceneReady||composing||runtime.pendingSuccessId||performance.now()-compositionEndedAt<80)return;
   const result=runtime.submit($('answer').value);
   if(result.ok){save();$('answerFeedback').textContent='';showSuccess();return;}
-  $('answerFeedback').textContent={empty:'글자를 입력해 주세요.',incorrect:'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
+  const message={empty:'글자를 입력해 주세요.',incorrect:puzzles[runtime.scene.puzzleId]?.incorrectMessage||'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
     'not-configured':'이 시안은 실제 정답을 설정하기 전이에요. 제작자 보기에서 다음 장면을 확인해 주세요.'}[result.reason]||'다시 확인해 주세요.';
-});
+  $('answerFeedback').textContent=message;$('keypadFeedback').textContent=message;
+}
+$('answerForm').addEventListener('submit',e=>{e.preventDefault();submitAnswer();});
 $('answer').addEventListener('compositionstart',()=>{composing=true;});
 $('answer').addEventListener('compositionend',()=>{composing=false;compositionEndedAt=performance.now();});
 $('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&(composing||e.isComposing||e.keyCode===229||performance.now()-compositionEndedAt<80))e.preventDefault();});
@@ -265,9 +299,52 @@ $('answer').addEventListener('focus',()=>{
   // document with the optional creator panel below the game stage.
   setTimeout(()=>{$('answerForm').scrollIntoView({block:'center',behavior:'instant'});},250);
 });
-$('hintButton').addEventListener('click',()=>{
-  const p=puzzles[runtime.scene.puzzleId];
-  $('answerFeedback').textContent=p.hints[Math.min(hintLevel++,p.hints.length-1)];
+$('hintButton').addEventListener('click',showPuzzleHints);
+$('morePuzzleHint').addEventListener('click',()=>{hintLevel+=1;showPuzzleHints();});
+$('closePuzzleHint').addEventListener('click',()=>{$('puzzleHintDialog').close();$('hintButton').focus();});
+
+function updateKeypad(){
+  $('keypadValue').textContent=$('answer').value||'— — —';
+  $('keypadDelete').disabled=!$('answer').value;
+  const full=$('answer').value.length>=3;
+  $('englishKeys').querySelectorAll('button').forEach(b=>b.disabled=full);
+}
+function openEnglishKeypad(){
+  if(puzzles[runtime.scene.puzzleId]?.answerMode!=='english-three'||runtime.pendingSuccessId)return;
+  const input=$('answer');
+  keypadInputState={inputMode:input.inputMode,readOnly:input.readOnly};
+  input.blur();input.inputMode='none';input.readOnly=true;
+  const normalized=normalizeArtAnswer(input.value);
+  // Opening the fallback keypad never silently truncates an existing raw answer.
+  if(/^[a-z]{0,3}$/.test(normalized))input.value=normalized;
+  $('keypadFeedback').textContent='';updateKeypad();$('englishKeypadDialog').showModal();
+}
+function closeEnglishKeypad(){
+  if($('englishKeypadDialog').open)$('englishKeypadDialog').close();
+  if(keypadInputState){$('answer').inputMode=keypadInputState.inputMode;$('answer').readOnly=keypadInputState.readOnly;keypadInputState=null;}
+}
+function keypadLetter(letter){
+  if($('answer').value.length>=3)return;
+  $('answer').value+=letter;updateKeypad();
+}
+for(const row of ['qwertyuiop','asdfghjkl','zxcvbnm']){
+  const keys=document.createElement('div');keys.className='keypad-row';
+  for(const letter of row){const button=document.createElement('button');button.type='button';button.textContent=letter;
+    button.setAttribute('aria-label',letter);button.addEventListener('click',()=>keypadLetter(letter));keys.append(button);}
+  $('englishKeys').append(keys);
+}
+$('englishKeypadButton').addEventListener('click',openEnglishKeypad);
+$('keypadDelete').addEventListener('click',()=>{$('answer').value=$('answer').value.slice(0,-1);updateKeypad();});
+$('keypadClose').addEventListener('click',()=>{closeEnglishKeypad();$('englishKeypadButton').focus();});
+$('englishKeypadDialog').addEventListener('cancel',e=>{e.preventDefault();closeEnglishKeypad();$('englishKeypadButton').focus();});
+$('englishKeypadDialog').addEventListener('close',()=>{if(keypadInputState)closeEnglishKeypad();});
+$('keypadSubmit').addEventListener('click',submitAnswer);
+$('englishKeypadDialog').addEventListener('keydown',e=>{
+  if(composing||e.isComposing||e.keyCode===229)return;
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(/^[a-z]$/i.test(e.key)){e.preventDefault();keypadLetter(e.key.toLowerCase());}
+  else if(e.key==='Backspace'){e.preventDefault();$('answer').value=$('answer').value.slice(0,-1);updateKeypad();}
+  else if(e.key==='Enter'){e.preventDefault();submitAnswer();}
 });
 $('menuButton').addEventListener('click',()=>{$('helpDialog').showModal();});
 $('resumeButton').addEventListener('click',()=>{$('helpDialog').close();});

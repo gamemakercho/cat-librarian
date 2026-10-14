@@ -1,8 +1,9 @@
 {
   "implementedInThisKit": false,
+  "implementedSegments": ["초반 24장", "평생학습실 ART", "유아자료실 02 이동 확인"],
   "route": [
     "로비",
-    "평생학습실",
+    "평생학습실(강의실1)",
     "유아자료실",
     "1.5층 책소독기",
     "2층 종합자료실",
@@ -11,12 +12,13 @@
   ],
   "confirmedAnswers": {
     "first": "고양이와 사서가 뒤바뀌었다",
-    "learningOverlay": "물감",
+    "learningOverlay": "art",
     "final": "고양이와 사서가 돌아왔다"
   },
   "answerNormalization": "NFC 후 공백·?·! 제거",
+  "artNormalization": "NFKC 후 모든 공백 제거·소문자화·ASCII 영문 3자 검사·art 비교. 기호는 무시하지 않음.",
+  "markerNumbers": {"평생학습실(강의실1)":1,"유아자료실":2,"책소독기":3,"종합자료실":4},
   "pending": [
-    "23번 현장 마크의 실제 글자",
     "유아자료실 문제·정답",
     "책소독기 문제·정답",
     "종합자료실 문제·정답",
@@ -29,7 +31,7 @@
     "성공 화면에서 키워드 확인",
     "상단 이야기로 돌아가기",
     "메인 화면 키워드 입력",
-    "정답이면 다음 대사"
+    "정답이면 칭찬 팝업 → 다음으로 버튼 → 다음 대사"
   ],
   "bookCatchExampleKeyword": "뿌듯 (예시, 확정 아님)",
   "urls": {
@@ -38,5 +40,5 @@
     "reshelving": "https://gamemakercho.github.io/bookband/",
     "ending": "https://gamemakercho.github.io/library/"
   },
-  "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 충돌 자동 연출."
+  "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 칭찬 팝업의 다음으로 버튼을 누르면 충돌 자동 연출. 현재 게임에는 미구현."
 }

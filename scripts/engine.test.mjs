@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {StoryRuntime,normalizeAnswer,validateStory,formatMarkerNumber} from '../engine.js';
+import {StoryRuntime,normalizeAnswer,normalizeArtAnswer,validateStory,formatMarkerNumber} from '../engine.js';
 import {chapters,puzzles} from '../story.js';
 
 test('원본 01~24가 번호순으로 한 번씩 유지된다',()=>{
@@ -20,15 +20,15 @@ test('23번 이동은 입력을 받지 않고 도착 확인으로만 진행한�
  const r=new StoryRuntime(chapters,puzzles);r.jump('learning-marker');
  for(const answer of ['물감','평생학습실','고양이'])assert.equal(r.submit(answer).reason,'not-a-puzzle');
  assert.equal(r.advance().reason,'arrival-required');
- assert.equal(r.advance({arrived:true}).scene.id,'learning-paint');
+ assert.equal(r.advance({arrived:true}).scene.id,'learning-intro');
  assert.equal(r.solved.size,0);
 });
 test('미리보기 우회는 정답 기록을 만들지 않는다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('learning-marker');
- assert.equal(r.advance({review:true}).scene.id,'learning-paint');
+ assert.equal(r.advance({review:true}).scene.id,'learning-intro');
  assert.equal(r.solved.has('learning-marker'),false);
 });
-test('검토 경로는 24장 뒤의 정지 화면에서 끝난다',()=>{
+test('검토 경로는 ART와 유아자료실 이동 뒤의 준비 화면에서 끝난다',()=>{
  const r=new StoryRuntime(chapters,puzzles);let n=0;
  while(r.scene.next){assert.equal(r.advance({review:true}).ok,true);if(++n>30)throw Error('진행 루프');}
  assert.equal(r.currentId,'opening-continuation');
@@ -91,4 +91,57 @@ test('같은 시스템으로 다른 목적지·번호·도착 후 문제를 연�
  const r=new StoryRuntime(custom,{configured:{acceptedAnswers:['확정답']}});
  assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'puzzle');assert.equal(r.solved.size,0);
  r.submit('확정답');assert.equal(r.advance().reason,'success-confirmation-required');assert.equal(r.confirmSuccess().scene.id,'end');
+});
+
+test('ART 정답은 NFKC·공백·대소문자만 정규화하며 다른 3글자와 기호를 거부한다',()=>{
+ for(const value of ['art','ART','Art',' art ','a r t','ａｒｔ','\tArT\n']){
+  const r=new StoryRuntime(chapters,puzzles);r.jump('learning-room-art');
+  assert.equal(r.submit(value).ok,true,value);assert.equal(r.currentId,'learning-room-art');
+  assert.equal(r.solved.has('learning-room-art'),false);
+ }
+ for(const value of ['물감','미술','아트','ar','arts','art!','a-r-t','cat','']){
+  const r=new StoryRuntime(chapters,puzzles);r.jump('learning-room-art');
+  assert.equal(r.submit(value).ok,false,value);assert.equal(r.pendingSuccess,null);assert.equal(r.solved.size,0);
+ }
+ assert.equal(normalizeArtAnswer(' ａｒｔ\n'),'art');
+});
+test('도착 → 소개 → 원본24 → ART → 팝업 확인 → 자국 → 02 도착 경로',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('learning-marker');
+ assert.equal(r.advance({arrived:true}).scene.id,'learning-intro');
+ assert.equal(r.advance().scene.id,'learning-paint');assert.equal(r.scene.sourceNumber,24);
+ assert.equal(r.advance().scene.id,'learning-room-art');assert.equal(r.advance().reason,'answer-required');
+ r.submit('ART');assert.equal(r.pendingSuccess.popup.title,'찾아냈다!');
+ assert.equal(r.pendingSuccess.nextSceneId,'learning-room-trail');assert.equal(r.advance().reason,'success-confirmation-required');
+ assert.equal(r.confirmSuccess().scene.id,'learning-room-trail');assert.equal(r.solved.has('learning-room-art'),true);
+ assert.equal(r.confirmSuccess().reason,'no-pending-success');
+ assert.equal(r.advance().scene.id,'infant-marker');assert.equal(r.scene.markerNumber,2);
+ assert.equal(r.advance({arrived:true}).scene.id,'opening-continuation');
+ assert.equal(r.solved.size,1);
+});
+test('팝업의 다음ID·문구·퍼즐ID를 저장하고 재제출·재설정에도 열린 문구를 유지한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('learning-room-art');r.submit('art');
+ const pending=structuredClone(r.pendingSuccess);r.submit('ART');assert.deepEqual(r.pendingSuccess,pending);
+ const changed=structuredClone(puzzles);changed['learning-room-art'].successPopup.title='설정 변경';
+ const restored=new StoryRuntime(chapters,changed,JSON.parse(JSON.stringify(r.snapshot())));
+ assert.deepEqual(restored.pendingSuccess,pending);assert.equal(restored.solved.has('learning-room-art'),false);
+ restored.confirmSuccess();assert.equal(restored.currentId,'learning-room-trail');assert.equal(restored.solved.size,1);
+});
+test('옛 저장의 대기 팝업만 변환하고 이미 뒤쪽에 도달한 저장은 되돌리지 않는다',()=>{
+ const pending=new StoryRuntime(chapters,puzzles,{currentId:'lobby-postcard',pendingSuccessId:'lobby-postcard',solved:['postcard-heading']});
+ assert.equal(pending.pendingSuccessId,'lobby-postcard');assert.equal(pending.pendingSuccess.puzzleId,'postcard-heading');
+ assert.equal(pending.solved.size,0);pending.confirmSuccess();assert.equal(pending.solved.size,1);
+ for(const id of ['learning-paint','opening-continuation']){
+  const old=new StoryRuntime(chapters,puzzles,{currentId:id,solved:['postcard-heading'],history:['lobby-escape']});
+  assert.equal(old.currentId,id);assert.equal(old.solved.has('postcard-heading'),true);
+ }
+});
+test('공통 팝업은 기존 한글 문장·미니게임 키워드·마지막 문장 입력에서도 사용 가능하다',()=>{
+ const fixtures=[{id:'fixture',scenes:[
+  {id:'keyword',type:'puzzle',puzzleId:'keyword',next:'final'},
+  {id:'final',type:'puzzle',puzzleId:'final',next:'ending'},
+  {id:'ending',type:'continuation',next:null}]}];
+ const r=new StoryRuntime(fixtures,{keyword:{acceptedAnswers:['테스트키']},final:{acceptedAnswers:['고양이와 사서가 돌아왔다']}},{},{title:'훌륭해!',cat:'happy'});
+ r.submit('테스트 키!');assert.equal(r.pendingSuccess.popup.title,'훌륭해!');assert.equal(r.currentId,'keyword');r.confirmSuccess();
+ r.submit(' 고양이와 사서가 돌아왔다？！ ');assert.equal(r.currentId,'final');r.confirmSuccess();assert.equal(r.currentId,'ending');
+ assert.equal(r.solved.size,2);
 });
