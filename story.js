@@ -51,7 +51,7 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '봤지?', next: 'lobby-social-life' },
   { id: 'lobby-social-life', sourceNumber: 19, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
     cat: 'resigned', layout: 'side', dim: true,
-    text: '내 사회생활이 실시간으로 끝나\n고 있어', next: 'lobby-wake-plan' },
+    text: '내 사회생활이 실시간으로 끝나\n가고 있어', next: 'lobby-wake-plan' },
   { id: 'lobby-wake-plan', sourceNumber: 20, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
     cat: 'resigned', layout: 'side', dim: true,
     text: '일단 자고 있는 녀석을 깨워야 할\n것 같아. 책으로 톡톡 쳐볼까?', next: 'lobby-postcard' },
