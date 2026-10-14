@@ -5,6 +5,7 @@ const root=resolve(import.meta.dirname,'..');
 const manifest=JSON.parse(readFileSync(resolve(root,'assets.json'),'utf8'));
 const used=new Set();
 for(const config of [uiText.successPopup,...Object.values(puzzles).map(p=>p.successPopup)])if(config?.cat)used.add('cat:'+config.cat);
+for(const p of Object.values(puzzles))for(const icon of Object.values(p.icons||{}))used.add(icon.assetKey);
 used.add('cat:neutral');
 for(const s of chapters.flatMap(c=>c.scenes)){
   for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop']]){
@@ -18,7 +19,7 @@ for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const
 }
 const html=readFileSync(resolve(root,'index.html'),'utf8');
 for(const asset of Object.values(manifest))if(/(?:^|\/)references\//.test(asset.src))throw Error('제작 원본이 runtime manifest에 있음');
-for(const file of readdirSync(root,{recursive:true}))if(/(?:01_door_sign|02_postcard|03_alignment_layer|04_solved_alignment|emerald-reading-cat-base)/.test(file))throw Error('배포 폴더에 새 제작 참고 원본이 있음: '+file);
+for(const file of readdirSync(root,{recursive:true}))if(/(?:01_door_sign|02_postcard|03_alignment_layer|04_solved_alignment|emerald-reading-cat-base|cat-library-notice|all-14-icons-index|objects-grid-original|actions-grid-original|library-notice-A3)/.test(file))throw Error('배포 폴더에 새 제작 참고 원본이 있음: '+file);
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 if(new Set(ids).size!==ids.length)throw Error('중복 HTML id');
 const code=readFileSync(resolve(root,'app.js'),'utf8');

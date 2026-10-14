@@ -30,7 +30,7 @@ test('미리보기 우회는 정답 기록을 만들지 않는다',()=>{
 });
 test('검토 경로는 ART와 유아자료실 이동 뒤의 준비 화면에서 끝난다',()=>{
  const r=new StoryRuntime(chapters,puzzles);let n=0;
- while(r.scene.next){assert.equal(r.advance({review:true}).ok,true);if(++n>30)throw Error('진행 루프');}
+ while(r.scene.next){assert.equal(r.advance({review:true}).ok,true);if(++n>=r.scenes.length)throw Error('진행 루프');}
  assert.equal(r.currentId,'opening-continuation');
  assert.equal(r.advance().reason,'end-of-preview');
 });
@@ -114,8 +114,9 @@ test('도착 → 소개 → 원본24 → ART → 팝업 확인 → 자국 → 02
  assert.equal(r.pendingSuccess.nextSceneId,'learning-room-trail');assert.equal(r.advance().reason,'success-confirmation-required');
  assert.equal(r.confirmSuccess().scene.id,'learning-room-trail');assert.equal(r.solved.has('learning-room-art'),true);
  assert.equal(r.confirmSuccess().reason,'no-pending-success');
+ assert.equal(r.advance().scene.id,'learning-infant-trail');
  assert.equal(r.advance().scene.id,'infant-marker');assert.equal(r.scene.markerNumber,2);
- assert.equal(r.advance({arrived:true}).scene.id,'opening-continuation');
+ assert.equal(r.advance({arrived:true}).scene.id,'infant-intro');
  assert.equal(r.solved.size,1);
 });
 test('팝업의 다음ID·문구·퍼즐ID를 저장하고 재제출·재설정에도 열린 문구를 유지한다',()=>{
@@ -144,4 +145,58 @@ test('공통 팝업은 기존 한글 문장·미니게임 키워드·마지막 �
  r.submit('테스트 키!');assert.equal(r.pendingSuccess.popup.title,'훌륭해!');assert.equal(r.currentId,'keyword');r.confirmSuccess();
  r.submit(' 고양이와 사서가 돌아왔다？！ ');assert.equal(r.currentId,'final');r.confirmSuccess();assert.equal(r.currentId,'ending');
  assert.equal(r.solved.size,2);
+});
+
+test('아이콘 문제는 첫 입장에서만 배치를 만들고 현재9개를 저장한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);assert.equal(r.puzzleStates['infant-room-icons-14'],undefined);
+ r.jump('infant-icon-puzzle');const state=r.getIconState();assert.equal(state.boardIds.length,9);assert.equal(new Set(state.boardIds).size,9);
+ assert.equal(state.boardIds.filter(id=>id.startsWith('rule_')).length,4);
+ assert.strictEqual(r.getIconState(),state);assert.deepEqual(r.snapshot().puzzleStates['infant-room-icons-14'].boardIds,state.boardIds);
+});
+test('실제 엔진의 아이콘 정답은 순서 독립 집합으로 팝업 다음에만 완료·C04 진입',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('infant-icon-puzzle');
+ for(const id of ['rule_guardian','rule_quiet_walk','rule_book_cart','rule_food_water'])r.toggleIcon(id);
+ assert.equal(r.pendingSuccess,null);assert.equal(r.submit().ok,true);assert.equal(r.pendingSuccess.popup.title,'와! 맞았어!');
+ assert.equal(r.currentId,'infant-icon-puzzle');assert.equal(r.solved.size,0);
+ assert.equal(r.advance().reason,'success-confirmation-required');assert.equal(r.toggleIcon('rule_guardian'),false);
+ assert.equal(r.confirmSuccess().scene.id,'infant-cleaning-bridge');assert.equal(r.confirmSuccess().reason,'no-pending-success');
+ assert.equal(r.solved.has('infant-room-icons-14'),true);assert.equal(r.puzzleStates['infant-room-icons-14'].completed,true);
+ assert.equal(r.advance().reason,'game-button-required');assert.equal(r.solved.has('cleaning-keyword'),false);
+});
+test('아이콘 오답·최대4·선택 해제는 배치를 유지한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('infant-icon-puzzle');const board=[...r.getIconState().boardIds];
+ const wrong=board.filter(id=>!id.startsWith('rule_'));for(const id of wrong.slice(0,4))r.toggleIcon(id);
+ r.toggleIcon(wrong[4]);assert.equal(r.getIconState().selectedIds.length,4);assert.match(r.getIconState().feedback,/다시 눌러/);
+ assert.equal(r.submit().reason,'incorrect');assert.deepEqual(r.getIconState().boardIds,board);assert.equal(r.pendingSuccess,null);
+ r.toggleIcon(wrong[0]);assert.equal(r.getIconState().selectedIds.length,3);
+});
+test('아이콘 선택/팝업 저장 복원은 RNG 없이 유지하고 재방문도 같은 배치다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('infant-icon-puzzle');r.toggleIcon('rule_book_cart');
+ let restored=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())),{},()=>{throw Error('RNG 재호출');});
+ assert.deepEqual(restored.getIconState().selectedIds,['rule_book_cart']);
+ for(const id of ['rule_guardian','rule_quiet_walk','rule_food_water'])restored.toggleIcon(id);restored.submit();
+ restored=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(restored.snapshot())),{},()=>{throw Error('팝업 재추첨');});
+ assert.equal(restored.pendingSuccess.popup.title,'와! 맞았어!');const board=[...restored.getIconState().boardIds];restored.confirmSuccess();
+ restored.back();assert.deepEqual(restored.getIconState().boardIds,board);assert.equal(restored.getIconState().completed,true);assert.equal(restored.submit().reason,'already-completed');
+});
+test('깨진 아이콘 상태만 복구하고 다른 풀이·저장 위치는 유지한다',()=>{
+ const snapshot={currentId:'infant-icon-puzzle',solved:['postcard-heading','learning-room-art','infant-room-icons-14'],puzzleStates:{'infant-room-icons-14':{boardIds:Array(9).fill('unknown'),pendingSuccess:true},other:{value:'유지'}},pendingSuccess:{fromSceneId:'infant-icon-puzzle',puzzleId:'infant-room-icons-14',nextSceneId:'infant-cleaning-bridge'}};
+ const r=new StoryRuntime(chapters,puzzles,snapshot);assert.equal(r.currentId,'infant-icon-puzzle');assert.equal(new Set(r.getIconState().boardIds).size,9);
+ assert.equal(r.pendingSuccess,null);assert.equal(r.solved.has('postcard-heading'),true);assert.equal(r.solved.has('learning-room-art'),true);assert.equal(r.solved.has('infant-room-icons-14'),false);assert.deepEqual(r.puzzleStates.other,{value:'유지'});
+});
+test('청소 키워드 null은 임의 답을 받지 않고 복귀는 완료 기록 없이 준비 화면으로 간다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('infant-cleaning-bridge');
+ for(const keyword of ['뿌듯','반짝','깨끗이'])assert.equal(r.submit(keyword).reason,'not-configured');
+ assert.equal(r.advance().reason,'game-button-required');assert.equal(r.advance({minigameReturned:true}).scene.id,'opening-continuation');assert.equal(r.solved.size,0);
+});
+test('나중에 확정한 미니게임 키워드도 공통 팝업과 다음 버튼을 사용한다',()=>{
+ const p=structuredClone(puzzles);p['cleaning-keyword'].acceptedAnswers=['테스트용키워드'];
+ const r=new StoryRuntime(chapters,p);r.jump('infant-cleaning-bridge');assert.equal(r.advance({minigameReturned:true}).reason,'answer-required');
+ r.submit('테스트용 키워드!');assert.equal(r.currentId,'infant-cleaning-bridge');assert.equal(r.pendingSuccess.popup.title,'훌륭해!');
+ const restored=new StoryRuntime(chapters,p,r.snapshot());assert.equal(restored.confirmSuccess().scene.id,'opening-continuation');assert.equal(restored.solved.has('cleaning-keyword'),true);
+});
+test('명시적 새 플레이는 아이콘 배치를 버리고 다음 입장에만 새 추첨을 한다',()=>{
+ let calls=0;const rng=()=>{calls++;return .5;};const r=new StoryRuntime(chapters,puzzles,{}, {},rng);
+ r.jump('infant-icon-puzzle');r.getIconState();const before=calls;r.reset();assert.equal(calls,before);assert.deepEqual(r.puzzleStates,{});
+ r.jump('infant-icon-puzzle');r.getIconState();assert(calls>before);
 });

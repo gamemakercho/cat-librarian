@@ -1,6 +1,7 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
-export const STORY_VERSION = 'opening-source-24-art-guide-v7-20261014';
+import {iconCatalog} from './icon-catalog.js';
+export const STORY_VERSION = 'opening-source-24-icons-v9-20261014';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -34,16 +35,16 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     guideNote:'같은 기기·브라우저에서 이어서 할 수 있어요.',nextLabel:'이야기 시작!',next:'opening-busy',
     geometry:{cat:[195,153,110,110],tutorialPanel:[32,280,436,493],nextButton:[130,799,244,63]} },
   { id: 'opening-busy', sourceNumber: 2, type: 'dialogue', background: 'meeting', cat: 'disappointed',
-    layout: 'meet', text: '혹시 오늘 바빠?', next: 'opening-speaking-cat' },
+    layout: 'meet', text: '안녕?', next: 'opening-speaking-cat' },
   { id: 'opening-speaking-cat', sourceNumber: 3, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     layout: 'meet', text: '말하는 고양이는 처음 보지?', next: 'opening-librarian' },
   { id: 'opening-librarian', sourceNumber: 4, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     layout: 'meet', text: '나는 사실 이 도서관 사서야', next: 'opening-memory' },
   { id: 'opening-memory', sourceNumber: 5, type: 'dialogue', background: null, textGroup:'morning-memory',
-    text: '오늘 아침에도 평소처럼 도서관\n에 출근 중이었어', next: 'opening-comic-1' },
+    text: '오늘 아침에도 평소처럼 도서관에\n출근 중이었어', next: 'opening-comic-1' },
   ...[6,7,8,9].map((number, i) => ({
     id: `opening-comic-${i+1}`, sourceNumber: number, type: 'comic', background: null,
-    comic: i+1, textGroup:'morning-memory', textMode:'static', text: '오늘 아침에도 평소처럼 도서관\n에 출근 중이었어',
+    comic: i+1, textGroup:'morning-memory', textMode:'static', text: '오늘 아침에도 평소처럼 도서관에\n출근 중이었어',
     effect: number === 9 ? 'collision' : null,
     next: number === 9 ? 'opening-swapped' : `opening-comic-${i+2}`
   })),
@@ -72,7 +73,7 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '내 사회생활이 실시간으로 끝나\n가고 있어', next: 'lobby-wake-plan' },
   { id: 'lobby-wake-plan', sourceNumber: 20, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
     cat: 'resigned', layout: 'side', dim: true,
-    text: '일단 자고 있는 녀석을 깨워야 할\n것 같아. 책으로 톡톡 쳐볼까?', next: 'lobby-postcard' },
+    text: '일단 자고 있는 녀석을 깨워야 할\n것 같아 책으로 톡톡 쳐볼까?', next: 'lobby-postcard' },
   { id: 'lobby-postcard', sourceNumber: 21, type: 'puzzle', background: 'lobby-sleeping', location: '도서관 로비',
     puzzleId: 'postcard-heading', illustration: 'postcard',
     text: '가지고 있는 엽서를 활용해서\n자고 있는 고양이(?)를 깨우자',
@@ -84,33 +85,56 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   { id: 'learning-marker', sourceNumber: 23, type: 'move', background: 'lobby', location: locations.learning.name,
     cat: 'neutral', layout: 'move', marker: true, markerNumber:locations.learning.markerNumber,
     destination:locations.learning.name,
-    guideText:'{destination} 앞으로 가 보자!\n문 앞의 고양이 마크 {markerNumber}을 찾아주세요.',
+    guideText:'{destination} 앞으로 가 보자!\n문 앞의 고양이 마크 {markerNumber}을 찾아주세요',
     locationHints:[
       '1층에서 ‘{destination}’이라고 적힌 문을 찾아보세요. 문 앞의 고양이 마크 {markerNumber}이 도착 표시예요.'
     ],
     emphasis:[locations.learning.name,'01'], next: 'learning-intro' },
   { id:'learning-intro', sourceNumber:null, type:'dialogue', background:'learning-clean', location:locations.learning.name,
-    cat:'neutral', layout:'arrival', text:'여기는 어린이부터 어른까지\n새로운 걸 배우는 곳이야.', next:'learning-paint',
-    geometry:{cat:[38,391,145,154],dialogue:[32,548,436,210]} },
+    cat:'neutral', layout:'arrival',fontSize:30,
+    text:'어린이부터 어른까지 즐길 수 있는\n유익하고 재미있는 프로그램을\n운영하는 곳이야',next:'learning-paint',
+    geometry:{cat:[38,345,145,154],dialogue:[32,515,436,240],nextButton:[155,790,194,63]} },
   { id: 'learning-paint', sourceNumber: 24, type: 'dialogue', background: 'learning-paint', location: locations.learning.name,
     cat: 'bewildered', layout: 'arrival',
-    text: '평생학습실 바닥이 물감자국..\n저거 내 몸으로 한 거야', next: 'learning-room-art' },
+    text: '평생학습실 바닥의 물감자국..?', next: 'learning-room-art' },
   { id:'learning-room-art', sourceNumber:null, type:'puzzle', puzzleId:'learning-room-art', background:'learning-paint',
     location:locations.learning.name, cat:'neutral', layout:'art',
     decoration:'paint-marks',
-    text:'엽서를 활용해 물감 자국을 완성하면\n무슨 글자가 보이는 것 같아.',
+    text:'엽서를 활용해 물감 자국을 완성하면\n무슨 글자가 보이는 것 같아',
     instruction:'영어 3자리(소문자)',next:'learning-room-trail',
     geometry:{cat:[40,175,140,154],dialogue:[32,340,436,235],answerForm:[29,595,442,230]} },
   { id:'learning-room-trail',sourceNumber:null,type:'dialogue',background:'learning-paint',location:locations.learning.name,
-    cat:'bewildered',layout:'arrival',text:'주황색이랑 초록색 자국이\n유아자료실로 이어져!',next:'infant-marker',
+    cat:'bewildered',layout:'arrival',fontSize:28,
+    text:'아무래도 이 사고뭉치가\n평생학습실에 있던 물감을\n터뜨리고 밟고 돌아다니는 것 같아',next:'learning-infant-trail',
+    geometry:{cat:[38,345,145,154],dialogue:[32,515,436,240],nextButton:[155,790,194,63]} },
+  { id:'learning-infant-trail',sourceNumber:null,type:'dialogue',background:'learning-paint',location:locations.learning.name,
+    cat:'bewildered',layout:'arrival',text:'주황색이랑 초록색 물감 자국이\n유아자료실로 이어져!',next:'infant-marker',
     geometry:{cat:[38,391,145,154],dialogue:[32,548,436,210]} },
   { id:'infant-marker',sourceNumber:null,type:'move',background:'learning-paint',location:locations.infant.name,
-    cat:'neutral',layout:'move',marker:true,markerNumber:locations.infant.markerNumber,destination:locations.infant.name,
-    guideText:'{destination}로 이동해 주세요.\n고양이 마크 {markerNumber}를 찾아주세요.',
-    locationHints:['‘{destination}’이라고 적힌 안내와 고양이 마크 {markerNumber}를 찾아보세요.'],next:'opening-continuation' },
-  { id: 'opening-continuation', sourceNumber: null, type: 'continuation', background: 'learning-paint',
+    cat:'neutral',layout:'move',fontSize:22,marker:true,markerNumber:locations.infant.markerNumber,destination:locations.infant.name,
+    guideText:'{destination}로 이동해 주세요\n고양이 마크 {markerNumber}를 찾아주세요\n\n마크는 유아자료실에 들어가자마자\n오른쪽 안내문에 있습니다',
+    locationHints:['유아자료실에 들어가자마자 오른쪽 안내문에서 고양이 마크 {markerNumber}를 찾아보세요'],next:'infant-intro',
+    geometry:{dialogue:[32,167,436,245],cat:[43,431,135,152],marker:[205,424,225,225],movementControls:[32,685,436,180]} },
+  { id:'infant-intro',sourceNumber:null,type:'dialogue',background:'infant-clean',location:locations.infant.name,
+    cat:'neutral',layout:'arrival',text:'여기는 어린 친구들이\n그림책을 읽는 곳이야',next:'infant-paint-accident',
+    geometry:{cat:[38,345,145,154],dialogue:[32,515,436,230],nextButton:[155,790,194,63]} },
+  { id:'infant-paint-accident',sourceNumber:null,type:'dialogue',background:'infant-mess',location:locations.infant.name,
+    cat:'shocked',layout:'arrival',fontSize:27,
+    text:'잠깐, 내 발로 물감 도장을 찍었네?!\n그 몸으로 그림까지 그리지 마!',next:'infant-icon-puzzle',
+    geometry:{cat:[38,330,145,180],dialogue:[32,532,436,225],nextButton:[155,790,194,63]} },
+  { id:'infant-icon-puzzle',sourceNumber:null,type:'puzzle',puzzleId:'infant-room-icons-14',background:'infant-mess',
+    location:locations.infant.name,layout:'icon-selection',fontSize:24,
+    text:'벽에 있는 고양이 안내문을 보고,\n설명에 맞는 그림 네 칸을\n선택해 주세요',next:'infant-cleaning-bridge',
+    geometry:{locationBanner:[31,50,438,66],dialogue:[26,132,448,136],iconPuzzle:[26,284,448,590]} },
+  { id:'infant-cleaning-bridge',sourceNumber:null,type:'minigame',puzzleId:'cleaning-keyword',background:'infant-mess',
+    location:locations.infant.name,cat:'shocked',layout:'minigame',fontSize:27,
+    text:'잠깐, 저 녀석 물감 묻은 발로\n돌아다니잖아!\n책까지 물감이 묻기 전에,\n얼른 바닥부터 닦자!',
+    gameUrl:'https://gamemakercho.github.io/cleaning-game/',gameStartLabel:'물감 청소하기',minigameClearKeyword:null,
+    next:'opening-continuation',
+    geometry:{cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,100],answerForm:[29,730,442,100]} },
+  { id: 'opening-continuation', sourceNumber: null, type: 'continuation', background: 'infant-mess',
     cat: 'neutral', location: locations.infant.name, layout: 'arrival',
-    text: '초반부는 여기까지입니다.\n후속 장면은 준비 중입니다.', next: null }
+    text: '초반부는 여기까지입니다\n후속 장면은 준비 중입니다', next: null }
 ]}];
 
 // 첫 엽서 답은 확정값입니다. 23번은 현장 마크를 찾는 이동/도착 확인으로 변경했습니다.
@@ -131,6 +155,17 @@ export const puzzles = {
       '같은 색과 모양끼리 맞대세요. 엽서 아래쪽의 글자 조각이 이어져요.'],
     incorrectMessage:'조금만 다시 볼까? 아래쪽에 이어진 영어를 확인해 봐.',missing:'',
     successPopup:{title:'찾아냈다!',body:'엽서와 안내문이 딱 맞았네!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
+  },
+  'infant-room-icons-14':{
+    status:'confirmed',answerMode:'icons',icons:iconCatalog,
+    hints:['벽의 고양이 안내문에 있는 네 가지 설명을 읽어 보세요',
+      '고양이 그림 옆 문장도 함께 읽고, 같은 내용을 나타내는 그림을 찾아보세요'],
+    successPopup:{title:'와! 맞았어!',body:'잘했어!\n안내문을 잘 살펴봤구나!',buttonLabel:'다음으로',cat:'happy',tone:'gold'}
+  },
+  'cleaning-keyword':{
+    status:'pending',acceptedAnswers:[],minigameClearKeyword:null,
+    placeholder:'클리어 키워드',hints:[],missing:'청소 게임의 클리어 키워드는 아직 미정입니다',
+    successPopup:{title:'훌륭해!',body:'잘했어!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
   }
 };
 
@@ -143,7 +178,8 @@ export const baseGeometry = {
   locationBanner:[31,64,438,81], answerForm:[29,672,442,100],
   cat:[173,225,162,194], sleeping:[154,226,198,148], staff:[315,217,150,221],
   comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190],
-  tutorialPanel:[32,280,436,493]
+  tutorialPanel:[32,280,436,493],
+  iconPuzzle:[26,284,448,590],minigameControls:[40,715,420,120]
 };
 export const movementGeometry = {
   cat:[43,377,135,152], dialogue:[32,167,436,195], marker:[205,370,225,225], movementControls:[32,625,436,190]
@@ -162,7 +198,7 @@ const overrides = {
 };
 for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};
-  scene.fontSize=scene.layout==='art'?26:30;
+  scene.fontSize??=scene.type==='move'?24:scene.layout==='art'?26:30;
   scene.lineHeight=1.48;
   // These source sprites face left. Speakers in the left slot face inward.
   scene.flipCat=scene.geometry.cat[0]<125;
@@ -171,5 +207,5 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.backgroundOpacity=scene.background==='meeting'?0.78:(scene.dim?0.74:0.93);
   scene.nextLabel??='다음';
   if(scene.sourceNumber===21){scene.fontSize=33;scene.lineHeight=1.35;}
-  if(scene.type==='move'){scene.fontSize=24;scene.lineHeight=1.5;scene.textMode='static';}
+  if(scene.type==='move'){scene.lineHeight=1.5;scene.textMode='static';}
 }

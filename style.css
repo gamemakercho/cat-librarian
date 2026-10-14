@@ -271,3 +271,30 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 .tutorial-cards h3{margin:0 0 1cqw;font-size:4.8cqw;font-weight:400;line-height:1.25;color:#2f695c}
 .tutorial-cards p{margin:0;font-size:4.2cqw;line-height:1.4;white-space:pre-line;word-break:normal}
 .tutorial-note{margin:0;font-size:3.8cqw;line-height:1.4;text-align:center;white-space:pre-line;color:#756048}
+/* Nine independently accessible buttons; selection stays outside the artwork. */
+.stage[data-layout="icon-selection"] .location-banner{font-size:7.2cqw}
+.stage[data-layout="icon-selection"] .dialogue{padding:2.5cqw 3.5cqw;text-align:left}
+.stage[data-layout="icon-selection"] .dialogue>p:first-child{font-size:var(--dialogue-size);line-height:1.35}
+.icon-puzzle{position:absolute;z-index:8}
+.icon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2cqw}
+.icon-tile{position:relative;width:100%;aspect-ratio:1;padding:.7cqw;border:.8cqw solid #f6e8c8;border-radius:2.5cqw;background:#fffdf4;color:#234d3f;overflow:visible}
+.icon-art{display:block;width:100%;height:100%;object-fit:contain;border-radius:1.2cqw}
+.icon-tile.selected{border-color:#184c42;box-shadow:0 0 0 .45cqw #fff8df}
+.icon-selected-badge{display:none;position:absolute;right:.3cqw;top:.3cqw;border-radius:1.6cqw;padding:.5cqw 1.2cqw;background:#184c42;color:white;font-size:3.5cqw;line-height:1.2;box-shadow:0 0 0 .35cqw white}
+.icon-tile.selected .icon-selected-badge{display:block}
+.icon-tile:disabled{cursor:default}
+.icon-controls{display:flex;justify-content:space-between;align-items:center;gap:2cqw;margin-top:2.4cqw}
+.icon-controls p{margin:0;font-size:5cqw;color:#214c3d;background:#fff8df;border-radius:2cqw;padding:1.5cqw 2cqw}
+.icon-controls button{min-height:44px;padding:2cqw 4cqw;border:.7cqw solid #187c78;border-radius:3cqw;background:#239c92;color:white;font-size:5cqw;line-height:1.2}
+.icon-controls button:disabled{background:#b6c6bd;border-color:#91a599;color:#fdfbf3;cursor:default}
+.icon-feedback{font-size:max(13px,3.5cqw);font-family:system-ui,sans-serif;line-height:1.4;margin:2cqw 0 0;border-radius:2cqw;padding:1.5cqw 2cqw;background:#fffaf1}
+.icon-feedback:empty{display:none}
+.minigame-controls{position:absolute;z-index:8;text-align:center}
+.minigame-controls .dialog-action{min-height:14cqw;font-size:6cqw}
+.minigame-controls p{margin:3cqw 0 0;padding:1.5cqw;background:#fff8e6dd;border-radius:2cqw;font-size:4cqw;line-height:1.4}
+body.minigame-active{overflow:hidden}
+.minigame-overlay{position:fixed;z-index:1000;inset:0;display:flex;flex-direction:column;width:100%;height:100dvh;background:#fff8df}
+.minigame-overlay header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;min-height:56px;border-bottom:1px solid #a3bbae;color:#2a6658}
+.minigame-overlay header button{min-height:44px;padding:8px 14px;border:1px solid #187c78;border-radius:12px;background:#239c92;color:white;font-size:18px}
+.minigame-overlay header span{font-size:18px;white-space:nowrap}
+.minigame-overlay iframe{flex:1;min-height:0;width:100%;border:0;background:#234d3f}

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app-shell">
+  <main id="appShell" class="app-shell">
     <div class="game-column">
     <section id="stage" class="stage" aria-label="고양이가 된 사서 게임 화면">
       <div class="scene-layer" id="sceneLayer" aria-hidden="true"></div>
@@ -35,6 +35,15 @@
         <p id="tutorialNote" class="tutorial-note"></p>
       </section>
       <button id="nextButton" class="next-button" type="button" hidden>다음</button>
+      <section id="iconPuzzle" class="icon-puzzle" hidden aria-label="그림 네 칸 선택 문제">
+        <div id="iconGrid" class="icon-grid"></div>
+        <div class="icon-controls"><p id="selectionCount" role="status">선택 0/4</p><button id="checkIcons" type="button" disabled>정답 확인</button></div>
+        <p id="iconFeedback" class="icon-feedback" role="status"></p>
+      </section>
+      <section id="minigameControls" class="minigame-controls" hidden>
+        <button id="startMinigame" class="dialog-action" type="button">물감 청소하기</button>
+        <p id="minigameNote">청소를 마치면 ‘이야기로 돌아가기’를 눌러줘</p>
+      </section>
       <section id="movementControls" class="movement-controls" hidden>
         <h2 id="arrivalQuestion">도착하였습니까?</h2>
         <div class="arrival-buttons">
@@ -119,6 +128,10 @@
     </aside>
     <aside id="referencePanel" class="reference-panel" hidden><p id="referenceCaption">원본 비교</p><img id="referenceImage" alt="해당 번호의 원본 압축 비교본" hidden></aside>
   </main>
+  <section id="minigameOverlay" class="minigame-overlay" aria-label="물감 청소 게임" hidden>
+    <header><button id="returnToStory" type="button">이야기로 돌아가기</button><span>물감 청소</span></header>
+    <iframe id="minigameFrame" title="우당탕! 물감 청소 게임"></iframe>
+  </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
   <script type="module" src="app.js"></script>
 </body>

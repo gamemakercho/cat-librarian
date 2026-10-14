@@ -74,6 +74,10 @@ function sceneAssetKeys(s){
   if(s.illustration)keys.push(`prop:${s.illustration}`);
   if(s.decoration)keys.push(`prop:${s.decoration}`);
   if(s.marker)keys.push('prop:marker');
+  if(puzzles[s.puzzleId]?.answerMode==='icons'){
+    const state=runtime.puzzleStates[s.puzzleId];
+    for(const id of state?.boardIds||[])keys.push(puzzles[s.puzzleId].icons[id].assetKey);
+  }
   return keys;
 }
 function sceneMessage(s,text=s.guideText??s.text??''){
@@ -121,6 +125,8 @@ function advance(opts={}){
 
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
+  if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
+  closeMinigame();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;hintLevel=0;locationHintLevel=0;
@@ -130,7 +136,7 @@ async function render(){
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
-  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel'])applyRect($(name),s.geometry[name]);
+  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls'])applyRect($(name),s.geometry[name]);
   $('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -187,7 +193,13 @@ async function render(){
     decoration.append(im);
   }
   $('nextButton').hidden=!['dialogue','comic','tutorial'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
-  $('answerForm').hidden=s.type!=='puzzle';
+  const puzzle=puzzles[s.puzzleId],isIcons=puzzle?.answerMode==='icons';
+  $('answerForm').hidden=!((s.type==='puzzle'&&!isIcons)||(s.type==='minigame'&&puzzle.acceptedAnswers?.length));
+  $('iconPuzzle').hidden=!isIcons;
+  if(isIcons)renderIconPuzzle();
+  $('minigameControls').hidden=s.type!=='minigame';
+  $('startMinigame').textContent=s.gameStartLabel||'게임 시작';
+  $('minigameNote').textContent=puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
   $('arrivalQuestion').textContent=s.arrivalQuestion||uiText.arrivalQuestion;
   $('arrivedButton').textContent=s.arrivedLabel||uiText.arrivedLabel;
@@ -213,10 +225,39 @@ async function render(){
   if(runtime.pendingSuccessId===s.id)showSuccess();
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
-  if(s.next && !['puzzle','move','continuation'].includes(s.type)){
+  if(s.next && !['puzzle','move','continuation','minigame'].includes(s.type)){
     const next=runtime.index.get(s.next);
-    if(next?.type!=='move')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
+    if(next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
   }
+}
+
+function renderIconPuzzle(){
+  const state=runtime.getIconState(),p=puzzles[runtime.scene.puzzleId];
+  $('iconGrid').replaceChildren();
+  for(const id of state.boardIds){
+    const icon=p.icons[id],button=document.createElement('button');button.type='button';button.className='icon-tile';
+    button.dataset.iconId=id;button.setAttribute('aria-label',icon.label);
+    button.append(createImage(icon.assetKey,'icon-art'));
+    const badge=document.createElement('span');badge.className='icon-selected-badge';badge.textContent='선택';badge.setAttribute('aria-hidden','true');button.append(badge);
+    button.addEventListener('click',()=>{if(!sceneReady)return;if(runtime.toggleIcon(id)){save();updateIconPuzzle();}});
+    $('iconGrid').append(button);
+  }
+  updateIconPuzzle();
+}
+function updateIconPuzzle(){
+  const state=runtime.getIconState();if(!state)return;
+  for(const button of $('iconGrid').children){
+    const selected=state.selectedIds.includes(button.dataset.iconId);
+    button.setAttribute('aria-pressed',String(selected));button.classList.toggle('selected',selected);
+    button.disabled=Boolean(state.pendingSuccess||state.completed||runtime.pendingSuccessId);
+  }
+  $('selectionCount').textContent=`선택 ${state.selectedIds.length}/4`;
+  $('checkIcons').textContent=state.completed?'다음으로':'정답 확인';
+  $('checkIcons').disabled=Boolean(runtime.pendingSuccessId||(!state.completed&&state.selectedIds.length!==4));
+  $('iconFeedback').textContent=state.feedback||'';
+}
+function closeMinigame(){
+  if(!$('minigameOverlay').hidden){$('minigameOverlay').hidden=true;$('minigameFrame').removeAttribute('src');document.body.classList.remove('minigame-active');$('appShell').inert=false;}
 }
 
 function showLocationHints(){
@@ -276,7 +317,7 @@ function updateReview(s){
   $('sceneSelect').value=s.id;
   const position=s.sourceNumber?`${s.sourceNumber} / 24번 시안`:'추가한 진행 화면';
   $('sceneMeta').textContent=`${position}\n장면 ID: ${s.id}\n배경: ${s.background||'흰 회상 화면'}${s.cat?' · 표정: '+s.cat:''}`;
-  const notConfigured=s.type==='puzzle'&&!puzzles[s.puzzleId].acceptedAnswers.length;
+  const notConfigured=['puzzle','minigame'].includes(s.type)&&puzzles[s.puzzleId].answerMode!=='icons'&&!puzzles[s.puzzleId].acceptedAnswers?.length;
   $('reviewWarning').hidden=!notConfigured;
   $('reviewWarning').textContent=notConfigured?puzzles[s.puzzleId].missing+' 실제 정답을 입력해도 지금은 성공 처리하지 않습니다.':'';
   $('bypassButton').hidden=!notConfigured;
@@ -294,6 +335,23 @@ $('nextButton').addEventListener('click',()=>textComplete?advance():finishText()
 $('dialogue').addEventListener('click',()=>{if(!textComplete)finishText();});
 $('backButton').addEventListener('click',()=>{if(runtime.back()){save();render();}});
 $('arrivedButton').addEventListener('click',()=>advance({arrived:true}));
+$('checkIcons').addEventListener('click',()=>{
+  if(!sceneReady||runtime.pendingSuccessId)return;
+  if(runtime.getIconState()?.completed){advance();return;}
+  const result=runtime.submit();save();updateIconPuzzle();if(result.ok)showSuccess();
+});
+$('startMinigame').addEventListener('click',()=>{
+  if(!sceneReady||runtime.scene.type!=='minigame'||runtime.pendingSuccessId)return;
+  if(!textComplete)finishText();save();
+  $('minigameFrame').src=runtime.scene.gameUrl;$('minigameOverlay').hidden=false;
+  document.body.classList.add('minigame-active');$('appShell').inert=true;$('returnToStory').focus();
+});
+$('returnToStory').addEventListener('click',()=>{
+  if($('minigameOverlay').hidden)return;
+  closeMinigame();
+  if(!puzzles[runtime.scene.puzzleId]?.acceptedAnswers?.length)advance({minigameReturned:true});
+  else $('startMinigame').focus();
+});
 $('notYetButton').addEventListener('click',showLocationHints);
 $('moreLocationHint').addEventListener('click',()=>{locationHintLevel+=1;showLocationHints();});
 $('closeLocationHint').addEventListener('click',()=>{$('locationHintDialog').close();$('notYetButton').focus();});
