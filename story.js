@@ -1,6 +1,6 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
-export const STORY_VERSION = 'opening-source-24-art-v6-20261014';
+export const STORY_VERSION = 'opening-source-24-art-guide-v7-20261014';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -14,7 +14,25 @@ export const uiText = {
 };
 export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
-    title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'opening-busy' },
+    title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'guide-structure' },
+  { id:'guide-structure',sourceNumber:null,type:'tutorial',background:'meeting',cat:'neutral',
+    location:'게임 안내 1 / 2',title:'어떤 게임일까?',textMode:'static',
+    guideCards:[
+      {title:'이야기를 따라가요',body:'고양이 사서의 이야기를 읽고,\n안내하는 장소를 찾아가는 게임이에요.'},
+      {title:'도서관에서 단서를 찾아요',body:'번호가 있는 고양이 마크를 찾고,\n실제 엽서와 안내문을 살펴봐요.'},
+      {title:'문제를 풀면 이야기가 이어져요',body:'현장에서 찾은 단서로 답을 맞히면\n다음 이야기와 장소로 이어져요.'}
+    ],
+    guideNote:'이동할 때는 휴대폰을 잠시 내려놓아요.',next:'guide-play',
+    geometry:{cat:[195,153,110,110],tutorialPanel:[32,280,436,493],nextButton:[155,799,194,63]} },
+  { id:'guide-play',sourceNumber:null,type:'tutorial',background:'meeting',cat:'neutral',
+    location:'게임 안내 2 / 2',title:'이렇게 플레이해요',textMode:'static',
+    guideCards:[
+      {title:'대사와 이동',body:'대사는 ‘다음’으로 넘겨요.\n장소에 도착하면 ‘도착했지!’를 눌러요.'},
+      {title:'정답 입력',body:'답을 입력하고 확인 버튼을 눌러요.\n정답 팝업에서 ‘다음으로’를 눌러요.'},
+      {title:'막히면 힌트를 봐요',body:'장소를 못 찾으면 ‘못 찾겠어…’,\n문제가 어려우면 ‘힌트 보기’를 눌러요.'}
+    ],
+    guideNote:'같은 기기·브라우저에서 이어서 할 수 있어요.',nextLabel:'이야기 시작!',next:'opening-busy',
+    geometry:{cat:[195,153,110,110],tutorialPanel:[32,280,436,493],nextButton:[130,799,244,63]} },
   { id: 'opening-busy', sourceNumber: 2, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     layout: 'meet', text: '혹시 오늘 바빠?', next: 'opening-speaking-cat' },
   { id: 'opening-speaking-cat', sourceNumber: 3, type: 'dialogue', background: 'meeting', cat: 'disappointed',
@@ -40,7 +58,7 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   { id: 'opening-perfect', sourceNumber: 14, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     text: '완벽하네', next: 'opening-first-cat' },
   { id: 'opening-first-cat', sourceNumber: 15, type: 'dialogue', background: 'meeting', cat: 'resigned',
-    text: '완벽하네\n나도 오늘 처음 고양이가 됐거든', next: 'lobby-transition' },
+    text: '나도 오늘 처음 고양이가 됐거든', next: 'lobby-transition' },
   { id: 'lobby-transition', sourceNumber: 16, type: 'dialogue', background: null, location: '도서관 로비',
     text: '내 몸을 가진 저 고양이가 도서관\n을 다 망쳐버리기 전에 잡아야 해', next: 'lobby-staff' },
   { id: 'lobby-staff', sourceNumber: 17, type: 'dialogue', background: 'lobby-sleeping', location: '도서관 로비',
@@ -79,9 +97,10 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '평생학습실 바닥이 물감자국..\n저거 내 몸으로 한 거야', next: 'learning-room-art' },
   { id:'learning-room-art', sourceNumber:null, type:'puzzle', puzzleId:'learning-room-art', background:'learning-paint',
     location:locations.learning.name, cat:'neutral', layout:'art',
-    text:'엽서를 돌려 네 귀퉁이의 물감 모양을\n안내문에 맞춰 보세요.\n아래쪽에 완성된 영어를 입력하세요.',
+    decoration:'paint-marks',
+    text:'엽서를 활용해 물감 자국을 완성하면\n무슨 글자가 보이는 것 같아.',
     instruction:'영어 3자리(소문자)',next:'learning-room-trail',
-    geometry:{cat:[40,175,140,154],dialogue:[32,340,436,245],answerForm:[29,605,442,230]} },
+    geometry:{cat:[40,175,140,154],dialogue:[32,340,436,235],answerForm:[29,595,442,230]} },
   { id:'learning-room-trail',sourceNumber:null,type:'dialogue',background:'learning-paint',location:locations.learning.name,
     cat:'bewildered',layout:'arrival',text:'주황색이랑 초록색 자국이\n유아자료실로 이어져!',next:'infant-marker',
     geometry:{cat:[38,391,145,154],dialogue:[32,548,436,210]} },
@@ -123,7 +142,8 @@ export const baseGeometry = {
   dialogue:[32,436,436,210], nextButton:[155,684,194,63],
   locationBanner:[31,64,438,81], answerForm:[29,672,442,100],
   cat:[173,225,162,194], sleeping:[154,226,198,148], staff:[315,217,150,221],
-  comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190]
+  comic:[10,98,480,320], marker:[193,251,227,244], movementControls:[32,625,436,190],
+  tutorialPanel:[32,280,436,493]
 };
 export const movementGeometry = {
   cat:[43,377,135,152], dialogue:[32,167,436,195], marker:[205,370,225,225], movementControls:[32,625,436,190]
@@ -144,11 +164,12 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};
   scene.fontSize=scene.layout==='art'?26:30;
   scene.lineHeight=1.48;
-  scene.flipCat=[18,19,20].includes(scene.sourceNumber);
+  // These source sprites face left. Speakers in the left slot face inward.
+  scene.flipCat=scene.geometry.cat[0]<125;
   scene.backgroundFrame=scene.background==='lobby-sleeping'?'sleeping':scene.background==='lobby'?'empty':'normal';
   scene.dimOpacity=scene.dim ? 0.24 : 0;
   scene.backgroundOpacity=scene.background==='meeting'?0.78:(scene.dim?0.74:0.93);
-  scene.nextLabel='다음';
+  scene.nextLabel??='다음';
   if(scene.sourceNumber===21){scene.fontSize=33;scene.lineHeight=1.35;}
   if(scene.type==='move'){scene.fontSize=24;scene.lineHeight=1.5;scene.textMode='static';}
 }

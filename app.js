@@ -72,6 +72,7 @@ function sceneAssetKeys(s){
   if(s.sleeping)keys.push('actor:sleeping');
   if(s.comic)keys.push(`comic:${s.comic}`);
   if(s.illustration)keys.push(`prop:${s.illustration}`);
+  if(s.decoration)keys.push(`prop:${s.decoration}`);
   if(s.marker)keys.push('prop:marker');
   return keys;
 }
@@ -129,7 +130,7 @@ async function render(){
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
-  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls'])applyRect($(name),s.geometry[name]);
+  for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel'])applyRect($(name),s.geometry[name]);
   $('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -160,11 +161,32 @@ async function render(){
     for(const line of s.titleLines||[s.title]){const span=document.createElement('span');span.textContent=line;heading.append(span);}
     $('startButton').textContent=s.startLabel||'터치해서 시작';
   }
-  $('dialogue').hidden=s.type==='title';$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
+  $('dialogue').hidden=['title','tutorial'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
+  $('tutorialPanel').hidden=s.type!=='tutorial';
+  if(s.type==='tutorial'){
+    $('tutorialTitle').textContent=s.title;
+    $('tutorialCards').replaceChildren();
+    for(const card of s.guideCards||[]){
+      const item=document.createElement('li');
+      const heading=document.createElement('h3');heading.textContent=card.title;
+      const body=document.createElement('p');body.textContent=card.body;
+      item.append(heading,body);$('tutorialCards').append(item);
+    }
+    $('tutorialNote').textContent=s.guideNote||'';
+  }
   $('instruction').hidden=!s.instruction||s.layout==='art';$('instruction').textContent=s.instruction||'';
   $('puzzleIllustration').hidden=!s.illustration;
   if(s.illustration)$('puzzleIllustration').src=imageURL(`prop:${s.illustration}`);
-  $('nextButton').hidden=!['dialogue','comic'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
+  const decoration=$('puzzleDecoration');decoration.hidden=!s.decoration;decoration.replaceChildren();
+  if(s.decoration){
+    const key=`prop:${s.decoration}`,asset=assets[key];
+    const [x,y,w,h]=asset.displayCrop||[0,0,asset.width,asset.height];
+    decoration.style.aspectRatio=`${w} / ${h}`;
+    const im=createImage(key,'decoration-art');
+    Object.assign(im.style,{left:-x/w*100+'%',top:-y/h*100+'%',width:asset.width/w*100+'%',height:asset.height/h*100+'%'});
+    decoration.append(im);
+  }
+  $('nextButton').hidden=!['dialogue','comic','tutorial'].includes(s.type);$('nextButton').textContent=s.nextLabel||'다음';
   $('answerForm').hidden=s.type!=='puzzle';
   $('movementControls').hidden=s.type!=='move';
   $('arrivalQuestion').textContent=s.arrivalQuestion||uiText.arrivalQuestion;

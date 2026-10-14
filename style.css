@@ -253,3 +253,21 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 .keypad-actions>button{min-height:44px;padding:7px;border:1px solid #86a69b;border-radius:12px;background:#edf8ef;color:#2a6658;font-size:19px}
 .keypad-actions>#keypadSubmit{grid-column:1/-1;background:#239c92;color:white;border:2px solid #187c78;min-height:48px;font-size:22px}
 @media(max-height:500px){.hint-illustration,.hint-cat{height:60px}.english-keypad-dialog{padding-top:8px}.english-keypad-dialog h2{font-size:21px}.keypad-value{margin-bottom:8px}}
+/* Show the supplied paint marks above real dialogue text, without the
+   original page's empty margins. The source PNG remains unchanged. */
+.stage[data-layout="art"] .dialogue{display:flex;flex-direction:column;gap:2cqw}
+.stage[data-layout="art"] .dialogue>p{flex:none}
+.puzzle-decoration{position:relative;flex:none;order:-1;width:100%;overflow:hidden;mix-blend-mode:multiply}
+.decoration-art{display:block;position:absolute;max-width:none;object-fit:fill}
+/* Two short, real-text guide pages between the title and the first dialogue. */
+.stage[data-type="tutorial"] .location-banner{font-size:7.4cqw}
+.stage[data-type="tutorial"] .scene-layer{opacity:.35!important}
+.stage[data-type="tutorial"] .next-button{font-size:7cqw}
+.tutorial-panel{position:absolute;z-index:6;display:flex;flex-direction:column;gap:2.5cqw;padding:3.7cqw 4cqw;border:.4cqw solid #231c11;border-radius:4cqw;background:#fff8df;color:#382a1f}
+.tutorial-panel h2{flex:none;margin:0;text-align:center;font-size:6.8cqw;font-weight:400;line-height:1.25;color:#317f73}
+.tutorial-cards{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2cqw;counter-reset:guide}
+.tutorial-cards li{position:relative;counter-increment:guide;border:1px solid #ded0ae;border-radius:2.4cqw;padding:2.1cqw 2.6cqw 2.1cqw 10cqw;background:#fffdf5}
+.tutorial-cards li::before{content:counter(guide);position:absolute;left:2.2cqw;top:2.2cqw;display:grid;place-items:center;width:5.9cqw;height:5.9cqw;border-radius:50%;background:#62a58c;color:white;font-size:4.7cqw;line-height:1}
+.tutorial-cards h3{margin:0 0 1cqw;font-size:4.8cqw;font-weight:400;line-height:1.25;color:#2f695c}
+.tutorial-cards p{margin:0;font-size:4.2cqw;line-height:1.4;white-space:pre-line;word-break:normal}
+.tutorial-note{margin:0;font-size:3.8cqw;line-height:1.4;text-align:center;white-space:pre-line;color:#756048}

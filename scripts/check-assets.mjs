@@ -7,7 +7,7 @@ const used=new Set();
 for(const config of [uiText.successPopup,...Object.values(puzzles).map(p=>p.successPopup)])if(config?.cat)used.add('cat:'+config.cat);
 used.add('cat:neutral');
 for(const s of chapters.flatMap(c=>c.scenes)){
-  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop']]){
+  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop']]){
     if(s[field])used.add(prefix+':'+s[field]);
   }
   if(s.staff)used.add('actor:staff');if(s.sleeping)used.add('actor:sleeping');if(s.marker)used.add('prop:marker');
