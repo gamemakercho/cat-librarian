@@ -92,7 +92,7 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     emphasis:[locations.learning.name,'01'], next: 'learning-intro' },
   { id:'learning-intro', sourceNumber:null, type:'dialogue', background:'learning-clean', location:locations.learning.name,
     cat:'neutral', layout:'arrival',fontSize:30,
-    text:'어린이부터 어른까지 즐길 수 있는\n유익하고 재미있는 프로그램을\n운영하는 곳이야',next:'learning-paint',
+    text:'여기는 어린이부터 어른까지\n즐길 수 있는 유익하고 재미있는\n프로그램을 운영하는 장소야',next:'learning-paint',
     geometry:{cat:[38,345,145,154],dialogue:[32,515,436,240],nextButton:[155,790,194,63]} },
   { id: 'learning-paint', sourceNumber: 24, type: 'dialogue', background: 'learning-paint', location: locations.learning.name,
     cat: 'bewildered', layout: 'arrival',
