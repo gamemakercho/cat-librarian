@@ -31,10 +31,10 @@ test('미리보기 우회는 정답 기록을 만들지 않는다',()=>{
  assert.equal(r.advance({review:true}).scene.id,'learning-intro');
  assert.equal(r.solved.has('learning-marker'),false);
 });
-test('검토 경로는 로비 후속 연결점까지 연결되고 엔딩/처음부터 처리가 없다',()=>{
+test('검토 경로는 마지막 엔딩까지 연결되고 끝 화면에서 자동 초기화하지 않는다',()=>{
  const r=new StoryRuntime(chapters,puzzles);let n=0;
  while(r.scene.next){assert.equal(r.advance({review:true}).ok,true);if(++n>=r.scenes.length)throw Error('진행 루프');}
- assert.equal(r.currentId,'lobby-ending-entry');assert.equal(r.scene.type,'handoff');
+ assert.equal(r.currentId,'ending-complete');assert.equal(r.scene.type,'ending');
  assert.equal(r.advance().reason,'end-of-preview');
 });
 test('새 장면을 추가해도 ID로 진행 위치와 이전 화면을 복구한다',()=>{
@@ -292,7 +292,7 @@ test('색 암호 SVG는 원본의 동일 크기6칸·세로/가로 좌표·최�
 test('PC/신간 네 조합은 중복04 없이 실제 동선으로 로비에 도착한다',()=>{
  for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){
   const options={showDeskInterlude,includeNewBooks},r=new StoryRuntime(createChapters(options),puzzles,{}, {},Math.random,options),visited=[];
-  r.jump('general-room-intro');while(r.scene.next){visited.push(r.currentId);assert(r.advance({review:true}).ok);assert(visited.length<20);}
+  r.jump('general-room-intro');while(r.currentId!=='lobby-ending-entry'){visited.push(r.currentId);assert(r.advance({review:true}).ok);assert(visited.length<20);}
   assert.equal(r.currentId,'lobby-ending-entry');assert.equal(visited.filter(id=>id==='general-room-intro').length,1);
   assert.equal(visited.includes('general-pc-guide'),showDeskInterlude);assert.equal(visited.includes('general-pc-paint'),showDeskInterlude);
   assert.equal(visited.includes('newbooks-intro'),includeNewBooks);assert.equal(visited.length,5+(showDeskInterlude?2:0)+(includeNewBooks?5:0));

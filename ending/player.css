@@ -1,0 +1,8 @@
+@font-face{font-family:HaemiJua;src:url('../assets/fonts/jua-complete.woff') format('woff');font-display:swap}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171c19;color:#fff9e9;font-family:HaemiJua,sans-serif}
+.cinema{height:100%;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 12px max(14px,env(safe-area-inset-bottom));gap:8px}
+.film-label{font-size:13px;letter-spacing:.12em;color:#ddcbaa}.film-stage{position:relative;flex:none;height:min(calc(100dvh - 160px),calc(150vw - 36px));min-height:0;aspect-ratio:2/3;max-width:100%;overflow:hidden;background:#fff4dc;box-shadow:0 15px 50px #0008}
+canvas{display:block;height:100%;width:100%;object-fit:contain}.letterbox{position:absolute;left:0;right:0;height:5%;background:#171c19;pointer-events:none}.letterbox.top{top:0}.letterbox.bottom{bottom:0}
+.film-caption{margin:2px 0;min-height:1.4em;font-size:clamp(16px,4vw,22px);text-align:center}.film-speech{position:absolute;z-index:2;transform:translate(-50%,-100%);white-space:nowrap;font-size:clamp(16px,5vw,24px);padding:8px 16px;border-radius:18px;background:#fff9e9;color:#3b3027;border:2px solid #705143;box-shadow:0 2px 6px #0002}
+button{background:transparent;border:1px solid #bfae91;border-radius:22px;color:inherit;min-height:44px;padding:8px 23px;font:inherit;cursor:pointer}button:focus-visible{outline:3px solid #8fe5cc;outline-offset:3px}[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

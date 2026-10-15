@@ -1,0 +1,112 @@
+{
+  "retrieved": "2026-10-15",
+  "sourceCommit": "17041a6a112d632342f394ed36611212d7ffaf0d",
+  "files": [
+    {
+      "source": "https://gamemakercho.github.io/library/playable/engine.js",
+      "sha256": "a0fc9523551f86062d15b665f4a1aad8a30f135355e379a84897c8af63f27fb3",
+      "bytes": 8831
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/playable/scene-config.js",
+      "sha256": "f3e07cd612a57bfe9923bff99bfddb9bb9def7e8c9863d5def82d3948e0f1471",
+      "bytes": 1107
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/playable/renderer.js",
+      "sha256": "baa0eaa6a088be5bb6b21642a18129999a6bae9a7414b0db335246f08f1b7e14",
+      "bytes": 6722
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/playable/impact-cutin.js",
+      "sha256": "a67e7a3a1a3307e2c617883635f4cd12f19d847abfc5bd3b8a78ac3696831ab4",
+      "bytes": 4326
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/playable/asset-loader.js",
+      "sha256": "cf253783e62d40014b9f9705c3ab3c73a73d83be9c0260f32e315b0276af888a",
+      "bytes": 8985
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/assets/staircase-background.png",
+      "originalBytes": 1829956,
+      "runtimeBytes": 91226,
+      "sourceDimensions": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/assets/librarian-actions.png",
+      "originalBytes": 1525794,
+      "runtimeBytes": 304040,
+      "sourceDimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/assets/cat-actions.png",
+      "originalBytes": 873847,
+      "runtimeBytes": 171370,
+      "sourceDimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/assets/librarian-run-8frames.png",
+      "originalBytes": 2125849,
+      "runtimeBytes": 300628,
+      "sourceDimensions": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "source": "https://gamemakercho.github.io/library/assets/forehead-bump-cutin.png",
+      "originalBytes": 2049320,
+      "runtimeBytes": 336032,
+      "sourceDimensions": [
+        1254,
+        1254
+      ]
+    }
+  ],
+  "notes": "Original engine, renderer, and measured forehead geometry retained. Story wrapper overrides the run path to approach Churu on the lobby floor before an accidental trip and attempted catch. Churu is drawn as a tiny canvas prop with no additional image request. Source hosted game is unchanged.",
+  "revision": "v15-20261015-1108",
+  "userSuppliedImpact": {
+    "sourceFile": "제목을 입력하세요 (15).png",
+    "originalSha256": "dc023388bfdcc77306399cd04f7ac418cfd61fee36c5992d1e698cf9da4341d7",
+    "runtimeFile": "assets/postcard-impact.webp",
+    "runtimeSha256": "29890845e70dbe2bf7c7a83877cc11dd84cb547c6229aa7983e017d6493a459f",
+    "display": {
+      "sourceFile": "제목을 입력하세요 (15).png",
+      "canvas_size": [
+        737,
+        1020
+      ],
+      "content_rect": [
+        122,
+        328,
+        536,
+        323
+      ],
+      "note": "원본 캐릭터/충돌 모양을 재그리지 않고 표시용 viewport만 지정함. 정답 확인 뒤에만 내려받음."
+    }
+  },
+  "playbackParts": [
+    "approach stops at contact without impact or recovery",
+    "restore starts at contact only after confirmed postcard answer",
+    "full replays the completed ending"
+  ],
+  "endingCause": {
+    "attraction": "로비 바닥의 츄르",
+    "runner": "고양이 영혼이 든 사서 몸",
+    "trip": "먹으려고 달려오다가 실수로 넘어짐",
+    "rescuer": "사서 영혼이 든 고양이 몸",
+    "line": "안 돼!",
+    "collision": "받아주려다가 두 머리가 부딪힘",
+    "openingUnchanged": true
+  }
+}

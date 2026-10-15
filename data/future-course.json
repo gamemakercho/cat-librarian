@@ -1,5 +1,5 @@
 {
-  "implementedInThisKit": false,
+  "implementedInThisKit": true,
   "implementedSegments": [
     "초반 24장",
     "평생학습실 ART",
@@ -10,7 +10,9 @@
     "종합자료실 04 도착 소개·서가 안내·선택 PC 대화",
     "종합자료실 임시 숫자 문제·책 받기·성공 결과 진행",
     "선택 신간코너 05 소개·임시 숫자 문제·책 꽂기·성공 결과 진행",
-    "1층 로비 도착 연결점"
+    "1층 로비 츄르 질주·구출·접촉 정지",
+    "마지막 엽서 접기 문제·정답 확정 뒤 충돌/몸 복구",
+    "사람 사서 감사·엔딩·다시 보기"
   ],
   "route": [
     "로비",
@@ -47,7 +49,7 @@
     "PC 중간 대화 포함 여부 최종 확정",
     "신간코너 포함 여부",
     "신간코너 상세 위치와05번 현장 마크 설치",
-    "마지막 엽서 접기·엔딩 구현"
+    "실제 스마트폰/실물 엽서·이번 버전 공개 배포 확인"
   ],
   "cleaningMiniGameFlow": [
     "게임 시작 전 연결 대사와 전용 시작 버튼",
@@ -60,9 +62,9 @@
     "cleaning": "https://gamemakercho.github.io/cleaning-game/",
     "bookCatch": "./games/book-catch/",
     "reshelving": "./games/book-order/",
-    "ending": "https://gamemakercho.github.io/library/"
+    "ending": "./ending/"
   },
-  "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 칭찬 팝업의 다음으로 버튼을 누르면 충돌 자동 연출. 현재 게임에는 미구현.",
+  "ending": "로비의 츄르를 먹으려는 질주→실수로 넘어짐→고양이 몸의 사서가 받으려다 우연히 머리 접촉→정지→엽서 문제→정답 팝업 다음으로→꽝 그림/몸 복구→사람 사서 감사/엔딩",
   "minigameClearKeywords": {
     "cleaning": null,
     "bookCatch": null,
@@ -81,7 +83,7 @@
     "bookOrder": {"mode": "result", "correctOrder": ["000", "100", "200", "300", "400", "500", "600", "700", "800", "900"]}
   },
   "currentFollowupHook": {
-    "sceneId": "lobby-ending-entry",
+    "sceneId": "ending-complete",
     "next": null
   },
   "coursePreview": {

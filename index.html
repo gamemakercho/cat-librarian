@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fbf3df">
   <title>고양이가 된 사서</title>
-  <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 1~24번 화면을 분리된 배경과 표정, 실제 대사로 구현한 초반부 시안입니다.">
+  <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -110,6 +110,19 @@
         <button id="successNextButton" class="dialog-action" type="button" autofocus>다음으로</button>
       </dialog>
       <div id="loading" class="loading" role="status" hidden>장면을 불러오고 있어요…</div>
+      <img id="endingContactStill" class="ending-contact-still" alt="두 인물의 머리가 맞닿으며 잠시 멈춘 장면" hidden>
+      <section id="endingFoldActions" class="ending-fold-actions" hidden><button id="openFoldGuide" type="button" aria-label="접기 그림 크게 보기"><img id="foldHintImage" alt="엽서의 노란 두 귀퉁이를 종이 뒤쪽으로 접는 그림"></button><p>노란 두 귀퉁이를 뒤로 접어 봐</p></section>
+      <section id="endingCinemaActions" class="ending-cinema-actions" hidden><button id="endingPlay" type="button">마지막 장면 보기</button></section>
+      <section id="endingCard" class="ending-card" hidden aria-labelledby="endingTitle">
+        <p class="ending-eyebrow">처음의 물음표가, 마지막의 느낌표로</p>
+        <div class="ending-punctuation" aria-hidden="true"><span>?</span><span>→</span><strong>!</strong></div>
+        <h1 id="endingTitle">고양이와 사서가<br>돌아왔다!</h1>
+        <p class="ending-thanks">오늘 도서관을 지켜 줘서 고마워요</p>
+        <p class="ending-credit">고양이가 된 사서 · 해미도서관</p>
+        <button id="endingReplay" type="button">마지막 장면 다시 보기</button>
+        <button id="endingFoldAgain" type="button">엽서 접기 다시 보기</button>
+        <button id="endingRestart" type="button">이야기 처음부터</button>
+      </section>
     </section>
           <nav class="player-tools" aria-label="진행 도구">
         <button id="backButton" type="button" class="small-control" aria-label="이전 장면">이전 화면</button>
@@ -118,9 +131,9 @@
       </nav>
     </div>
     <aside id="reviewPanel" class="review-panel" hidden aria-label="제작자 화면 확인">
-      <p class="eyebrow">초반부 · 제작자 미리보기</p>
+      <p class="eyebrow">전체 이야기 · 제작자 미리보기</p>
       <h2>고양이가 된 사서</h2>
-      <p class="review-intro">첨부 1~24번을 실제 대사와 표정으로 재현했어요. 장면을 골라 확인해 보세요.</p>
+      <p class="review-intro">첨부 1~24번과 마지막 엽서 문제, 엔딩까지 장면을 골라 확인해 보세요.</p>
       <label for="sceneSelect">화면 선택</label>
       <select id="sceneSelect"></select>
       <div class="review-actions"><button id="reviewBack" type="button">이전 화면</button><button id="reviewNext" type="button">다음 화면</button></div>
@@ -128,7 +141,7 @@
       <p id="reviewWarning" class="review-warning" hidden></p>
       <button id="bypassButton" class="bypass-button" type="button" hidden>정답 없이 다음 장면 확인</button>
       <details class="reference-details"><summary>첨부 원본과 비교</summary><p>제공된 원본의 압축 비교본을 같은 비율로 표시합니다.</p><p id="noReference" hidden>이번에 추가한 장면은 기존 24장에 비교본이 없습니다.</p></details>
-      <details><summary>이번 시안의 범위</summary><p>처음 만남, 네 컷 회상, 로비 엽서 문제, 평생학습실의 실제 안내문·엽서 문제, 유아자료실 02 도착 확인까지입니다. 이후 문제와 미니게임은 준비 중입니다.</p><p>도착 확인은 퍼즐 정답 기록과 구분됩니다.</p></details>
+      <details><summary>이번 시안의 범위</summary><p>처음 만남부터 마지막 엽서 접기와 몸이 돌아오는 장면, 감사 인사와 엔딩까지 이어져요. 종합자료실과 신간코너의 현장 문제는 임시 문제예요.</p><p>도착 확인은 퍼즐 정답 기록과 구분됩니다.</p></details>
       <div class="review-links"><a href="?">게임 화면만 보기</a></div>
       <p id="assetStats" class="asset-stats"></p>
     </aside>
@@ -138,6 +151,17 @@
     <header id="minigameHeader" class="minigame-header" hidden><button id="returnToStory" type="button">이야기로 돌아가기</button><span id="minigameTitle"></span></header>
     <div id="minigameLoadError" class="minigame-load-error" role="alert" hidden><span>게임을 불러오지 못했어 연결을 확인하고 다시 시도해 줘</span><button id="retryMinigame" type="button">다시 불러오기</button></div>
     <iframe id="minigameFrame" title="우당탕! 물감 청소 게임"></iframe>
+  </section>
+  <dialog id="foldGuideDialog" class="fold-guide-dialog" aria-labelledby="foldStepTitle">
+    <header><h2 id="foldStepTitle">엽서 접는 방법</h2><button id="foldGuideClose" type="button" aria-label="접기 안내 닫기">닫기</button></header>
+    <p id="foldStepBody"></p><img id="foldStepImage" alt="엽서 접기 단계 안내" draggable="false">
+    <footer><button id="foldStepPrevious" type="button">이전 그림</button><span id="foldStepCount" role="status">1 / 2</span><button id="foldStepNext" type="button">다음 그림</button></footer>
+  </dialog>
+  <section id="endingCinemaOverlay" class="ending-cinema-overlay" role="dialog" aria-modal="true" aria-label="마지막 이야기 연출" hidden>
+    <header><span id="endingCinemaLabel">아직 끝나지 않은 이야기</span><button id="endingClose" type="button">이야기로 돌아가기</button></header>
+    <iframe id="endingFrame" title="사서와 고양이가 원래 몸으로 돌아오는 마지막 장면"></iframe>
+    <p id="endingLoading" class="ending-load" role="status">마지막 장면을 준비하고 있어요…</p>
+    <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
   <script type="module" src="app.js"></script>

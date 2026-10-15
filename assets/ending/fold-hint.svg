@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="470" height="220" viewBox="0 0 470 220" role="img" aria-label="엽서의 노란 두 귀퉁이를 뒤로 접는 힌트"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#178977"/></marker>
+<g id="paper"><rect width="260" height="360" fill="#fff" stroke="#91a49b" stroke-width="2"/><path d="M80.4 0H260V179.6Z M0 181.8V360H178.2Z" fill="#ffdf72"/><path d="M80.4 0L260 179.6M0 181.8L178.2 360" fill="none" stroke="#d69d39" stroke-width="2" stroke-dasharray="7 6"/></g>
+<g id="fold"><path d="M0 0H80.4L260 179.6V360H178.2L0 181.8Z" fill="#fff" stroke="#91a49b" stroke-width="2"/>
+<path d="M80.4 0H260V179.6Z M0 181.8V360H178.2Z" fill="#ffdf72" fill-opacity=".18" stroke="#91a49b" stroke-width="2" stroke-dasharray="6 6"/>
+<path d="M80.4 0L260 179.6M0 181.8L178.2 360" stroke="#d69d39" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M182 65C280 38 299 145 235 140M65 285C-20 322-35 216 24 223" fill="none" stroke="#178977" stroke-width="4" marker-end="url(#arrow)"/></g></defs><g transform="translate(20 10) scale(.55)"><use xlink:href="#paper"/></g><path d="M202 106H240" stroke="#9aab9e" stroke-width="3" marker-end="url(#arrow)"/><g transform="translate(285 10) scale(.55)"><use xlink:href="#fold"/></g></svg>

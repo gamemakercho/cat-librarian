@@ -12,6 +12,7 @@ for(const s of chapters.flatMap(c=>c.scenes)){
   for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop'],['cipher','prop']]){
     if(s[field])used.add(prefix+':'+s[field]);
   }
+  if(s.actor)used.add('actor:'+s.actor);
   if(s.staff)used.add('actor:staff');if(s.sleeping)used.add('actor:sleeping');if(s.marker)used.add('prop:marker');
 }
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);
@@ -38,3 +39,5 @@ for(const asset of [...games.assets,...games.unchangedRules]){
  if(createHash('sha256').update(file).digest('hex')!==asset.sha256)throw Error('게임 자산/원본 판정 변경 '+asset.file);
 }
 console.log(JSON.stringify({gameAssets:games.assets.length,gameAssetBytes:games.assets.reduce((sum,a)=>sum+a.bytes,0),unchangedRuleFiles:games.unchangedRules.length}));
+
+await import('./check-ending.mjs');

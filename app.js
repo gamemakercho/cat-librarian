@@ -2,6 +2,8 @@ import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
 import {isMinigameReturn,isMinigameMessage,MINIGAME_CLEAR} from './minigame-bridge.js';
+import {createEndingUI} from './ending-ui.js';
+import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -19,6 +21,7 @@ if(review&&params.has('scene')){
   const requested=sourceScenes.find(s=>s.sourceNumber===Number(params.get('scene')));
   if(requested&&requested.id!==runtime.currentId)runtime.jump(requested.id);
 }
+if(review&&params.has('sceneId')&&runtime.index.has(params.get('sceneId')))runtime.jump(params.get('sceneId'));
 let hintLevel=0;
 let locationHintLevel=0;
 let composing=false;
@@ -38,6 +41,14 @@ const imageCache=new Map();
 const elementCache=new Map();
 const clipCache=new Map();
 const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
+  getPoster:()=>runtime.endingContactPoster,
+  canRestore:()=>runtime.solved.has(ENDING_PUZZLE_ID),
+  isCompleted:()=>runtime.scene.cinematicPart==='approach'?runtime.flags.endingContactReached===true:runtime.flags.endingRescueComplete===true,
+  onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
+  onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
+  onReplay:()=>advance(),onRestart:()=>restart()});
 
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}}
 function imageURL(key){if(!assets[key])throw Error(`자산 없음: ${key}`);return assets[key].src;}
@@ -60,6 +71,18 @@ function createImage(key,className,alt=''){
   const cacheKey=key+'|'+className;
   if(elementCache.has(cacheKey))return elementCache.get(cacheKey);
   const render=assets[key].render;
+  if(render?.crop){
+    const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox',render.crop.join(' '));svg.setAttribute('class',className);svg.setAttribute('preserveAspectRatio','xMidYMax meet');
+    svg.setAttribute('aria-hidden','true');svg.style.overflow='hidden';
+    const source=document.createElementNS(ns,'image');source.setAttribute('href',imageURL(key));source.setAttribute('width',assets[key].width);source.setAttribute('height',assets[key].height);svg.append(source);
+    if(render.cropClip){
+      const defs=document.createElementNS(ns,'defs'),clip=document.createElementNS(ns,'clipPath'),polygon=document.createElementNS(ns,'polygon');
+      clip.id='crop-'+key.replace(/[^a-z0-9-]/gi,'-');clip.setAttribute('clipPathUnits','userSpaceOnUse');
+      polygon.setAttribute('points',render.cropClip.map(point=>point.join(',')).join(' '));clip.append(polygon);defs.append(clip);svg.prepend(defs);source.setAttribute('clip-path',`url(#${clip.id})`);
+    }
+    elementCache.set(cacheKey,svg);return svg;
+  }
   if(render){
     const ns='http://www.w3.org/2000/svg';
     const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox',render.viewBox.join(' '));svg.setAttribute('preserveAspectRatio','xMidYMax meet');svg.setAttribute('class',className);svg.setAttribute('aria-hidden','true');
@@ -77,6 +100,7 @@ function sceneAssetKeys(s){
   if(s.cat)keys.push(`cat:${s.cat}`);
   if(s.staff)keys.push('actor:staff');
   if(s.sleeping)keys.push('actor:sleeping');
+  if(s.actor)keys.push(`actor:${s.actor}`);
   if(s.comic)keys.push(`comic:${s.comic}`);
   if(s.illustration)keys.push(`prop:${s.illustration}`);
   if(s.decoration)keys.push(`prop:${s.decoration}`);
@@ -134,7 +158,7 @@ function advance(opts={}){
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  closeMinigame();
+  closeMinigame();endingUI.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;
@@ -165,6 +189,7 @@ async function render(){
   if(s.sleeping){const im=createImage('actor:sleeping','character sleeping');applyRect(im,s.geometry.sleeping);cl.append(im);}
   if(s.staff){const im=createImage('actor:staff','character staff');applyRect(im,s.geometry.staff);cl.append(im);}
   if(s.cat){const im=createImage(`cat:${s.cat}`,'character cat');applyRect(im,s.geometry.cat);im.style.transform=s.flipCat?'scaleX(-1)':'';cl.append(im);}
+  if(s.actor){const im=createImage(`actor:${s.actor}`,'character ending-actor');applyRect(im,s.geometry.actor);cl.append(im);}
   if(s.comic){const im=createImage(`comic:${s.comic}`,'comic-panel'+(s.effect?' bump':''));applyRect(im,s.geometry.comic);cl.append(im);}
   if(s.marker){const marker=createMarker(s);applyRect(marker,s.geometry.marker);$('effectLayer').append(marker);}
   $('effectLayer').className='effect-layer';
@@ -180,7 +205,7 @@ async function render(){
     for(const line of s.titleLines||[s.title]){const span=document.createElement('span');span.textContent=line;heading.append(span);}
     $('startButton').textContent=s.startLabel||'터치해서 시작';
   }
-  $('dialogue').hidden=['title','tutorial','handoff'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
+  $('dialogue').hidden=['title','tutorial','handoff','ending'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
   $('tutorialPanel').hidden=s.type!=='tutorial';
   if(s.type==='tutorial'){
     $('tutorialTitle').textContent=s.title;
@@ -245,11 +270,11 @@ async function render(){
   $('answer').autocomplete='off';$('answer').spellcheck=false;$('answer').enterKeyHint='done';
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
-  renderedScene=s;updateReview(s);
+  renderedScene=s;updateReview(s);endingUI.render(s);
   if(runtime.pendingSuccessId===s.id)showSuccess();
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
-  if(s.next && !['puzzle','move','continuation','minigame'].includes(s.type)){
+  if(s.next && !['puzzle','move','continuation','minigame','cinematic','ending'].includes(s.type)){
     const next=runtime.index.get(s.next);
     if(next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
   }

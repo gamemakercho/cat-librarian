@@ -3,7 +3,8 @@
 import {iconCatalog} from './icon-catalog.js';
 import {createGeneralScenes,generalPuzzles} from './general-course.js';
 import {normalizeCourseOptions} from './course-config.js';
-export const STORY_VERSION = 'opening-source-24-result-games-v13-20261015';
+import {endingPuzzle,endingPuzzleId} from './ending-course.js';
+export const STORY_VERSION = 'opening-source-24-ending-v15-20261015';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -183,6 +184,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
 // 도착 확인과 제작자 장면 이동은 퍼즐 정답 성공 기록을 만들지 않습니다.
 export const puzzles = {
   ...generalPuzzles,
+  [endingPuzzleId]:endingPuzzle,
   'postcard-heading': {
     status: 'confirmed', acceptedAnswers: ['고양이와 사서가 뒤바뀌었다'],
     placeholder: '엽서 상단 문구',

@@ -1,4 +1,5 @@
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
+import {createEndingScenes} from './ending-course.js';
 const dialogue={cat:[38,345,145,154],dialogue:[32,515,436,230],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[43,428,135,152],marker:[205,425,225,225],movementControls:[32,685,436,180]};
 const gameGeometry={cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,175]};
@@ -50,8 +51,7 @@ export function createGeneralScenes(value){
     destination:'1층 로비',marker:false,guideText:`책도 제자리!\n이제 내 몸도 제자리로 돌려놓자\n\n${lobbyGuide}`,
     locationHints:['계단을 내려가 처음 만났던 1층 로비로 이동하세요'],next:'lobby-ending-entry',geometry:{...movement,cat:[180,450,140,150]}}
   ]:[]),
-  // The existing project has no implemented final-fold/ending scene yet.
-  {id:'lobby-ending-entry',type:'handoff',background:'lobby',location:'1층 로비',text:'',next:null}
+  ...createEndingScenes()
  ];
  return scenes.map(s=>({sourceNumber:null,nextLabel:'다음으로',...s}));
 }

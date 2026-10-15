@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test scripts/engine.test.mjs",
+    "test": "node --test scripts/*.test.mjs",
     "check": "node scripts/check-assets.mjs",
     "serve": "node server.mjs"
   }

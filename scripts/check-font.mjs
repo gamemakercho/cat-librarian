@@ -44,7 +44,7 @@ for(let i=0;i<cmap.readUInt16BE(2);i++){
     }
   }
 }
-const content=JSON.stringify({chapters,puzzles,uiText})+readFileSync(resolve(root,'app.js'),'utf8')+readFileSync(resolve(root,'index.html'),'utf8');
+const content=JSON.stringify({chapters,puzzles,uiText})+['app.js','index.html','ending-ui.js','ending/player.js','ending/churu-finale.js','ending/index.html'].map(file=>readFileSync(resolve(root,file),'utf8')).join('');
 const korean=new Set(content.match(/[\uAC00-\uD7A3]/gu)||[]);
 const missing=[...korean].filter(char=>!codepoints.has(char.codePointAt(0)));
 if(missing.length)throw Error('게임 폰트에 없는 한글: '+missing.join(' '));
