@@ -61,9 +61,12 @@ export class StoryRuntime {
     this.history = (snapshot.history ?? []).filter(id => this.index.has(id)).slice(-200);
     this.pendingSuccess = null;
     const pending = snapshot.pendingSuccess;
-    if (['puzzle','minigame'].includes(this.scene.type) && pending?.fromSceneId===this.currentId && pending.puzzleId===this.scene.puzzleId) {
+    // These two games used to wait for a keyword popup. Keep their clear proof,
+    // but discard that obsolete popup without affecting legacy cleaning saves.
+    const resultGame=this.scene.type==='minigame'&&puzzles[this.scene.puzzleId]?.completionMode==='result'&&Boolean(puzzles[this.scene.puzzleId]?.resultKind);
+    if (!resultGame && ['puzzle','minigame'].includes(this.scene.type) && pending?.fromSceneId===this.currentId && pending.puzzleId===this.scene.puzzleId) {
       this.pendingSuccess = {...pending, nextSceneId:this.index.has(pending.nextSceneId)?pending.nextSceneId:this.scene.next};
-    } else if (snapshot.pendingSuccessId===this.currentId && ['puzzle','minigame'].includes(this.scene.type) && this.solved.has(this.scene.puzzleId)) {
+    } else if (!resultGame && snapshot.pendingSuccessId===this.currentId && ['puzzle','minigame'].includes(this.scene.type) && this.solved.has(this.scene.puzzleId)) {
       // v3/v5 saved a solved record before the popup was confirmed.
       this.pendingSuccess = this.createPendingSuccess();
     }
@@ -107,10 +110,10 @@ export class StoryRuntime {
       popup:{...this.successDefaults,...this.puzzles[s.puzzleId]?.successPopup,...s.successPopup}};
   }
   snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults, flags:this.flags,sceneStates:this.sceneStates,runId:this.runId,courseOptions:this.courseOptions }; }
-  completeMinigame(result) {
+  completeMinigame(result,{recordOnly=false}={}) {
     const s=this.scene,p=this.puzzles[s.puzzleId];
     if(s.type!=='minigame'||!(p?.completionMode==='result'||p?.requiresGameClear)||!isMinigameClear(result,p))return {ok:false,reason:'game-clear-required'};
-    this.minigameResults[s.puzzleId]={...result};if(p.completionMode==='result')this.solved.add(s.puzzleId);
+    this.minigameResults[s.puzzleId]={...result};if(p.completionMode==='result'&&!recordOnly)this.solved.add(s.puzzleId);
     return {ok:true};
   }
   advance({ review = false, arrived = false, minigameReturned = false } = {}) {
@@ -133,6 +136,7 @@ export class StoryRuntime {
     const s = this.scene;
     if (!['puzzle','minigame'].includes(s.type)) return {ok:false,reason:'not-a-puzzle'};
     const p = this.puzzles[s.puzzleId];
+    if(s.type==='minigame'&&p.completionMode==='result')return {ok:false,reason:'game-clear-required'};
     if(p.requiresGameClear&&!isMinigameClear(this.minigameResults[s.puzzleId],p))return {ok:false,reason:'game-clear-required'};
     if(p.repairFlag&&this.flags[p.repairFlag])return {ok:false,reason:'already-repaired'};
     if(p.repairFlag&&typeof value!=='string')return {ok:false,reason:'incorrect'};

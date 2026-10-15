@@ -189,7 +189,7 @@ test('깨진 아이콘 상태만 복구하고 다른 풀이·저장 위치는 �
 });
 test('청소 키워드는 null이고 B 이상 실제 결과 없이 복귀로 우회하지 못한다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('infant-cleaning-bridge');
- for(const keyword of ['뿌듯','반짝','깨끗이'])assert.equal(r.submit(keyword).reason,'not-configured');
+ for(const keyword of ['뿌듯','반짝','깨끗이'])assert.equal(r.submit(keyword).reason,'game-clear-required');
  assert.equal(r.advance().reason,'game-clear-required');assert.equal(r.advance({minigameReturned:true}).reason,'game-clear-required');assert.equal(r.solved.size,0);
  for(const result of [{grade:'C',cleared:false,generated:100,cleaned:69,remaining:31,ratio:.69},
    {grade:'B',cleared:true,generated:100,cleaned:69,remaining:31,ratio:.69},
@@ -310,24 +310,43 @@ test('숫자 문제만 NFKC/공백 규칙을 쓰고 두 문제의 풀이/입력/
  r.confirmSuccess();assert(r.solved.has('general-room-placeholder-v1'));assert(r.solved.has('newbooks-placeholder-v1'));
  r.jump('learning-room-art');assert.equal(r.submit('2').ok,false);r.jump('sterilizer-color-puzzle');assert.equal(r.submit('2').ok,false);
 });
-test('미니게임 성공은 기록만 남기고 키워드와 팝업 다음에서만 진행한다',()=>{
+test('책 받기는20권 클리어 뒤 결과 확인에서만 진행하고 키워드 입력을 받지 않는다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('general-book-catch');
- assert.equal(r.submit('뿌듯').reason,'game-clear-required');assert.equal(r.advance().reason,'answer-required');
+ assert.deepEqual(puzzles[r.scene.puzzleId].acceptedAnswers,[]);
+ assert.equal(r.submit('뿌듯').reason,'game-clear-required');assert.equal(r.advance().reason,'game-clear-required');
  assert.equal(r.completeMinigame({kind:'book-catch',cleared:false,score:19,elapsedMs:30000,totalBooks:30,missed:2}).ok,false);
+ assert.equal(r.completeMinigame({kind:'book-catch',cleared:true,score:19,elapsedMs:30000,totalBooks:30,missed:2}).ok,false);
  const clear={kind:'book-catch',cleared:true,score:20,elapsedMs:32000,totalBooks:30,missed:2};
- assert(r.completeMinigame(clear).ok);assert(!r.solved.has('book-catch-keyword'));assert.equal(r.currentId,'general-book-catch');
- assert.equal(r.submit('제자리').reason,'incorrect');assert(r.submit('뿌 듯！').ok);assert.equal(r.pendingSuccess.popup.title,'훌륭해!');
+ assert(r.completeMinigame(clear,{recordOnly:true}).ok);assert(!r.solved.has('book-catch-keyword'));assert.equal(r.currentId,'general-book-catch');
+ assert.equal(r.advance().reason,'game-clear-required');assert.equal(r.pendingSuccess,null);
+ assert.equal(r.submit('뿌듯').reason,'game-clear-required');
  const restored=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(restored.currentId,'general-book-catch');
- assert.equal(restored.advance().reason,'success-confirmation-required');assert.equal(restored.confirmSuccess().scene.id,'general-after-catch');assert(restored.solved.has('book-catch-keyword'));
+ assert.deepEqual(restored.minigameResults['book-catch-keyword'],clear);assert.equal(restored.advance().reason,'game-clear-required');
+ assert(restored.completeMinigame(clear).ok);assert.equal(restored.currentId,'general-book-catch');assert.equal(restored.advance().scene.id,'general-after-catch');assert(restored.solved.has('book-catch-keyword'));
  assert.equal(restored.confirmSuccess().reason,'no-pending-success');
 });
-test('책 꽂기는 실제10권 완료 배열만 인정하고 다른 게임 결과/키워드를 받지 않는다',()=>{
+test('책 꽂기는 실제10권 완료 배열만 인정하고 성공 결과 확인으로 다음 이야기를 연다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('newbooks-order-game');const shelf=puzzles['book-order-keyword'].correctOrder;
+ assert.deepEqual(puzzles[r.scene.puzzleId].acceptedAnswers,[]);
  assert.equal(r.completeMinigame({kind:'book-catch',cleared:true,score:100,elapsedMs:30000,totalBooks:100,missed:0}).ok,false);
  assert.equal(r.completeMinigame({kind:'book-order',cleared:true,complete:true,shelf:[...shelf].reverse(),cart:Array(10).fill(null)}).ok,false);
  assert(r.completeMinigame({kind:'book-order',cleared:true,complete:true,shelf:[...shelf],cart:Array(10).fill(null)}).ok);
- assert.equal(r.submit('뿌듯').reason,'incorrect');assert(r.submit('제 자 리？！').ok);assert.equal(r.currentId,'newbooks-order-game');
- assert.equal(r.confirmSuccess().scene.id,'newbooks-after-order');assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'lobby-ending-entry');
+ assert.equal(r.submit('제자리').reason,'game-clear-required');assert.equal(r.pendingSuccess,null);assert.equal(r.currentId,'newbooks-order-game');
+ assert.equal(r.advance().scene.id,'newbooks-after-order');assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'lobby-ending-entry');
+});
+
+test('옛2층 키워드 팝업은 제거하되 클리어 증거·앞선 풀이·runId는 보존한다',()=>{
+ for(const [id,proof] of [['general-book-catch',{kind:'book-catch',cleared:true,score:20,elapsedMs:32000,totalBooks:30,missed:2}],
+  ['newbooks-order-game',{kind:'book-order',cleared:true,complete:true,shelf:puzzles['book-order-keyword'].correctOrder,cart:Array(10).fill(null)}]]){
+  const original=new StoryRuntime(chapters,puzzles);original.jump(id);const s=original.snapshot(),puzzleId=original.scene.puzzleId;
+  s.minigameResults[puzzleId]=proof;s.sceneStates[id]={answer:'옛 키워드'};s.solved=['learning-room-art'];
+  s.pendingSuccessId=id;s.pendingSuccess={fromSceneId:id,puzzleId,nextSceneId:original.scene.next,popup:{title:'훌륭해!'}};
+  const restored=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(s)));
+  assert.equal(restored.currentId,id);assert.equal(restored.pendingSuccess,null);assert.equal(restored.runId,s.runId);
+  assert(restored.solved.has('learning-room-art'));assert.deepEqual(restored.minigameResults[puzzleId],proof);
+  assert(restored.completeMinigame(proof).ok);assert.equal(restored.advance().scene.id,original.scene.next);
+  s.minigameResults={};const invalid=new StoryRuntime(chapters,puzzles,s);assert.equal(invalid.pendingSuccess,null);assert.equal(invalid.advance().reason,'game-clear-required');
+ }
 });
 test('한 플레이의 설정/runId를 복구하고 새 전체 플레이는 새 미니게임 저장공간을 쓴다',()=>{
  const options=normalizeCourseOptions({showDeskInterlude:false,includeNewBooks:false});

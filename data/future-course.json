@@ -8,8 +8,8 @@
     "청소 게임 시작/복귀",
     "청소 완료 뒤 책소독기 03 이동·색 암호·수리",
     "종합자료실 04 도착 소개·서가 안내·선택 PC 대화",
-    "종합자료실 임시 숫자 문제·책 받기·키워드 칭찬",
-    "선택 신간코너 05 소개·임시 숫자 문제·책 꽂기·키워드 칭찬",
+    "종합자료실 임시 숫자 문제·책 받기·성공 결과 진행",
+    "선택 신간코너 05 소개·임시 숫자 문제·책 꽂기·성공 결과 진행",
     "1층 로비 도착 연결점"
   ],
   "route": [
@@ -47,7 +47,6 @@
     "PC 중간 대화 포함 여부 최종 확정",
     "신간코너 포함 여부",
     "신간코너 상세 위치와05번 현장 마크 설치",
-    "책 받기·책 꽂기 키워드 최종 확정",
     "마지막 엽서 접기·엔딩 구현"
   ],
   "cleaningMiniGameFlow": [
@@ -57,7 +56,6 @@
     "클리어 결과 위쪽 큰 성공! 사서를 따라가자!·아래 아주 작은 다시하기 글씨",
     "복귀 버튼에서만 실제 성공 결과 메시지를 보내고 다음 이야기로 진행"
   ],
-  "bookCatchExampleKeyword": "뿌듯 (예시, 확정 아님)",
   "urls": {
     "cleaning": "https://gamemakercho.github.io/cleaning-game/",
     "bookCatch": "./games/book-catch/",
@@ -66,7 +64,9 @@
   },
   "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 칭찬 팝업의 다음으로 버튼을 누르면 충돌 자동 연출. 현재 게임에는 미구현.",
   "minigameClearKeywords": {
-    "cleaning": null
+    "cleaning": null,
+    "bookCatch": null,
+    "bookOrder": null
   },
   "minigameCompletion": {
     "cleaning": {
@@ -76,7 +76,9 @@
         "A",
         "B"
       ]
-    }
+    },
+    "bookCatch": {"mode": "result", "target": 20},
+    "bookOrder": {"mode": "result", "correctOrder": ["000", "100", "200", "300", "400", "500", "600", "700", "800", "900"]}
   },
   "currentFollowupHook": {
     "sceneId": "lobby-ending-entry",
@@ -94,16 +96,15 @@
     "general-room-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"},
     "newbooks-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"}
   },
-  "previewGameKeywords": {
-    "book-catch-keyword": {"word": "뿌듯", "status": "시안·최종 확정 전"},
-    "book-order-keyword": {"word": "제자리", "status": "시안·최종 확정 전"}
-  },
-  "keywordGameFlow": {
-    "userChoice": "ZIP처럼 키워드 입력 후 진행",
-    "outerReturnAlwaysAvailable": true,
+  "resultGameFlow": {
+    "userChoice": "2층도1층 청소처럼 클리어 결과 버튼으로 진행",
+    "outerReturnAlwaysAvailable": false,
     "clearEventAdvancesStory": false,
     "requiresActualClear": true,
-    "sequence": ["시작 버튼", "게임 성공 화면에서 키워드 확인", "동일 입력 장면으로 복귀", "키워드 입력", "삼색 고양이 칭찬 팝업", "다음으로에서 이동"],
+    "keywordInput": false,
+    "primaryLabel": "성공! 사서를 따라가자!",
+    "retryLabel": "다시하기",
+    "sequence": ["시작 버튼", "클리어 기준 달성", "성공 결과 버튼", "다음 이동 장면"],
     "newPlayIsolation": "runId를 책 꽂기의 게임ID·저장 키에 포함"
   }
 }

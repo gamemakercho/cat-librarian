@@ -215,9 +215,13 @@ async function render(){
   $('iconPuzzle').hidden=!isIcons;
   if(isIcons)renderIconPuzzle();
   $('minigameControls').hidden=s.type!=='minigame';
-  $('startMinigame').textContent=s.gameStartLabel||'게임 시작';
-  $('minigameNote').hidden=keywordGame;
-  $('minigameNote').textContent=puzzle?.completionMode==='result'?'B등급 이상으로 청소하면 이야기를 이어갈 수 있어':
+  const savedGameClear=s.type==='minigame'&&puzzle?.completionMode==='result'&&Boolean(runtime.minigameResults[s.puzzleId]);
+  $('continueMinigame').hidden=!savedGameClear;
+  if(savedGameClear){const [x,y,w,h]=s.geometry.minigameControls;applyRect($('minigameControls'),[x,y,w,Math.max(h,160)]);}
+  $('startMinigame').textContent=savedGameClear?'다시하기':s.gameStartLabel||'게임 시작';
+  $('startMinigame').classList.toggle('retry-small',savedGameClear);
+  $('minigameNote').hidden=keywordGame||savedGameClear;
+  $('minigameNote').textContent=puzzle?.completionMode==='result'?(puzzle.clearInstruction||'B등급 이상으로 청소하면 이야기를 이어갈 수 있어'):
     puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
   $('arrivalQuestion').textContent=s.arrivalQuestion||uiText.arrivalQuestion;
@@ -402,9 +406,13 @@ async function openMinigame(){
   document.body.style.setProperty('--story-scroll-top',`${-activeMinigame.scrollY}px`);
   document.documentElement.classList.add('minigame-active');document.body.classList.add('minigame-active');$('appShell').inert=true;
   sizeMinigame();$('minigameOverlay').hidden=false;$('minigameFrame').src=url.href;$('minigameFrame').focus();
-  if(keywordMode)minigameLoadTimer=setTimeout(()=>{if(activeMinigame)$('minigameLoadError').hidden=false;},20000);
+  if(keywordMode||config.resultKind)minigameLoadTimer=setTimeout(()=>{if(activeMinigame)$('minigameLoadError').hidden=false;},20000);
 }
 $('startMinigame').addEventListener('click',openMinigame);
+$('continueMinigame').addEventListener('click',()=>{
+  if(!sceneReady||runtime.scene.type!=='minigame'||puzzles[runtime.scene.puzzleId]?.completionMode!=='result')return;
+  if(runtime.completeMinigame(runtime.minigameResults[runtime.scene.puzzleId]).ok){runtime.updateSceneState({gameReturned:true});save();advance();}
+});
 function returnFromKeywordGame(){runtime.updateSceneState({gameReturned:true});save();closeMinigame();$('startMinigame').focus();}
 $('returnToStory').addEventListener('click',()=>{if(activeMinigame)returnFromKeywordGame();});
 $('retryMinigame').addEventListener('click',()=>{closeMinigame();openMinigame();});
@@ -414,13 +422,13 @@ window.addEventListener('message',event=>{
     clearTimeout(minigameLoadTimer);$('minigameLoadError').hidden=true;return;
   }
   if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-error')){$('minigameLoadError').hidden=false;return;}
-  if(config?.completionMode==='keyword'&&isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,MINIGAME_CLEAR)){
-    if(runtime.completeMinigame(event.data.result).ok)save();return;
+  if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,MINIGAME_CLEAR)){
+    if(runtime.completeMinigame(event.data.result,{recordOnly:true}).ok)save();return;
   }
   if(!isMinigameReturn(event,activeMinigame,$('minigameFrame').contentWindow,config))return;
   if(!runtime.completeMinigame(event.data.result).ok)return;
   if(config.completionMode==='keyword'){returnFromKeywordGame();return;}
-  save();closeMinigame();advance();
+  runtime.updateSceneState({gameReturned:true});save();closeMinigame();advance();
 });
 window.addEventListener('resize',sizeMinigame);
 $('notYetButton').addEventListener('click',showLocationHints);

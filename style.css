@@ -315,7 +315,8 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .answer-form[data-numeric="true"]>button[type="submit"],.answer-form[data-keyword="true"]>button[type="submit"]{font-size:max(16px,5cqw);height:12cqw;min-height:44px;-webkit-text-stroke:0}
 .answer-form[data-numeric="true"]>input,.answer-form[data-keyword="true"]>input{height:12cqw;min-height:44px;padding:1cqw 2cqw;border-radius:1.5cqw}
 .answer-form[data-keyword="true"]>p{font-size:max(13px,3cqw);line-height:1.35;margin-top:.5cqw}
-.stage[data-layout="keyword-game"] .minigame-controls .dialog-action{font-size:4.8cqw;padding:2cqw;line-height:1.3}
+.stage[data-layout="result-game"] .minigame-controls .dialog-action{font-size:4.8cqw;padding:2cqw;line-height:1.3}
+.minigame-controls .dialog-action.retry-small{display:block;margin:0 auto;min-height:44px;height:auto;width:auto;padding:0 14px;border:0;border-radius:0;box-shadow:none;background:transparent;color:#776858;font:400 11px/1.2 system-ui,sans-serif}
 .minigame-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;min-height:56px;background:#fff8df;color:#2a6658;border-bottom:1px solid #a3bbae}
 .minigame-header button,.minigame-load-error button{min-height:44px;padding:8px 12px;border:1px solid #187c78;border-radius:12px;background:#239c92;color:white;font-size:16px}
 .minigame-header span{font-size:16px;white-space:nowrap}

@@ -3,7 +3,7 @@
 import {iconCatalog} from './icon-catalog.js';
 import {createGeneralScenes,generalPuzzles} from './general-course.js';
 import {normalizeCourseOptions} from './course-config.js';
-export const STORY_VERSION = 'opening-source-24-general-v12-20261015';
+export const STORY_VERSION = 'opening-source-24-result-games-v13-20261015';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
