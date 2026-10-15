@@ -1,7 +1,9 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {iconCatalog} from './icon-catalog.js';
-export const STORY_VERSION = 'opening-source-24-sterilizer-v11-20261014';
+import {createGeneralScenes,generalPuzzles} from './general-course.js';
+import {normalizeCourseOptions} from './course-config.js';
+export const STORY_VERSION = 'opening-source-24-general-v12-20261015';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -15,7 +17,7 @@ export const uiText = {
 };
 const followDialogueGeometry={cat:[38,345,145,154],dialogue:[32,515,436,230],nextButton:[138,790,224,63]};
 const followMovementGeometry={dialogue:[32,158,436,250],cat:[43,428,135,152],marker:[205,425,225,225],movementControls:[32,685,436,180]};
-export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
+const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scenes: [
   { id: 'opening-title', sourceNumber: 1, type: 'title', background: 'meeting', cat: 'neutral',
     title: '고양이가 된 사서', titleLines:['고양이가 된','사서'], startLabel:'터치해서 시작', next: 'guide-structure' },
   { id:'guide-structure',sourceNumber:null,type:'tutorial',background:'meeting',cat:'neutral',
@@ -180,6 +182,7 @@ export const chapters = [{ id: 'opening', title: '고양이가 된 사서', scen
 // 첫 엽서 답은 확정값입니다. 23번은 현장 마크를 찾는 이동/도착 확인으로 변경했습니다.
 // 도착 확인과 제작자 장면 이동은 퍼즐 정답 성공 기록을 만들지 않습니다.
 export const puzzles = {
+  ...generalPuzzles,
   'postcard-heading': {
     status: 'confirmed', acceptedAnswers: ['고양이와 사서가 뒤바뀌었다'],
     placeholder: '엽서 상단 문구',
@@ -218,8 +221,6 @@ export const puzzles = {
   }
 };
 
-export const sourceScenes = chapters.flatMap(c => c.scenes).filter(s => s.sourceNumber);
-
 // 원본 500×900 좌표. 장면별 배치·색·서체도 이 파일에서 수정합니다.
 export const palette = { cream:'#fff8df', blue:'#d1eff0', yellow:'#f3df68', pink:'#fac3c3' };
 export const baseGeometry = {
@@ -246,10 +247,15 @@ const overrides = {
   22:{cat:[40,284,140,148]},
   24:{cat:[38,391,145,154], dialogue:[32,548,436,210]}
 };
-for (const scene of chapters.flatMap(c=>c.scenes)) {
+export function createChapters(value) {
+ const options=normalizeCourseOptions(value),chapters=structuredClone(openingChapters);
+ const intro=chapters[0].scenes.find(s=>s.id==='general-room-intro');
+ intro.text='여기는 책을 골라 읽고 빌리는\n종합자료실이야';intro.next='general-shelf-guide';intro.nextLabel='다음으로';
+ chapters[0].scenes.push(...createGeneralScenes(options));
+ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};
-  scene.fontSize??=scene.type==='move'?24:scene.layout==='art'?26:30;
-  scene.lineHeight=1.48;
+  scene.fontSize??=scene.type==='move'?24:scene.layout==='art'?26:scene.layout==='numeric'?62:30;
+  scene.lineHeight=scene.layout==='numeric'?1.2:1.48;
   // These source sprites face left. Speakers in the left slot face inward.
   scene.flipCat=scene.geometry.cat[0]<125;
   scene.backgroundFrame=scene.background==='lobby-sleeping'?'sleeping':scene.background==='lobby'?'empty':'normal';
@@ -258,4 +264,8 @@ for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.nextLabel??='다음';
   if(scene.sourceNumber===21){scene.fontSize=33;scene.lineHeight=1.35;}
   if(scene.type==='move'){scene.lineHeight=1.5;scene.textMode='static';}
+ }
+ return chapters;
 }
+export const chapters=createChapters();
+export const sourceScenes = chapters.flatMap(c => c.scenes).filter(s => s.sourceNumber);

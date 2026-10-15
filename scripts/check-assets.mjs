@@ -1,4 +1,5 @@
 import {readFileSync,statSync,readdirSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {chapters,puzzles,uiText} from '../story.js';
 const root=resolve(import.meta.dirname,'..');
@@ -19,7 +20,7 @@ for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const
 }
 const html=readFileSync(resolve(root,'index.html'),'utf8');
 for(const asset of Object.values(manifest))if(/(?:^|\/)references\//.test(asset.src))throw Error('제작 원본이 runtime manifest에 있음');
-for(const file of readdirSync(root,{recursive:true}))if(/(?:01_door_sign|02_postcard|03_alignment_layer|04_solved_alignment|emerald-reading-cat-base|cat-library-notice|all-14-icons-index|objects-grid-original|actions-grid-original|library-notice-A3|physical-nameplate-latest|puzzle-original|MASTER_SCENARIO)/.test(file))throw Error('배포 폴더에 새 제작 참고 원본이 있음: '+file);
+for(const file of readdirSync(root,{recursive:true}))if(/(?:01_door_sign|02_postcard|03_alignment_layer|04_solved_alignment|emerald-reading-cat-base|cat-library-notice|all-14-icons-index|objects-grid-original|actions-grid-original|library-notice-A3|physical-nameplate-latest|puzzle-original|MASTER_SCENARIO|general-pc-paint-original|game-code-snapshots)/.test(file))throw Error('배포 폴더에 새 제작 참고 원본이 있음: '+file);
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 if(new Set(ids).size!==ids.length)throw Error('중복 HTML id');
 const code=readFileSync(resolve(root,'app.js'),'utf8');
@@ -30,3 +31,10 @@ const raw=JSON.parse(allJpg).totalBytes;
 console.log(JSON.stringify({usedImageCount:used.size,openingImageBytes:sum,originalScreenBytes:raw,imageBytesReductionPercent:(1-sum/raw)*100,
   checked:'장면 연결·이미지 경로/크기·UI id. 실제 모바일 브라우저 검증은 별도.'},null,2));
 await import('./check-font.mjs');
+const games=JSON.parse(readFileSync(resolve(root,'games/origins.json'),'utf8'));
+for(const asset of [...games.assets,...games.unchangedRules]){
+ const file=readFileSync(resolve(root,'games',asset.file));
+ if(asset.bytes&&file.length!==asset.bytes)throw Error('게임 자산 크기 불일치 '+asset.file);
+ if(createHash('sha256').update(file).digest('hex')!==asset.sha256)throw Error('게임 자산/원본 판정 변경 '+asset.file);
+}
+console.log(JSON.stringify({gameAssets:games.assets.length,gameAssetBytes:games.assets.reduce((sum,a)=>sum+a.bytes,0),unchangedRuleFiles:games.unchangedRules.length}));

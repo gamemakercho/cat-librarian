@@ -1,0 +1,126 @@
+{
+  "sources": {
+    "book-catch": "https://github.com/gamemakercho/library-game1",
+    "book-order": "https://github.com/gamemakercho/bookband"
+  },
+  "assets": [
+    {
+      "file": "book-catch/assets/cat-reshelve-5frames.webp",
+      "bytes": 643354,
+      "sha256": "ac8a3fc48917ab548eeb56d78b6cd585e9198774c11404b84ecd3722a4eb89a5"
+    },
+    {
+      "file": "book-catch/assets/empty-cart.webp",
+      "bytes": 303452,
+      "sha256": "909b82169d12fa4fbc3cd9a8f2b3787d6c381e714213bfc5b2661e364cdae015"
+    },
+    {
+      "file": "book-catch/assets/falling-book-red-trim.webp",
+      "bytes": 183678,
+      "sha256": "682a005610667d95b431d6f6e7330fbab57cc7c5fc1dbcf938a315b895f283ab"
+    },
+    {
+      "file": "book-catch/assets/falling-book-teal-trim.webp",
+      "bytes": 137390,
+      "sha256": "6d941fa92883698325610e2d9618b8e0e2ce737f7857054782d92540196354a6"
+    },
+    {
+      "file": "book-catch/assets/floor-book-trim.webp",
+      "bytes": 245798,
+      "sha256": "55b4d9f575e80d35ef0d7adc0cd609ab1bb0ab918bacb7b53e09aa909effe109"
+    },
+    {
+      "file": "book-catch/assets/librarian-drop-5frames.webp",
+      "bytes": 769864,
+      "sha256": "8b5c6d8f1144df6839abcfdc88626a960e6a519bb543609dd5f584a143aaa81f"
+    },
+    {
+      "file": "book-catch/assets/librarian-idle.webp",
+      "bytes": 133874,
+      "sha256": "bc52879cb3687bcf2011fd96abffec1a50e036ddba92282988bbd3532c8f7c14"
+    },
+    {
+      "file": "book-catch/assets/library-background.webp",
+      "bytes": 76946,
+      "sha256": "f3e823211a7b215a247a3a978b611f567c828b9d027a249c435df33942813183"
+    },
+    {
+      "file": "book-catch/assets/perfect-clear.webp",
+      "bytes": 302074,
+      "sha256": "242937fa58e2167389316b6433572f9d06dccdafc4c082302e7ed28ab229d26b"
+    },
+    {
+      "file": "book-catch/assets/pushing-cat.webp",
+      "bytes": 190788,
+      "sha256": "40fe6ab9041b37c9773d699fcabae6488c77ea1600bdb0c85595d9df0d4ae40c"
+    },
+    {
+      "file": "book-catch/assets/stack-gold.webp",
+      "bytes": 25944,
+      "sha256": "f6a9183682dff857f42c20233bd51e36d2090575a610f196e6636165d9b6f2a1"
+    },
+    {
+      "file": "book-catch/assets/stack-red.webp",
+      "bytes": 26452,
+      "sha256": "ea54c4515bdacea7497f8060527c0290ee16583ce65987c1fb7ba3f5e625b235"
+    },
+    {
+      "file": "book-catch/assets/stack-teal.webp",
+      "bytes": 28944,
+      "sha256": "4f850aa2480255158411cf8abc4399e7c42ba71360bf75570fb96d599fe112cc"
+    },
+    {
+      "file": "book-order/assets/book-cart.json",
+      "bytes": 368,
+      "sha256": "eeac54c547aa74b5e0db45a812627a8da9ab91822335945d932d41db85681f34"
+    },
+    {
+      "file": "book-order/assets/book-cart.webp",
+      "bytes": 88002,
+      "sha256": "19a545c815b70fec6bfbff8cea92bb5820a9eb2f94e8aeeb1642ed780ced2384"
+    },
+    {
+      "file": "book-order/assets/books-atlas-crisp-v2.json",
+      "bytes": 5816,
+      "sha256": "f88d1aebaae2e36251cd610943296bc529e04028f293ff285d7aa2702e0e15c9"
+    },
+    {
+      "file": "book-order/assets/books-atlas-crisp-v2.webp",
+      "bytes": 797270,
+      "sha256": "97ef042a1e9cf8bbb3fe04a8310a7865b8c7819133c2d9c01113ec090b044d01"
+    },
+    {
+      "file": "book-order/assets/cat-paws-atlas.json",
+      "bytes": 2295,
+      "sha256": "54ba4ed7203ce70518f9accf3a67898c0ca5f3e7312db4eb2b7e0a1496c23514"
+    },
+    {
+      "file": "book-order/assets/cat-paws-atlas.webp",
+      "bytes": 147790,
+      "sha256": "6661a6dc003be0c0fc30622dd23806baf1373457ba7a4e15d7e576ff418c2633"
+    },
+    {
+      "file": "book-order/assets/library-background.webp",
+      "bytes": 138358,
+      "sha256": "fcdc9843380a17b50f1fe2cc4d5819c048e57807560425d8f69ec5f2d0ddd783"
+    }
+  ],
+  "unchangedRules": [
+    {
+      "file": "book-catch/engine.js",
+      "sha256": "9eab02a991134496e338478646287f2f308c09dbc371e0007fac1add43479ce7"
+    },
+    {
+      "file": "book-catch/config.js",
+      "sha256": "13c506a7ad8b7d8ce04e4160af69dc47395ade3c01792a03a63e1e529e322282"
+    },
+    {
+      "file": "book-order/state.js",
+      "sha256": "16a2f11c25a05b9c33c0839be2db9ba6c574eb0c2276a1b089dc66485d7e8a3a"
+    },
+    {
+      "file": "book-order/geometry.js",
+      "sha256": "6cd8bad66610d5e0f71f2690846e9acf2b17146492120e393a337873c79695a6"
+    }
+  ]
+}

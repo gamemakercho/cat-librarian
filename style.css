@@ -308,3 +308,15 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="sterilizer"] .answer-form>label{grid-column:1/-1;font-size:max(16px,4.8cqw);line-height:1.2}
 .stage[data-layout="sterilizer"] .answer-form>button[type="submit"]{font-size:max(16px,5.2cqw);min-height:44px}
 .stage[data-layout="sterilizer"] .answer-form>p{grid-column:1/-1;margin:0}
+.stage[data-layout="numeric"] .dialogue{display:flex;align-items:center;justify-content:center;padding:3cqw;text-align:center}
+.stage[data-layout="numeric"] .dialogue>p:first-child{font-size:var(--dialogue-size);line-height:1.2}
+.answer-form[data-numeric="true"],.answer-form[data-keyword="true"]{grid-template-columns:1fr 31%;padding:2.5cqw;gap:1.5cqw}
+.answer-form[data-numeric="true"]>label,.answer-form[data-keyword="true"]>label{grid-column:1/-1;font-size:max(16px,4.6cqw);line-height:1.2;-webkit-text-stroke:0}
+.answer-form[data-numeric="true"]>button[type="submit"],.answer-form[data-keyword="true"]>button[type="submit"]{font-size:max(16px,5cqw);height:12cqw;min-height:44px;-webkit-text-stroke:0}
+.answer-form[data-numeric="true"]>input,.answer-form[data-keyword="true"]>input{height:12cqw;min-height:44px;padding:1cqw 2cqw;border-radius:1.5cqw}
+.answer-form[data-keyword="true"]>p{font-size:max(13px,3cqw);line-height:1.35;margin-top:.5cqw}
+.stage[data-layout="keyword-game"] .minigame-controls .dialog-action{font-size:4.8cqw;padding:2cqw;line-height:1.3}
+.minigame-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;min-height:56px;background:#fff8df;color:#2a6658;border-bottom:1px solid #a3bbae}
+.minigame-header button,.minigame-load-error button{min-height:44px;padding:8px 12px;border:1px solid #187c78;border-radius:12px;background:#239c92;color:white;font-size:16px}
+.minigame-header span{font-size:16px;white-space:nowrap}
+.minigame-load-error{display:flex;gap:8px;align-items:center;padding:8px;background:#fff0d9;font:14px/1.4 system-ui,sans-serif;color:#5a3e26}

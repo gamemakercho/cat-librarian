@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "design_size": [
+    941,
+    1672
+  ],
+  "background": "assets/library-background.webp",
+  "header_title_center": [
+    560,
+    74
+  ],
+  "header_title_max_width": 630,
+  "header_subtitle_center": [
+    558,
+    133
+  ],
+  "sign_label_center": [
+    470,
+    548
+  ],
+  "sign_max_width": 320,
+  "shelf": {
+    "left": 74,
+    "right": 869,
+    "baseline": 860,
+    "book_height": 237,
+    "slot_count": 10,
+    "slot_width": 79.5,
+    "number_baseline": 889,
+    "drop_rect": [
+      65,
+      597,
+      814,
+      278
+    ]
+  },
+  "cart": {
+    "dest_content_rect": [
+      66,
+      1036,
+      809,
+      557
+    ],
+    "hit_rect": [
+      64,
+      951,
+      812,
+      620
+    ],
+    "tray_baselines": [
+      1115,
+      1312,
+      1510
+    ],
+    "foreground_clip_rects": [
+      [
+        66,
+        1113,
+        809,
+        28
+      ],
+      [
+        66,
+        1308,
+        809,
+        31
+      ],
+      [
+        66,
+        1036,
+        83,
+        557
+      ],
+      [
+        792,
+        1036,
+        83,
+        557
+      ]
+    ]
+  },
+  "footer_center": [
+    470,
+    1634
+  ],
+  "footer_max_width": 760,
+  "idle_paws": {
+    "left_dest": [
+      -75,
+      1340,
+      300,
+      229
+    ],
+    "right_dest": [
+      716,
+      1340,
+      300,
+      229
+    ],
+    "clip_to_viewport": true,
+    "visible_clip_rects": [
+      [
+        0,
+        1300,
+        240,
+        300
+      ],
+      [
+        701,
+        1300,
+        240,
+        300
+      ]
+    ]
+  },
+  "held_book_size": [
+    79.5,
+    237
+  ],
+  "cart_book_samples": [
+    {
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": 0,
+      "center": [
+        210,
+        1029.68
+      ]
+    },
+    {
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": 0,
+      "center": [
+        290,
+        1029.68
+      ]
+    },
+    {
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": 0,
+      "center": [
+        370,
+        1029.68
+      ]
+    },
+    {
+      "stack_baseline": 1115,
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": -90,
+      "center": [
+        635,
+        1086.38
+      ],
+      "stack": "top"
+    },
+    {
+      "stack_baseline": 1115,
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": -90,
+      "center": [
+        635,
+        1029.14
+      ],
+      "stack": "top"
+    },
+    {
+      "stack_baseline": 1312,
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": -90,
+      "center": [
+        285,
+        1283.38
+      ],
+      "stack": "middle"
+    },
+    {
+      "stack_baseline": 1312,
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": -90,
+      "center": [
+        285,
+        1226.14
+      ],
+      "stack": "middle"
+    },
+    {
+      "stack_baseline": 1312,
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": -90,
+      "center": [
+        285,
+        1168.9
+      ],
+      "stack": "middle"
+    },
+    {
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": 0,
+      "center": [
+        610,
+        1226.68
+      ]
+    },
+    {
+      "size": [
+        57.24,
+        170.64
+      ],
+      "rotation_deg": 0,
+      "center": [
+        690,
+        1226.68
+      ]
+    }
+  ],
+  "swap": {
+    "show_cart": false,
+    "show_paws": false,
+    "swap_duration_ms": 0,
+    "flash_duration_ms": 70
+  },
+  "reshelve": {
+    "show_cart": true,
+    "show_paws": true
+  },
+  "sparkle": {
+    "duration_ms": 1400,
+    "particle_count": 16,
+    "colors": [
+      "#fff7bd",
+      "#ffe184",
+      "#ffffff"
+    ]
+  },
+  "note_ko": "좌표는 941×1672 기준입니다. 전체를 한 좌표계로 비례 확대/축소하고 pointer 위치를 역변환합니다. 배경에 글씨가 없으므로 제목·팻말·번호·안내는 코드로 한 번만 그립니다. 카트 샘플은 책 id가 아니라 무작위 책을 넣을 위치 예시입니다.",
+  "grip_paws": {
+    "width": 135,
+    "book_overlap": 6,
+    "anchor_y_ratio": 0.44
+  }
+}

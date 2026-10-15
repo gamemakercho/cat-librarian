@@ -7,7 +7,10 @@
     "유아자료실 14아이콘 문제",
     "청소 게임 시작/복귀",
     "청소 완료 뒤 책소독기 03 이동·색 암호·수리",
-    "종합자료실 04 도착 소개"
+    "종합자료실 04 도착 소개·서가 안내·선택 PC 대화",
+    "종합자료실 임시 숫자 문제·책 받기·키워드 칭찬",
+    "선택 신간코너 05 소개·임시 숫자 문제·책 꽂기·키워드 칭찬",
+    "1층 로비 도착 연결점"
   ],
   "route": [
     "로비",
@@ -36,14 +39,18 @@
     "평생학습실(강의실1)": 1,
     "유아자료실": 2,
     "책소독기": 3,
-    "종합자료실": 4
+    "종합자료실": 4,
+    "신간코너": 5
   },
   "pending": [
-    "종합자료실 문제·정답",
+    "종합자료실·신간코너 실제 현장 문제·정답",
+    "PC 중간 대화 포함 여부 최종 확정",
     "신간코너 포함 여부",
-    "미니게임별 최종 클리어 키워드"
+    "신간코너 상세 위치와05번 현장 마크 설치",
+    "책 받기·책 꽂기 키워드 최종 확정",
+    "마지막 엽서 접기·엔딩 구현"
   ],
-  "miniGameFlow": [
+  "cleaningMiniGameFlow": [
     "게임 시작 전 연결 대사와 전용 시작 버튼",
     "같은 탭에서 미니게임 크게 표시·바깥 스크롤 잠금",
     "실패 결과는 재도전만 허용",
@@ -53,8 +60,8 @@
   "bookCatchExampleKeyword": "뿌듯 (예시, 확정 아님)",
   "urls": {
     "cleaning": "https://gamemakercho.github.io/cleaning-game/",
-    "bookCatch": "https://gamemakercho.github.io/library-game1/",
-    "reshelving": "https://gamemakercho.github.io/bookband/",
+    "bookCatch": "./games/book-catch/",
+    "reshelving": "./games/book-order/",
     "ending": "https://gamemakercho.github.io/library/"
   },
   "ending": "엽서 오른쪽 위·왼쪽 아래 노란 부분을 반대 면으로 접어 두 머리가 만나고 최종 문장 완성. 정답 후 칭찬 팝업의 다음으로 버튼을 누르면 충돌 자동 연출. 현재 게임에는 미구현.",
@@ -72,7 +79,31 @@
     }
   },
   "currentFollowupHook": {
-    "sceneId": "general-room-intro",
+    "sceneId": "lobby-ending-entry",
     "next": null
+  },
+  "coursePreview": {
+    "settingsFile": "course-config.js",
+    "showDeskInterlude": true,
+    "includeNewBooks": true,
+    "newBooksExactLocation": null,
+    "fixedWithinPlay": true,
+    "shelfDirection": "입구에서 안쪽을 볼 때 왼쪽 아동서가·오른쪽 일반서가 (사용자 확인)"
+  },
+  "previewPuzzles": {
+    "general-room-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"},
+    "newbooks-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"}
+  },
+  "previewGameKeywords": {
+    "book-catch-keyword": {"word": "뿌듯", "status": "시안·최종 확정 전"},
+    "book-order-keyword": {"word": "제자리", "status": "시안·최종 확정 전"}
+  },
+  "keywordGameFlow": {
+    "userChoice": "ZIP처럼 키워드 입력 후 진행",
+    "outerReturnAlwaysAvailable": true,
+    "clearEventAdvancesStory": false,
+    "requiresActualClear": true,
+    "sequence": ["시작 버튼", "게임 성공 화면에서 키워드 확인", "동일 입력 장면으로 복귀", "키워드 입력", "삼색 고양이 칭찬 팝업", "다음으로에서 이동"],
+    "newPlayIsolation": "runId를 책 꽂기의 게임ID·저장 키에 포함"
   }
 }

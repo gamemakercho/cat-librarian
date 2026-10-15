@@ -1,6 +1,7 @@
-import { chapters, puzzles, STORY_VERSION, palette, uiText } from './story.js';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js';
+import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
-import {isMinigameReturn} from './minigame-bridge.js';
+import {isMinigameReturn,isMinigameMessage,MINIGAME_CLEAR} from './minigame-bridge.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -11,7 +12,8 @@ try{assets=await fetch('./assets.json').then(r=>{if(!r.ok)throw Error('자산 �
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
-const runtime=new StoryRuntime(chapters,puzzles,snapshot,uiText.successPopup);
+const courseOptions=normalizeCourseOptions(snapshot.courseOptions||courseSettings);
+let runtime=new StoryRuntime(createChapters(courseOptions),puzzles,snapshot,uiText.successPopup,Math.random,courseOptions);
 const sourceScenes=runtime.scenes.filter(s=>s.sourceNumber);
 if(review&&params.has('scene')){
   const requested=sourceScenes.find(s=>s.sourceNumber===Number(params.get('scene')));
@@ -29,6 +31,9 @@ let renderSerial=0;
 let renderedScene=null;
 let keypadInputState=null;
 let activeMinigame=null;
+let minigameLoadTimer=null;
+let openingMinigame=false;
+let answerBlurAt=-Infinity;
 const imageCache=new Map();
 const elementCache=new Map();
 const clipCache=new Map();
@@ -175,7 +180,7 @@ async function render(){
     for(const line of s.titleLines||[s.title]){const span=document.createElement('span');span.textContent=line;heading.append(span);}
     $('startButton').textContent=s.startLabel||'터치해서 시작';
   }
-  $('dialogue').hidden=['title','tutorial'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
+  $('dialogue').hidden=['title','tutorial','handoff'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
   $('tutorialPanel').hidden=s.type!=='tutorial';
   if(s.type==='tutorial'){
     $('tutorialTitle').textContent=s.title;
@@ -203,12 +208,15 @@ async function render(){
   const repairDone=Boolean(puzzles[s.puzzleId]?.repairFlag&&runtime.flags[puzzles[s.puzzleId].repairFlag]);
   $('nextButton').hidden=!s.next||(!['dialogue','comic','tutorial'].includes(s.type)&&!repairDone);$('nextButton').textContent=repairDone?'다음으로':s.nextLabel||'다음';
   const puzzle=puzzles[s.puzzleId],isIcons=puzzle?.answerMode==='icons';
+  const keywordGame=s.type==='minigame'&&puzzle?.completionMode==='keyword';
+  $('answerForm').dataset.numeric=String(puzzle?.answerMode==='numeric-string');$('answerForm').dataset.keyword=String(keywordGame);
   $('answerForm').hidden=repairDone||!((s.type==='puzzle'&&!isIcons)||(s.type==='minigame'&&puzzle.acceptedAnswers?.length));
   if(repairDone){applyRect($('nextButton'),[138,790,224,63]);$('machineStatus').dataset.state='repaired';$('machineStatus').textContent='수리 완료';}
   $('iconPuzzle').hidden=!isIcons;
   if(isIcons)renderIconPuzzle();
   $('minigameControls').hidden=s.type!=='minigame';
   $('startMinigame').textContent=s.gameStartLabel||'게임 시작';
+  $('minigameNote').hidden=keywordGame;
   $('minigameNote').textContent=puzzle?.completionMode==='result'?'B등급 이상으로 청소하면 이야기를 이어갈 수 있어':
     puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
@@ -218,7 +226,7 @@ async function render(){
   $('continuationControls').hidden=s.type!=='continuation';
   $('backButton').disabled=!runtime.history.length;
   composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent='';
-  $('hintButton').hidden=s.type!=='puzzle';
+  $('hintButton').hidden=s.type!=='puzzle'||!puzzle?.hints?.length;
   $('hintButton').textContent=puzzle?.hintLabel||'힌트 보기';
   const p=puzzles[s.puzzleId],english=p?.answerMode==='english-three';
   $('answerForm').dataset.english=String(Boolean(english));
@@ -228,7 +236,7 @@ async function render(){
   $('answer').placeholder=p?.placeholder||'';
   $('answer').setAttribute('aria-label',p?.ariaLabel||p?.placeholder||'정답');
   $('answer').lang=english?'en':'ko';
-  $('answer').inputMode='text';$('answer').readOnly=false;
+  $('answer').inputMode=p?.inputMode||'text';$('answer').readOnly=false;
   $('answer').setAttribute('autocapitalize','none');$('answer').setAttribute('autocorrect','off');
   $('answer').autocomplete='off';$('answer').spellcheck=false;$('answer').enterKeyHint='done';
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
@@ -269,6 +277,7 @@ function updateIconPuzzle(){
   $('iconFeedback').textContent=state.feedback||'';
 }
 function closeMinigame(){
+  clearTimeout(minigameLoadTimer);minigameLoadTimer=null;
   if(!$('minigameOverlay').hidden){
     const scrollY=activeMinigame?.scrollY||0;activeMinigame=null;
     $('minigameOverlay').hidden=true;$('minigameFrame').removeAttribute('src');
@@ -366,22 +375,51 @@ $('checkIcons').addEventListener('click',()=>{
   if(runtime.getIconState()?.completed){advance();return;}
   const result=runtime.submit();save();updateIconPuzzle();if(result.ok)showSuccess();
 });
-$('startMinigame').addEventListener('click',()=>{
-  if(!sceneReady||runtime.scene.type!=='minigame'||runtime.pendingSuccessId)return;
+async function openMinigame(){
+  if(openingMinigame||activeMinigame||!sceneReady||runtime.scene.type!=='minigame'||runtime.pendingSuccessId)return;
+  openingMinigame=true;const from=runtime.currentId;
+  const keyboardWasOpen=document.activeElement===$('answer')||performance.now()-answerBlurAt<500;
+  $('answer').blur();
+  if(keyboardWasOpen){
+    // Wait for the keyboard to close before freezing the game's viewport height.
+    let last=window.visualViewport?.height||innerHeight,stable=0;
+    for(let i=0;i<8;i++){await new Promise(resolve=>setTimeout(resolve,75));const h=window.visualViewport?.height||innerHeight;stable=Math.abs(h-last)<1?stable+1:0;last=h;if(i>=3&&stable>=2)break;}
+  }
+  openingMinigame=false;if(runtime.currentId!==from||!sceneReady)return;
   if(!textComplete)finishText();save();
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
     scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,width:innerWidth};
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);
+  const config=puzzles[runtime.scene.puzzleId],keywordMode=config.completionMode==='keyword';
+  url.searchParams.set('storyRunId',runtime.runId);url.searchParams.set('storyMode',keywordMode?'keyword':'result');
+  if(keywordMode)url.searchParams.set('storyKeyword',config.acceptedAnswers[0]);
+  $('minigameHeader').hidden=!keywordMode;$('minigameTitle').textContent=runtime.scene.gameTitle||'물감 청소';
+  $('minigameOverlay').setAttribute('aria-label',runtime.scene.gameTitle||'물감 청소 게임');
+  $('minigameFrame').title=runtime.scene.gameTitle||'물감 청소 게임';$('minigameLoadError').hidden=true;
+  runtime.updateSceneState({gameEntered:true});save();
   document.body.style.setProperty('--story-scroll-top',`${-activeMinigame.scrollY}px`);
   document.documentElement.classList.add('minigame-active');document.body.classList.add('minigame-active');$('appShell').inert=true;
   sizeMinigame();$('minigameOverlay').hidden=false;$('minigameFrame').src=url.href;$('minigameFrame').focus();
-});
+  if(keywordMode)minigameLoadTimer=setTimeout(()=>{if(activeMinigame)$('minigameLoadError').hidden=false;},20000);
+}
+$('startMinigame').addEventListener('click',openMinigame);
+function returnFromKeywordGame(){runtime.updateSceneState({gameReturned:true});save();closeMinigame();$('startMinigame').focus();}
+$('returnToStory').addEventListener('click',()=>{if(activeMinigame)returnFromKeywordGame();});
+$('retryMinigame').addEventListener('click',()=>{closeMinigame();openMinigame();});
 window.addEventListener('message',event=>{
   const config=puzzles[runtime.scene.puzzleId];
+  if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-ready')){
+    clearTimeout(minigameLoadTimer);$('minigameLoadError').hidden=true;return;
+  }
+  if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-error')){$('minigameLoadError').hidden=false;return;}
+  if(config?.completionMode==='keyword'&&isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,MINIGAME_CLEAR)){
+    if(runtime.completeMinigame(event.data.result).ok)save();return;
+  }
   if(!isMinigameReturn(event,activeMinigame,$('minigameFrame').contentWindow,config))return;
   if(!runtime.completeMinigame(event.data.result).ok)return;
+  if(config.completionMode==='keyword'){returnFromKeywordGame();return;}
   save();closeMinigame();advance();
 });
 window.addEventListener('resize',sizeMinigame);
@@ -401,11 +439,13 @@ function submitAnswer(){
   const result=runtime.submit($('answer').value);
   if(result.ok){save();$('answerFeedback').textContent='';showSuccess();return;}
   const message={empty:'글자를 입력해 주세요.',incorrect:puzzles[runtime.scene.puzzleId]?.incorrectMessage||'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
+    'game-clear-required':'게임을 클리어하고 나온 키워드를 입력해 줘',
     'not-configured':'이 시안은 실제 정답을 설정하기 전이에요. 제작자 보기에서 다음 장면을 확인해 주세요.'}[result.reason]||'다시 확인해 주세요.';
   $('answerFeedback').textContent=message;$('keypadFeedback').textContent=message;
 }
 $('answerForm').addEventListener('submit',e=>{e.preventDefault();submitAnswer();});
 $('answer').addEventListener('input',()=>{runtime.updateSceneState({answer:$('answer').value});save();});
+$('answer').addEventListener('blur',()=>{answerBlurAt=performance.now();});
 $('answer').addEventListener('compositionstart',()=>{composing=true;});
 $('answer').addEventListener('compositionend',()=>{composing=false;compositionEndedAt=performance.now();});
 $('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&(composing||e.isComposing||e.keyCode===229||performance.now()-compositionEndedAt<80))e.preventDefault();});
@@ -463,17 +503,13 @@ $('englishKeypadDialog').addEventListener('keydown',e=>{
 });
 $('menuButton').addEventListener('click',()=>{$('helpDialog').showModal();});
 $('resumeButton').addEventListener('click',()=>{$('helpDialog').close();});
-function restart(){runtime.reset();save();render();}
+function restart(){const options=normalizeCourseOptions(courseSettings);runtime=new StoryRuntime(createChapters(options),puzzles,{},uiText.successPopup,Math.random,options);save();if(review)fillSceneSelect();render();}
 $('restartButton').addEventListener('click',restart);
 $('helpRestartButton').addEventListener('click',()=>{$('helpDialog').close();restart();});
 $('helpPreviewNote').hidden=!review;
 if(review){
   $('reviewPanel').hidden=false;
-  for(const s of runtime.scenes){
-    const option=document.createElement('option');option.value=s.id;
-    option.textContent=(s.sourceNumber?`${String(s.sourceNumber).padStart(2,'0')}. `:'＋ ')+(s.title||s.destination||s.text||'').replaceAll('\n',' ').slice(0,34);
-    $('sceneSelect').append(option);
-  }
+  fillSceneSelect();
   $('sceneSelect').addEventListener('change',e=>{runtime.jump(e.target.value);save();render();});
   $('reviewNext').addEventListener('click',()=>advance({review:true}));
   $('bypassButton').addEventListener('click',()=>advance({review:true}));
@@ -488,6 +524,11 @@ if(review){
   const initialKeys=new Set(sceneAssetKeys(runtime.scenes[0]));
   const bytes=keys=>[...keys].reduce((a,k)=>a+assets[k].bytes,0);
   $('assetStats').textContent=`이미지 자산: 시작 장면 ${(bytes(initialKeys)/1000).toFixed(0)} KB (1KB=1,000B) · 24장 전체에서 재사용하는 그림 ${(bytes(allKeys)/1000).toFixed(0)} KB. 원본 비교 썸네일과 코드, 호스팅 로그인 데이터는 별도입니다.`;
+}
+function fillSceneSelect(){
+ $('sceneSelect').replaceChildren();
+ for(const s of runtime.scenes){const option=document.createElement('option');option.value=s.id;
+  option.textContent=(s.sourceNumber?`${String(s.sourceNumber).padStart(2,'0')}. `:'＋ ')+(s.title||s.destination||s.location&&s.type==='handoff'&&s.location||s.text||'').replaceAll('\n',' ').slice(0,34);$('sceneSelect').append(option);}
 }
 function applyRect(el,rect){
   const [x,y,w,h]=rect;Object.assign(el.style,{left:x/5+'%',top:y/9+'%',width:w/5+'%',height:h/9+'%'});
