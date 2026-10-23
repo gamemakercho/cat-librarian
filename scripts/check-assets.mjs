@@ -41,3 +41,4 @@ for(const asset of [...games.assets,...games.unchangedRules]){
 console.log(JSON.stringify({gameAssets:games.assets.length,gameAssetBytes:games.assets.reduce((sum,a)=>sum+a.bytes,0),unchangedRuleFiles:games.unchangedRules.length}));
 
 await import('./check-ending.mjs');
+await import('./check-chase.mjs');

@@ -42,3 +42,7 @@
 - 마지막 정답은 고양이와 사서가 돌아왔다만 허용한다. NFC·공백·? ! ？ ！ 제거,한글11글자 안내·maxlength80·ART 키패드 숨김이다. 찾아냈다!/우리 이야기의 마지막 한 줄이네!/다음으로 팝업에서 다음으로를 눌러 solved를 확정한 뒤 ending-impact를 별도 시작 없이 재생한다.
 - 접기 안내는 assets/ending의 fold-hint/step-1/step-2.svg만 쓴다. 흰 종이·두 노란 귀퉁이·뒤로 접는 화살표만 공개하고 완성된 엽서·캐릭터·문장 조각·QR·머리 모양을 힌트/alt에 추가하지 않는다. fold-step-3.svg는 사용/배포하지 않는다. 첨부 충돌 그림은 ending/assets/postcard-impact.webp와 원본 표시 좌표[122,328,536,323] 그대로 정답 뒤 약1.05초 표시한다.
 - ending-bridge/ending-ui는 iframe창·정확한 origin·session·runId·gameId·part·결과를 확인한다. endingContactReached/endingRescueComplete/endingContactPoster를 분리 저장하고,앞부분 완료/닫기/시간 경과만으로 복구를 확정하지 않는다. v13 미답 접기는 접근부로,기존 정답/팝업은 새 후반으로 이어 준다. 문서 숨김은 시간을 멈추며 동작 줄이기는 강한 빛을 쓰지 않는다. 완료 뒤 다시 보기는 full,전체 처음부터는 사진/플래그/풀이를 초기화한다.
+
+- 2026-10-23 사용자 제작 패키지 적용: 마지막 approach는 games/librarian-chase의 30초 달리기 → 원본 SD 엔딩 PNG 5장으로 교체한다. 원본 PNG의 픽셀·알파·프레임 JSON·전체 만화 구도를 유지하고, 별도로 그린 책장/바닥과 합성한다. 아직 정답을 풀지 않은 상태에서 이전 접촉 장면이나 완성 엽서를 노출하지 않는다.
+- 새 추격 게임은 본편의 기존 origin·frame·session·runId·gameId·part 검증 계약을 사용한다. 30초 및 만화 5장 뒤 ending-contact로 본편 접기 문제에 복귀한다. 이 호환 이벤트는 접촉 그림을 의미하지 않는다. 독립 플레이의 localStorage 완료가 본편 미니게임을 건너뛰게 하지 않는다. 정답 뒤의 원본 restore 엔진과 기존 저장 ID·성공 팝업 다음으로 흐름을 유지한다.
+- 마지막 엽서 정답만 공백·느낌표·마침표 차이를 무시하도록 postcard-final 정규화를 사용한다. 다른 퍼즐의 기존 정규화는 변경하지 않는다. 접기 화면의 도식은 새 패키지의 fold-guide.svg를 사용하며 실제 엽서 참고 원본은 추가 배포하지 않는다.

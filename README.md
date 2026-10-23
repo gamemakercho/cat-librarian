@@ -206,3 +206,11 @@ story.js의 cleaning-keyword는 completionMode:'result',minimumRatio:.7,allowedG
 앱 진행 테스트35개·첨부 보조 테스트9개·자산/폰트/문법 검사를 통과했습니다. 실제 HTTP Chrome의 /cat-librarian/ 하위 경로에서 전체 새 구간·오답/IME·팝업/수리/두 도착의 저장 복원·기존 ART/아이콘 저장을 확인했습니다.320/360/390px × 844/380px의6조건과 키보드 공간을 모사한320px 높이에서 모든 새 장면과 입력·버튼 접근을 검증했습니다. 기존 청소 연결도 서로 다른 로컬 origin의 두 실제 저장소로6조건 재검증했습니다.
 
 실제 삼성 인터넷/카카오톡·Android/iOS 자판, 현장 이름표와03/04 마크 설치, 새 버전 공개 배포는 미확인입니다. 이번 변경은 cat-librarian 폴더이며 cleaning-game 실행 코드와 미정 키워드는 수정하지 않았습니다. GitHub Desktop에서 cat-librarian의 변경을 Commit/Push하여 반영하세요.
+
+## 사서를 잡아라! 추격 게임 연결 — 2026-10-23
+
+기존 마지막 단계의 시작 버튼을 30초 추격 → 원본 SD 만화 5장 → 실제 엽서 접기 문제로 연결했습니다. 게임은 games/librarian-chase에 있고 설정은 그 폴더의 config.js입니다. 원본 PNG·알파·좌표 JSON을 유지하며 배경과 장애물/UI는 별도로 그립니다.
+
+기존 장면 ID·진행 저장·정답 팝업 다음으로·정답 뒤 복구 및 마지막 대사는 유지합니다. 마지막 정답만 마침표도 무시하며 ART/다른 한글 퍼즐의 규칙은 바꾸지 않았습니다. 원본 엽서와 정답 전 충돌 장면은 새 게임에 넣지 않았습니다.
+
+GitHub Desktop에서 이 cat-librarian 저장소의 변경을 커밋/푸시합니다. 최상위 index.html·.nojekyll과 상대 모듈 경로를 유지하므로 기존 GitHub Pages 경로에서 이어집니다. 새 추격 자산은 버튼을 눌러 iframe에 들어간 뒤에만 읽습니다.

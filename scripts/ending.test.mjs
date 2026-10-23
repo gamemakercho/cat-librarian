@@ -14,13 +14,13 @@ import {readFileSync} from 'node:fs';
 test('처음12글자·마지막11글자는 정확한 문장이고 같은 규칙으로 정규화한다',()=>{
  assert.equal([...normalizeAnswer(puzzles['postcard-heading'].acceptedAnswers[0])].length,12);
  assert.equal([...normalizeAnswer(puzzles[endingPuzzleId].acceptedAnswers[0])].length,11);
- for(const answer of ['고양이와 사서가 돌아왔다','고양이와사서가돌아왔다!',' 고양이와\n사서가 돌아왔다！ ','고양이와 사서가 돌아왔다'.normalize('NFD')]){
+ for(const answer of ['고양이와 사서가 돌아왔다','고양이와사서가돌아왔다!',' 고양이와\n사서가 돌아왔다！ ','고양이와 사서가 돌아왔다.','고양이와 사서가 돌아왔다'.normalize('NFD')]){
   const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(r.submit(answer).ok);
   assert.equal(r.currentId,'ending-fold-puzzle');assert(!r.solved.has(endingPuzzleId));
   const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.pendingSuccessId,'ending-fold-puzzle');
   assert.equal(restored.advance().reason,'success-confirmation-required');assert.equal(restored.confirmSuccess().scene.id,'ending-impact');
  }
- for(const answer of ['사서와 고양이가 돌아왔다','고양이와 사서가 뒤바뀌었다','돌아왔다','고양이와 사서가 돌아왔다.']){
+ for(const answer of ['사서와 고양이가 돌아왔다','고양이와 사서가 뒤바뀌었다','돌아왔다','고양이와 사서가 돌아왔어']){
   const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(!r.submit(answer).ok);
  }
 });

@@ -6,6 +6,8 @@ export function normalizeAnswer(value) {
   return String(value ?? '').normalize('NFC').replace(/[\s?？!！]/gu, '').toLowerCase();
 }
 
+export function normalizeFinalAnswer(value) { return normalizeAnswer(value).replace(/[.。．]/gu,''); }
+
 export function normalizeArtAnswer(value) {
   return String(value ?? '').normalize('NFKC').replace(/\s/gu, '').toLowerCase();
 }
@@ -166,7 +168,7 @@ export class StoryRuntime {
       if(!this.pendingSuccess)this.pendingSuccess=this.createPendingSuccess();
       return {ok:true,reason:'correct'};
     }
-    const normalize=p.answerMode==='english-three'?normalizeArtAnswer:p.answerMode==='numeric-string'?normalizeNumericAnswer:normalizeAnswer;
+    const normalize=p.answerMode==='postcard-final'?normalizeFinalAnswer:p.answerMode==='english-three'?normalizeArtAnswer:p.answerMode==='numeric-string'?normalizeNumericAnswer:normalizeAnswer;
     const answer=normalize(value);
     if (!answer) return {ok:false,reason:'empty'};
     if (!p.acceptedAnswers?.length) return {ok:false,reason:'not-configured'};
