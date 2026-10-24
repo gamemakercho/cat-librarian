@@ -4,6 +4,8 @@ import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.j
 import {isMinigameReturn,isMinigameMessage,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
+import {endingArtIds} from './ending-course.js';
+import {createIllustrationUI} from './ending-illustrations.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -48,7 +50,12 @@ const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.r
   isCompleted:()=>runtime.scene.cinematicPart==='approach'?runtime.flags.endingContactReached===true:runtime.flags.endingRescueComplete===true,
   onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
   onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
-  onReplay:()=>advance(),onRestart:()=>restart()});
+  onReplay:()=>{if(runtime.scene.type==='ending'){runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
+const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),
+ onStart:()=>{runtime.flags.endingIllustrationStarted=true;save();},
+ onImpactDone:()=>{if(runtime.completeIllustratedImpact().ok){save();advance();}},
+ onComplete:()=>{if(runtime.completeStory()){save();window.dispatchEvent(new CustomEvent('escape-room:complete',{detail:{puzzleId:'cat-librarian-ending',completed:true,runId:runtime.runId}}));}}});
+let nextReadyAt=0;
 
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}}
 function imageURL(key){if(!assets[key])throw Error(`자산 없음: ${key}`);return assets[key].src;}
@@ -56,7 +63,10 @@ function loadImage(key){
   const src=imageURL(key);
   if(!imageCache.has(src)){
     const raster=new Promise((resolve,reject)=>{
-      const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('이미지를 읽을 수 없어요.'));im.src=src;
+      const im=new Image();let fallback=false;
+      im.onload=()=>{assets[key].loadedSrc=im.src;resolve(im);};
+      im.onerror=()=>{if(assets[key].fallback&&!fallback){fallback=true;im.src=assets[key].fallback;}else{imageCache.delete(src);reject(Error('이미지를 읽을 수 없어요.'));}};
+      im.src=src;
     });
     const clip=assets[key].render?.clip;
     if(clip&&!clipCache.has(clip))clipCache.set(clip,fetch(clip).then(r=>{if(!r.ok)throw Error('직원 마스크 로딩 오류');return r.text();}).then(text=>{
@@ -91,11 +101,12 @@ function createImage(key,className,alt=''){
     const source=document.createElementNS(ns,'image');source.setAttribute('href',imageURL(key));source.setAttribute('width',assets[key].width);source.setAttribute('height',assets[key].height);source.setAttribute('clip-path','url(#passing-staff-clip)');svg.append(source);
     elementCache.set(cacheKey,svg);return svg;
   }
-  const im=document.createElement('img');im.src=imageURL(key);im.alt=alt;im.className=className;im.draggable=false;
+  const im=document.createElement('img');im.src=assets[key].loadedSrc||imageURL(key);im.alt=alt;im.className=className;im.draggable=false;
   elementCache.set(cacheKey,im);return im;
 }
 function sceneAssetKeys(s){
   const keys=[];
+  if(s.endingArt)keys.push(`ending:${s.endingArt}`);
   if(s.background)keys.push(`bg:${s.background}`);
   if(s.cat)keys.push(`cat:${s.cat}`);
   if(s.staff)keys.push('actor:staff');
@@ -158,7 +169,7 @@ function advance(opts={}){
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  closeMinigame();endingUI.stop();
+  closeMinigame();endingUI.stop();illustrationUI.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;
@@ -170,15 +181,17 @@ async function render(){
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
   for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls','machineStatus','cipherPanel'])applyRect($(name),s.geometry[name]);
-  $('loading').hidden=preserveText;
+  $('retryScene').hidden=true;$('endingArtLayer').replaceChildren();$('endingImpactText').hidden=true;
+  $('loading').textContent='장면을 불러오고 있어요…';$('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
     $('loading').hidden=false;
-    $('loading').textContent='이미지를 읽지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.';
+    $('loading').textContent='이미지를 읽지 못했어요 연결을 확인하고 다시 시도해 주세요';$('retryScene').hidden=false;
     return;
   }
   if(serial!==renderSerial)return;
-  $('loading').hidden=true;sceneReady=true;
+  $('loading').hidden=true;sceneReady=true;nextReadyAt=performance.now()+300;
+  if(s.endingArt){const im=createImage(`ending:${s.endingArt}`,'ending-art',s.type==='impact'?'사서와 고양이의 이마가 부딪히는 순간':s.endingArt==='ending-04-returned'?'바닥에 앉아 돌아온 걸 깨달은 사서와 놀라 물러나는 고양이':'작은 고양이를 안고 웃는 사서');$('endingArtLayer').append(im);}
   const bg=$('sceneLayer');bg.replaceChildren();
   bg.style.backgroundImage=s.background?`url("${imageURL(`bg:${s.background}`)}")`:'none';
   bg.style.opacity=s.backgroundOpacity||1;
@@ -205,7 +218,7 @@ async function render(){
     for(const line of s.titleLines||[s.title]){const span=document.createElement('span');span.textContent=line;heading.append(span);}
     $('startButton').textContent=s.startLabel||'터치해서 시작';
   }
-  $('dialogue').hidden=['title','tutorial','handoff','ending'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
+  $('dialogue').hidden=['title','tutorial','handoff','ending','impact'].includes(s.type);$('dialogue').dataset.tone=s.panelTone||'cream';$('dialogue').style.background=palette[s.panelTone||'cream'];
   $('tutorialPanel').hidden=s.type!=='tutorial';
   if(s.type==='tutorial'){
     $('tutorialTitle').textContent=s.title;
@@ -271,12 +284,14 @@ async function render(){
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
   renderedScene=s;updateReview(s);endingUI.render(s);
+  illustrationUI.render(s);
+  if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
   if(runtime.pendingSuccessId===s.id)showSuccess();
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
-  if(s.next && !['puzzle','move','continuation','minigame','cinematic','ending'].includes(s.type)){
+  if(s.next && !['puzzle','move','continuation','minigame','cinematic','impact','ending'].includes(s.type)){
     const next=runtime.index.get(s.next);
-    if(next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
+    if(!next?.endingArt&&next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
   }
 }
 
@@ -382,8 +397,9 @@ function updateReview(s){
   const position=s.sourceNumber?`${s.sourceNumber} / 24번 시안`:'추가한 진행 화면';
   $('sceneMeta').textContent=`${position}\n장면 ID: ${s.id}\n배경: ${s.background||'흰 회상 화면'}${s.cat?' · 표정: '+s.cat:''}`;
   const notConfigured=['puzzle','minigame'].includes(s.type)&&puzzles[s.puzzleId].answerMode!=='icons'&&puzzles[s.puzzleId].completionMode!=='result'&&!puzzles[s.puzzleId].acceptedAnswers?.length;
-  $('reviewWarning').hidden=!notConfigured;
-  $('reviewWarning').textContent=notConfigured?puzzles[s.puzzleId].missing+' 실제 정답을 입력해도 지금은 성공 처리하지 않습니다.':'';
+  const setupNote=puzzles[s.puzzleId]?.setupNote;
+  $('reviewWarning').hidden=!notConfigured&&!setupNote;
+  $('reviewWarning').textContent=notConfigured?puzzles[s.puzzleId].missing+' 실제 정답을 입력해도 지금은 성공 처리하지 않습니다.':setupNote||'';
   $('bypassButton').hidden=!notConfigured;
   $('referenceImage').hidden=!s.sourceNumber;$('noReference').hidden=Boolean(s.sourceNumber);
   $('referencePanel').hidden=!document.querySelector('.reference-details').open;
@@ -395,7 +411,9 @@ function updateReview(s){
 }
 
 $('startButton').addEventListener('click',()=>advance());
-$('nextButton').addEventListener('click',()=>textComplete?advance():finishText());
+$('nextButton').addEventListener('click',e=>{if(performance.now()<nextReadyAt)return;nextReadyAt=performance.now()+300;textComplete?advance():finishText();});
+$('retryScene').addEventListener('click',()=>render());
+$('nextButton').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat)e.preventDefault();});
 $('dialogue').addEventListener('click',()=>{if(!textComplete)finishText();});
 $('backButton').addEventListener('click',()=>{if(runtime.back()){save();render();}});
 $('arrivedButton').addEventListener('click',()=>advance({arrived:true}));
@@ -470,7 +488,7 @@ function submitAnswer(){
   if(!sceneReady||composing||runtime.pendingSuccessId||performance.now()-compositionEndedAt<80)return;
   runtime.updateSceneState({answer:$('answer').value});save();
   const result=runtime.submit($('answer').value);
-  if(result.ok){save();$('answerFeedback').textContent='';showSuccess();return;}
+  if(result.ok){save();$('answerFeedback').textContent='';if(result.immediate){$('answer').blur();render();}else showSuccess();return;}
   const message={empty:'글자를 입력해 주세요.',incorrect:puzzles[runtime.scene.puzzleId]?.incorrectMessage||'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
     'game-clear-required':'게임을 클리어하고 나온 키워드를 입력해 줘',
     'not-configured':'이 시안은 실제 정답을 설정하기 전이에요. 제작자 보기에서 다음 장면을 확인해 주세요.'}[result.reason]||'다시 확인해 주세요.';

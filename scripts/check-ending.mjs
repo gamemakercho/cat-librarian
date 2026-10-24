@@ -33,3 +33,8 @@ for(const name of ['fold-hint.svg','fold-step-1.svg','fold-step-2.svg']){
 }
 if(existsSync(resolve(root,'assets/ending/fold-step-3.svg')))throw Error('예전 완성 접기 그림이 남아 있음');
 console.log(JSON.stringify({endingImagesAndMetadataBytes:cinemaBytes,foldGuideBytes:['fold-step-1.svg','fold-step-2.svg','fold-hint.svg'].reduce((n,s)=>n+statSync(resolve(root,'assets/ending',s)).size,0),endingUI:'HTML ID·두 단계·접촉/복구 경계·지연 iframe·상대 모듈 경로 확인',sourceEngineAndGeometry:'원본 해시 확인',browserQA:'이 명령은 정적 검사만 실행 — 브라우저·실기기 결과는 검증 보고서 참조'},null,2));
+
+for(const id of ['ending-03-impact','ending-04-returned','ending-05-thanks'])for(const ext of ['webp','png'])statSync(resolve(root,'assets/ending',id+'.'+ext));
+const runner=JSON.parse(read('games/ending-chase/SOURCE.json'));
+for(const file of runner.unchanged){if(createHash('sha256').update(readFileSync(resolve(root,'games/ending-chase',file.file))).digest('hex')!==file.sha256)throw Error('달리기 원본 규칙 변경 '+file.file);}
+console.log('새 엔딩3장 WebP/PNG 및 기존 달리기 판정/물리 원본 해시 확인');

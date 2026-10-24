@@ -327,7 +327,7 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .ending-fold-actions{top:60%;height:17%}.ending-cinema-actions{top:86%}
 .ending-fold-actions #foldHintImage{height:22cqw;width:100%;object-fit:contain;display:block}
 .ending-fold-actions #openFoldGuide{width:100%;padding:0;border:0;background:transparent;min-height:0}
-.ending-contact-still{position:absolute;z-index:3;left:8%;top:12%;width:84%;height:23%;object-fit:cover;object-position:50% 84%;border-radius:3cqw}
+.ending-contact-still{position:absolute;z-index:3;left:8%;top:12%;width:84%;height:23%;object-fit:contain;object-position:center;border-radius:3cqw}
 .stage[data-layout="final-fold"] .dialogue{padding:3cqw 4cqw}
 .stage[data-layout="final-fold"] .instruction{position:static;width:auto;font-size:3.8cqw;line-height:1.45;margin-top:1.5cqw}
 .stage[data-layout="final-fold"] .answer-form{grid-template-columns:1fr 30%;padding:2cqw;gap:1cqw}
@@ -358,3 +358,25 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .ending-cinema-overlay iframe{border:0;display:block;width:100%;flex:1;min-height:0;background:#171c19}
 .ending-load,.ending-error{position:absolute;inset:70px 8% 10%;display:grid;place-content:center;text-align:center;background:#171c19;font-size:18px;line-height:1.8}
 .ending-error button{margin-top:10px}html.ending-active,body.ending-active{overflow:hidden;height:100%;overscroll-behavior:none}
+
+/* Full-panel story art keeps its native 3:2 ratio and never duplicates actors. */
+.ending-art-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.ending-art{position:absolute;left:3%;top:8%;width:94%;height:auto;aspect-ratio:3/2;object-fit:contain;image-rendering:auto;border-radius:3cqw;animation:art-fade .25s ease-out}
+.ending-speaker{position:absolute;z-index:7;left:10%;top:52%;font-size:4.5cqw;color:#406a54}
+.stage[data-layout="ending-illustration"]{background:#fff7e3}
+.stage[data-layout="ending-illustration"] .dialogue{padding-top:8cqw;font-size:5.6cqw;line-height:1.6}
+.stage[data-layout="ending-illustration"] .next-button{font-size:5cqw;min-height:44px}
+.stage[data-type="impact"] .ending-art{left:0;top:23%;width:100%;border-radius:0;animation:impact-art .6s ease-out both}
+.ending-impact-text{position:absolute;z-index:8;top:12%;left:0;right:0;text-align:center;font-size:16cqw;color:#f5b23f;-webkit-text-stroke:1cqw #493321;paint-order:stroke fill;text-shadow:0 2px #fff}
+.stage[data-layout="ending-illustration"] .ending-card{inset:47% 4% 2%;padding:3%;background:#fff9e8;opacity:1;transition:none;border:1px solid #c6b58f;border-radius:4cqw;justify-content:center}
+.stage[data-layout="ending-illustration"] .ending-card h1{font-size:6.5cqw;line-height:1.25}
+.stage[data-layout="ending-illustration"] .ending-card .ending-thanks{font-size:4cqw;margin:2cqw 0}
+.stage[data-layout="ending-illustration"] .ending-card .ending-eyebrow,.stage[data-layout="ending-illustration"] .ending-card .ending-punctuation,.stage[data-layout="ending-illustration"] .ending-card .ending-credit{display:none}
+.stage[data-layout="ending-illustration"] .ending-card button{padding:1cqw;margin:.5cqw 0;font-size:3.8cqw;min-height:44px}
+.retry-scene{position:absolute;z-index:25;top:64%;left:15%;width:70%;min-height:48px;font:inherit;background:#e2f0e4;color:#294c41;border:2px solid #6b947f;border-radius:12px}
+@keyframes art-fade{from{opacity:0}to{opacity:1}}
+@keyframes impact-art{0%{transform:scale(.94);opacity:1}45%{transform:scale(1.04);opacity:1}80%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:.3}}
+@media(prefers-reduced-motion:reduce){.ending-art,.stage[data-type="impact"] .ending-art{animation:art-fade .1s ease-out both}}
+
+.ending-tab-hidden .ending-art{animation-play-state:paused!important}
+.stage[data-layout="ending-illustration"] .scene-layer{background:#fff7e3}

@@ -11,36 +11,36 @@ import {directRescue} from '../ending/auto-director.js';
 import {ImpactCutin,advanceImpactTimeline} from '../ending/impact-cutin.js';
 import {readFileSync} from 'node:fs';
 
-test('처음12글자·마지막11글자는 정확한 문장이고 같은 규칙으로 정규화한다',()=>{
+test('마지막11글자 정답만 즉시 충돌 장면으로 연결되고 앞부분12글자 판정은 유지된다',()=>{
  assert.equal([...normalizeAnswer(puzzles['postcard-heading'].acceptedAnswers[0])].length,12);
  assert.equal([...normalizeAnswer(puzzles[endingPuzzleId].acceptedAnswers[0])].length,11);
- for(const answer of ['고양이와 사서가 돌아왔다','고양이와사서가돌아왔다!',' 고양이와\n사서가 돌아왔다！ ','고양이와 사서가 돌아왔다'.normalize('NFD')]){
-  const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(r.submit(answer).ok);
-  assert.equal(r.currentId,'ending-fold-puzzle');assert(!r.solved.has(endingPuzzleId));
-  const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.pendingSuccessId,'ending-fold-puzzle');
-  assert.equal(restored.advance().reason,'success-confirmation-required');assert.equal(restored.confirmSuccess().scene.id,'ending-impact');
+ for(const value of ['고양이와 사서가 돌아왔다','고양이와사서가돌아왔다!',' 고양이와\n사서가 돌아왔다！ ','고양이와 사서가 돌아왔다'.normalize('NFD')]){
+  const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(r.submit(value).immediate);
+  assert.equal(r.currentId,'ending-impact');assert(r.solved.has(endingPuzzleId));assert.equal(r.pendingSuccess,null);
+  assert.equal(r.submit(value).ok,false);assert(!r.flags.endingCompleted);
  }
- for(const answer of ['사서와 고양이가 돌아왔다','고양이와 사서가 뒤바뀌었다','돌아왔다','고양이와 사서가 돌아왔다.']){
-  const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(!r.submit(answer).ok);
+ for(const value of ['사서와 고양이가 돌아왔다','고양이와 사서가 뒤바뀌었다','돌아왔다','고양이와 사서가 돌아왔다.','고양이와 사서가 돌아왔다 추가']){
+  const r=new StoryRuntime(chapters,puzzles);r.jump('ending-fold-puzzle');assert(!r.submit(value).ok);assert.equal(r.currentId,'ending-fold-puzzle');assert(!r.solved.has(endingPuzzleId));
  }
 });
+
 test('기존 로비 저장은 제목으로 돌아가지 않고 후속 엔딩 첫 대사로 복원된다',()=>{
  const r=new StoryRuntime(chapters,puzzles,{currentId:'lobby-ending-entry',solved:['postcard-heading'],history:['newbooks-after-order']});
  assert.equal(r.scene.type,'dialogue');assert(r.scene.next);assert(r.solved.has('postcard-heading'));assert.equal(r.back(),true);
  assert.equal(r.currentId,'newbooks-after-order');
 });
-test('정답·시간 경과·복귀 버튼만으로 연출이 완료되지 않으며 결과 뒤에만 이동한다',()=>{
+test('접근은 실제 결과가 필요하고 삽화 충돌은 정답 이후 타이머 완료로만 이동한다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('ending-rescue');assert.equal(r.advance().reason,'ending-required');
- assert(!r.completeCinematic({gameId:'another-game',completed:true}).ok);assert(!r.completeCinematic({gameId:'library-ending-rescue',completed:false}).ok);
- assert.equal(r.flags.endingRescueComplete,undefined);
+ assert(!r.completeCinematic({gameId:'another-game',completed:true}).ok);
  assert(r.completeEndingApproach({gameId:'library-ending-rescue',contactReached:true,completed:false}).ok);
- assert.equal(r.advance().scene.id,'ending-fold-puzzle');assert.equal(r.flags.endingRescueComplete,undefined);
- r.submit('고양이와 사서가 돌아왔다!');assert.equal(r.confirmSuccess().scene.id,'ending-impact');
- assert(r.completeCinematic({gameId:'library-ending-rescue',completed:true}).ok);
- const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert(restored.flags.endingRescueComplete);
- assert.equal(restored.advance().scene.id,'ending-returned');
- r.reset();assert(!r.flags.endingRescueComplete);
+ assert.equal(r.advance().scene.id,'ending-fold-puzzle');assert(!r.flags.endingRescueComplete);
+ r.submit('고양이와 사서가 돌아왔다!');assert.equal(r.currentId,'ending-impact');assert.equal(r.advance().reason,'ending-required');
+ assert(r.completeIllustratedImpact().ok);assert.equal(r.advance().scene.id,'ending-returned');assert(!r.flags.endingCompleted);
+ while(r.scene.next)assert(r.advance().ok);
+ assert.equal(r.currentId,'ending-complete');assert(r.completeStory());assert(!r.completeStory());
+ const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert(!restored.completeStory());restored.reset();assert(!restored.flags.endingCompleted);
 });
+
 test('iframe 결과는 출처·창·세션·플레이ID·게임ID·완료 결과를 모두 확인한다',()=>{
  const frame={},active={origin:'https://gamemakercho.github.io',session:'session-1',runId:'run-12345678',part:'restore'};
  const valid={source:frame,origin:active.origin,data:{type:ENDING_COMPLETE,part:'restore',session:active.session,runId:active.runId,gameId:'library-ending-rescue',result:{gameId:'library-ending-rescue',completed:true}}};
@@ -75,10 +75,12 @@ test('충돌 컷인 포함 자동 연출은 작은/큰 프레임 간격과 동�
 test('일시정지는 영화 시간과 자동 이동을 함께 멈춘다',()=>{
  const e=new RescueEngine();e.start();e.advance(3);e.pause();const before=e.snapshot();directRescue(e,5);e.advance(5);assert.deepEqual(e.snapshot(),before);e.resume();directRescue(e,.1);e.advance(.1);assert(e.snapshot().totalTime>before.totalTime);
 });
-test('복구 후에는 말하는 고양이 사서 대신 사람 사서와 원래 고양이 그림을 쓴다',()=>{
- const ending=createEndingScenes(),idx=ending.findIndex(s=>s.id==='ending-returned');
- for(const s of ending.slice(idx)){assert(!s.cat);if(s.type==='dialogue')assert(s.actor?.startsWith('returned-'));}
+test('복귀 3대사와 포옹 3대사는 각각 같은 전체 삽화만 쓰고 인물을 중복하지 않는다',()=>{
+ const scenes=createEndingScenes(),returned=['ending-returned','ending-cat','ending-returned-joke'],thanks=['ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
+ for(const [ids,art]of [[returned,'ending-04-returned'],[thanks,'ending-05-thanks']])for(const id of ids){const s=scenes.find(s=>s.id===id);assert.equal(s.endingArt,art);assert(!s.actor&&!s.cat&&!s.background);}
+ assert.equal(scenes.find(s=>s.id==='ending-cat').text,'야옹~!');
 });
+
 test('앞부분은 접촉 순간에 멈추며 기다려도 복구/완료되지 않는다',()=>{
  for(const dt of [1/120,1/60,.1]){
   let completed=false;const d=new PhasedFinale({part:'approach',onComplete:()=>completed=true});d.start();
@@ -111,10 +113,11 @@ test('정답 뒤에는 츄르 질주에서 멈춘 실제 구출 자세와 같은
  for(const key of ['human','cat','landingX','jumpStartX','rescueHumanStart','phaseTime'])assert.deepEqual(after.snapshot()[key],before.snapshot()[key]);
  assert.equal(after.snapshot().paused,false);
 });
-test('미답 상태에서는 복구 장면의 완료 결과도 다음 이야기로 넘기지 않는다',()=>{
- const r=new StoryRuntime(chapters,puzzles);r.jump('ending-impact');
- assert.equal(r.completeCinematic({gameId:'library-ending-rescue',completed:true}).reason,'answer-required');assert.equal(r.advance().reason,'ending-required');
+test('미답 상태의 삽화와 임의 iframe 완료는 다음 이야기로 넘기지 않는다',()=>{
+ const r=new StoryRuntime(chapters,puzzles);r.jump('ending-impact');assert(!r.completeCinematic({gameId:'library-ending-rescue',completed:true}).ok);
+ assert.equal(r.completeIllustratedImpact().reason,'answer-required');assert.equal(r.advance().reason,'ending-required');
 });
+
 test('충돌 대기 사진은 허용한 그림 데이터만 보존하고 전체 시작에서 지운다',()=>{
  const still='data:image/webp;base64,UklGRg==',r=new StoryRuntime(chapters,puzzles);r.jump('ending-rescue');
  assert(isEndingPoster(still));assert(!isEndingPoster('https://another.invalid/private.png'));assert(!isEndingPoster('data:image/svg+xml,<svg/>'));
@@ -127,12 +130,15 @@ test('정답 전 접촉과 정답 후 완료 메시지는 서로 다른 경계�
  const event={source:frame,origin:active.origin,data:{type:ENDING_CONTACT,part:'approach',session:active.session,runId:active.runId,gameId:'library-ending-rescue',result:{gameId:'library-ending-rescue',contactReached:true,completed:false}}};
  assert(isEndingMessage(event,active,frame,ENDING_CONTACT));assert(!isEndingMessage({...event,data:{...event.data,part:'restore'}},active,frame,ENDING_CONTACT));assert(!isEndingMessage({...event,data:{...event.data,result:{gameId:'library-ending-rescue',completed:true}}},active,frame,ENDING_CONTACT));
 });
-test('이전 버전의 정답 팝업과 이미 확인한 정답을 새 복구 장면으로 이어 준다',()=>{
- const previous={currentId:'ending-fold-puzzle',pendingSuccess:{fromSceneId:'ending-fold-puzzle',puzzleId:endingPuzzleId,nextSceneId:'ending-not-yet',popup:{title:'찾아냈다!'}}};
- const r=new StoryRuntime(chapters,puzzles,previous);assert.equal(r.confirmSuccess().scene.id,'ending-impact');
- const old=new StoryRuntime(chapters,puzzles,{currentId:'ending-rescue',solved:[endingPuzzleId]});assert.equal(old.currentId,'ending-impact');assert(old.flags.endingContactReached);
+test('옛 마지막 팝업은 새 충돌로, 중단된 새 충돌은 복귀 삽화로 복원한다',()=>{
+ const r=new StoryRuntime(chapters,puzzles,{currentId:'ending-fold-puzzle',pendingSuccess:{fromSceneId:'ending-fold-puzzle',puzzleId:endingPuzzleId,nextSceneId:'ending-not-yet'}});
+ assert.equal(r.currentId,'ending-impact');assert(r.solved.has(endingPuzzleId));assert.equal(r.pendingSuccess,null);
+ const old=new StoryRuntime(chapters,puzzles,{currentId:'ending-rescue',solved:[endingPuzzleId]});assert.equal(old.currentId,'ending-impact');
+ const resumed=new StoryRuntime(chapters,puzzles,{currentId:'ending-impact',solved:[endingPuzzleId],flags:{endingIllustrationStarted:true}});
+ assert.equal(resumed.currentId,'ending-returned');assert(resumed.flags.endingRescueComplete);
  const unanswered=new StoryRuntime(chapters,puzzles,{currentId:'ending-fold-puzzle',storyVersion:'opening-source-24-ending-v13-20261015'});assert.equal(unanswered.currentId,'ending-rescue');
 });
+
 test('실제 자산 로더는 정답 전에는 새 충돌 그림을 요청하지 않는다',async()=>{
  const {loadAssets}=await import('../ending/asset-loader.js');
  const oldImage=globalThis.Image,oldFetch=globalThis.fetch,requested=[];
@@ -142,4 +148,15 @@ test('실제 자산 로더는 정답 전에는 새 충돌 그림을 요청하지
   const approach=await loadAssets(new AbortController().signal,{part:'approach'});assert.equal(approach.impact,null);assert(!requested.some(x=>x.endsWith('postcard-impact.webp')));
   const restore=await loadAssets(new AbortController().signal,{part:'restore'});assert(restore.impact);assert(requested.some(x=>x.endsWith('postcard-impact.webp')));
  }finally{globalThis.Image=oldImage;globalThis.fetch=oldFetch;}
+});
+
+test('첨부 장면 순서/대사 데이터와 현재 엔딩 장면이 일치한다',()=>{
+ const data=JSON.parse(readFileSync(new URL('../assets/ending/sequence.json',import.meta.url),'utf8'));
+ const actual=createEndingScenes(),ids=['ending-impact','ending-returned','ending-cat','ending-returned-joke','ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
+ const start=actual.findIndex(s=>s.id==='ending-impact');assert.deepEqual(actual.slice(start).map(s=>s.id),ids);
+ for(const group of data.post_answer_sequence.filter(s=>s.dialogue)){
+  const expected=group.dialogue.map(d=>d.text.replace(/\s/gu,''));
+  const found=actual.filter(s=>s.endingArt===group.asset_id&&s.type==='dialogue').map(s=>s.text.replace(/\s/gu,''));assert.deepEqual(found,expected);
+ }
+ assert.equal(actual[start].durationMs,data.post_answer_sequence[0].duration_ms);
 });

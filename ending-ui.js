@@ -19,7 +19,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
  function showError(){if(!active)return;$('endingLoading').hidden=true;$('endingError').hidden=false;$('endingRetry').focus();}
  function play(replay=false){
   const part=replay?'full':getScene().cinematicPart||'approach';if(part!=='approach'&&!canRestore())return;
-  stop();const url=new URL('./ending/',location.href);
+  stop();const url=new URL(part==='approach'?'./games/ending-chase/':'./ending/',location.href);
   active={session:crypto.randomUUID(),runId:getRunId(),origin:url.origin,from:getScene().id,replay,part};
   $('endingCinemaLabel').textContent=part==='approach'?'아직 끝나지 않은 이야기':'다시, 제자리로';
   $('endingFrame').title=part==='approach'?'츄르를 먹으려다 벌어진 로비의 마지막 사고':'원래 모습으로 돌아오는 마지막 장면';
@@ -29,7 +29,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   $('endingFrame').src=url.href;$('endingClose').focus();timer=setTimeout(showError,25000);
  }
  $('endingPlay').addEventListener('click',()=>{if(isCompleted())onReplay();else play();});
- $('endingReplay').addEventListener('click',()=>play(true));$('endingRestart').addEventListener('click',onRestart);$('endingRetry').addEventListener('click',()=>play(Boolean(active?.replay)));
+ $('endingReplay').addEventListener('click',onReplay);$('endingRestart').addEventListener('click',onRestart);$('endingRetry').addEventListener('click',()=>play(Boolean(active?.replay)));
  $('endingClose').addEventListener('click',()=>{stop();(getScene().type==='ending'?$('endingReplay'):$('endingPlay')).focus();});
  window.addEventListener('message',async event=>{
   const frame=$('endingFrame').contentWindow;

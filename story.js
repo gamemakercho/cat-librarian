@@ -4,7 +4,7 @@ import {iconCatalog} from './icon-catalog.js';
 import {createGeneralScenes,generalPuzzles} from './general-course.js';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js';
-export const STORY_VERSION = 'opening-source-24-ending-v15-20261015';
+export const STORY_VERSION = 'opening-source-24-ending-v16-20261024';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -252,7 +252,7 @@ const overrides = {
 export function createChapters(value) {
  const options=normalizeCourseOptions(value),chapters=structuredClone(openingChapters);
  const intro=chapters[0].scenes.find(s=>s.id==='general-room-intro');
- intro.text='여기는 책을 골라 읽고 빌리는\n종합자료실이야';intro.next='general-shelf-guide';intro.nextLabel='다음으로';
+ intro.text='여기는 종합자료실이야\n여러 분야의 책을 찾아 읽고 빌리는 곳이지';intro.next='general-shelf-guide';intro.nextLabel='다음으로';
  chapters[0].scenes.push(...createGeneralScenes(options));
  for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};

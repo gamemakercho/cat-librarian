@@ -10,7 +10,11 @@ export function isEndingPoster(value){return typeof value==='string'&&value.leng
 export function migrateEndingSnapshot(value={}){
  const snapshot={...value,flags:{...value.flags}};
  const solved=Array.isArray(value.solved)&&value.solved.includes(ENDING_PUZZLE_ID);
- if(value.pendingSuccess?.puzzleId===ENDING_PUZZLE_ID)snapshot.pendingSuccess={...value.pendingSuccess,nextSceneId:'ending-impact'};
+ if(value.pendingSuccess?.puzzleId===ENDING_PUZZLE_ID||value.pendingSuccessId==='ending-fold-puzzle'){
+   snapshot.solved=[...new Set([...(value.solved||[]),ENDING_PUZZLE_ID])];snapshot.pendingSuccess=null;snapshot.pendingSuccessId=null;
+   snapshot.currentId='ending-impact';snapshot.flags.endingContactReached=true;
+ }
+ if(value.currentId==='ending-impact'&&solved&&value.flags?.endingIllustrationStarted){snapshot.currentId='ending-returned';snapshot.flags.endingRescueComplete=true;}
  if(solved){snapshot.flags.endingContactReached=true;if(['ending-rescue','ending-not-yet'].includes(value.currentId))snapshot.currentId='ending-impact';}
  if(value.storyVersion?.includes('ending-v13')&&value.currentId==='ending-fold-puzzle'&&!solved&&!value.pendingSuccess)snapshot.currentId='ending-rescue';
  return snapshot;

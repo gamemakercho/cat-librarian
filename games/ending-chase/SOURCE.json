@@ -1,0 +1,35 @@
+{
+  "source": "C:/Users/user/Documents/Codex/2026-10-23/codex-prompt-md-x20/outputs/github/catch-librarian",
+  "version": "balance6",
+  "adaptation": "app.js: exact-origin story contact/ready/error only; original runner physics and five comics retained; final rescue comic held as postcard still, not the empty runner canvas",
+  "unchanged": [
+    {
+      "file": "engine.js",
+      "sha256": "f820bb6fe4166e1968bbb8a3c8465574f9bb2122399e2ec3b7a1703d27dc1595"
+    },
+    {
+      "file": "renderer.js",
+      "sha256": "18346b216fac4994b44bfc03e64aeec274c806e467deab56cad37a3060d1f4a6"
+    },
+    {
+      "file": "collision.js",
+      "sha256": "d338d6734512f2e253d478ab9025a0b04639fb8fd1071d791e24637f694b81e0"
+    },
+    {
+      "file": "props.js",
+      "sha256": "187a2a30ef7ed6c60f7706d6338682a688867666665db9997a8d775cc9246cf2"
+    },
+    {
+      "file": "librarian-motion.js",
+      "sha256": "5e495b6342320dc0e5d3997f2cfffae988113586b9b83c5dcf636a04141a0ef3"
+    },
+    {
+      "file": "scene-data.js",
+      "sha256": "3c9d2c1924b255f6dc13be7ae677f5c4eaf6c6731b661070188b6bbaa9d276dc"
+    },
+    {
+      "file": "config.js",
+      "sha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9"
+    }
+  ]
+}

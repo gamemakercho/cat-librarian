@@ -9,7 +9,7 @@ for(const config of [uiText.successPopup,...Object.values(puzzles).map(p=>p.succ
 for(const p of Object.values(puzzles))for(const icon of Object.values(p.icons||{}))used.add(icon.assetKey);
 used.add('cat:neutral');
 for(const s of chapters.flatMap(c=>c.scenes)){
-  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop'],['cipher','prop']]){
+  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop'],['cipher','prop'],['endingArt','ending']]){
     if(s[field])used.add(prefix+':'+s[field]);
   }
   if(s.actor)used.add('actor:'+s.actor);

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "usage_ko": "현재 프로젝트의 엔딩 상태 관리에 맞춰 적용할 참조 데이터입니다. 새 엔진이나 공통 게임 API를 가정하지 않습니다. 경로는 ZIP 루트 기준입니다.",
+  "trigger": {
+    "type": "correct-final-answer",
+    "display_answer": "고양이와 사서가 돌아왔다!",
+    "expected_normalized_answer": "고양이와사서가돌아왔다",
+    "normalization": {
+      "unicode": "NFC",
+      "remove": [
+        "whitespace",
+        "?",
+        "!",
+        "？",
+        "！"
+      ],
+      "compare": "exact"
+    }
+  },
+  "pre_answer": {
+    "state": "await-final-answer",
+    "action": "기존 질주·휘청임·구출 시도에서 멈추고 실제 엽서 접기 문제를 보여 줍니다.",
+    "hide_post_answer_images": true,
+    "hide_folded_solution_reference": true,
+    "dialogue": [
+      {
+        "speaker": "고양이 몸의 사서",
+        "text": "잠깐! 고양이로 끝낼 순 없지!"
+      },
+      {
+        "speaker": "고양이 몸의 사서",
+        "text": "엽서 속 마지막 한 줄을 찾아줘!"
+      }
+    ]
+  },
+  "post_answer_sequence": [
+    {
+      "id": "impact",
+      "asset_id": "ending-03-impact",
+      "image": "assets/ending-03-impact.webp",
+      "fallback": "assets/ending-03-impact.png",
+      "advance": "auto",
+      "duration_ms": 600,
+      "text_overlay": "쿵!",
+      "animation": {
+        "kind": "impact-cutin",
+        "scale_keyframes": [
+          0.94,
+          1.04,
+          1
+        ],
+        "play_once": true
+      },
+      "reduced_motion": "short-fade",
+      "next": "returned"
+    },
+    {
+      "id": "returned",
+      "asset_id": "ending-04-returned",
+      "source_panel": "첨부1 4번째 컷",
+      "image": "assets/ending-04-returned.webp",
+      "fallback": "assets/ending-04-returned.png",
+      "advance": "next-button-per-dialogue",
+      "dialogue": [
+        {
+          "speaker": "사서",
+          "text": "앗… 돌아왔다!"
+        },
+        {
+          "speaker": "고양이",
+          "text": "야옹~!"
+        },
+        {
+          "speaker": "사서",
+          "text": "너는 야옹 한마디면 끝이지?"
+        }
+      ],
+      "next": "thanks"
+    },
+    {
+      "id": "thanks",
+      "asset_id": "ending-05-thanks",
+      "source_panel": "첨부2 4번째 컷",
+      "image": "assets/ending-05-thanks.webp",
+      "fallback": "assets/ending-05-thanks.png",
+      "transition": {
+        "kind": "fade",
+        "duration_ms": 250
+      },
+      "advance": "next-button-per-dialogue",
+      "dialogue": [
+        {
+          "speaker": "사서",
+          "text": "고마워. 책도 바닥도, 나까지 제자리로 돌려놔 줬네."
+        },
+        {
+          "speaker": "사서",
+          "text": "다음에도 도서관에 놀러 와. 그땐 책만 빌려줄게."
+        },
+        {
+          "speaker": "사서",
+          "text": "오늘은 내 몸까지 대출 중이었거든."
+        }
+      ],
+      "next": "complete"
+    },
+    {
+      "id": "complete",
+      "reuse_asset_id": "ending-05-thanks",
+      "title": "고양이와 사서가 돌아왔다!",
+      "complete_game_once": true
+    }
+  ],
+  "guards": {
+    "start_once_per_playthrough": true,
+    "discard_answer_submit_gesture_on_new_scene": true,
+    "block_next_during_impact": true,
+    "pause_when_hidden": true,
+    "wait_for_images_before_timing": true,
+    "retry_on_image_failure": true,
+    "save_scene_and_dialogue_index": true,
+    "resume_interrupted_impact_at": "returned"
+  }
+}

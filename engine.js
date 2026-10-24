@@ -125,6 +125,14 @@ export class StoryRuntime {
     if(isEndingPoster(result.still))this.endingContactPoster=result.still;
     return {ok:true};
   }
+  completeIllustratedImpact(){
+    if(this.scene.type!=='impact'||!this.solved.has(ENDING_PUZZLE_ID))return {ok:false,reason:'answer-required'};
+    this.flags.endingRescueComplete=true;return {ok:true};
+  }
+  completeStory(){
+    if(this.currentId!=='ending-complete'||!this.solved.has(ENDING_PUZZLE_ID)||this.flags.endingCompleted)return false;
+    this.flags.endingCompleted=true;return true;
+  }
   completeCinematic(result) {
     if(this.scene.type!=='cinematic'||this.scene.cinematicPart==='approach'||!isEndingResult(result))return {ok:false,reason:'invalid-ending-result'};
     if(!this.solved.has(ENDING_PUZZLE_ID))return {ok:false,reason:'answer-required'};
@@ -135,6 +143,7 @@ export class StoryRuntime {
     if(this.pendingSuccessId===s.id&&!review)return {ok:false,reason:'success-confirmation-required'};
     if (s.type === 'puzzle' && !this.solved.has(s.puzzleId) && !review) return {ok:false,reason:'answer-required'};
     if (s.type === 'move' && !arrived && !review) return {ok:false,reason:'arrival-required'};
+    if(s.type==='impact'&&!review&&(!this.solved.has(ENDING_PUZZLE_ID)||!this.flags.endingRescueComplete))return {ok:false,reason:'ending-required'};
     if(s.type==='cinematic'&&!review){
       if(s.cinematicPart==='approach'&&!this.flags.endingContactReached)return {ok:false,reason:'ending-required'};
       if(s.cinematicPart==='restore'&&(!this.solved.has(ENDING_PUZZLE_ID)||!this.flags.endingRescueComplete))return {ok:false,reason:'ending-required'};
@@ -172,6 +181,11 @@ export class StoryRuntime {
     if (!p.acceptedAnswers?.length) return {ok:false,reason:'not-configured'};
     if ((p.answerMode==='english-three'&&!/^[a-z]{3}$/u.test(answer)) || !p.acceptedAnswers.some(a => normalize(a) === answer)) {
       return {ok:false,reason:'incorrect'};
+    }
+    if(p.successMode==='immediate'){
+      this.solved.add(s.puzzleId);this.pendingSuccess=null;
+      this.history.push(this.currentId);this.currentId=s.next;
+      return {ok:true,reason:'correct',immediate:true};
     }
     if(this.pendingSuccessId!==s.id)this.pendingSuccess=this.createPendingSuccess();
     return {ok:true,reason:'correct'};

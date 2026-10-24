@@ -289,22 +289,23 @@ test('색 암호 SVG는 원본의 동일 크기6칸·세로/가로 좌표·최�
   ['209','60','80','80','#EA524A'],['289','60','80','80','#A165AF'],['438','60','80','80','#4AA470'],['518','60','80','80','#A165AF']]);
  assert.match(svg,/viewBox="0 0 634 219"/);assert.doesNotMatch(svg,/고치기|ㄱ|ㅗ|ㅊ|ㅣ/);
 });
-test('PC/신간 네 조합은 중복04 없이 실제 동선으로 로비에 도착한다',()=>{
+test('옛 선택 설정에 관계없이 책 꽂기→서가 문제→책 받기→로비 도착을 모두 지난다',()=>{
  for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){
-  const options={showDeskInterlude,includeNewBooks},r=new StoryRuntime(createChapters(options),puzzles,{}, {},Math.random,options),visited=[];
-  r.jump('general-room-intro');while(r.currentId!=='lobby-ending-entry'){visited.push(r.currentId);assert(r.advance({review:true}).ok);assert(visited.length<20);}
-  assert.equal(r.currentId,'lobby-ending-entry');assert.equal(visited.filter(id=>id==='general-room-intro').length,1);
-  assert.equal(visited.includes('general-pc-guide'),showDeskInterlude);assert.equal(visited.includes('general-pc-paint'),showDeskInterlude);
-  assert.equal(visited.includes('newbooks-intro'),includeNewBooks);assert.equal(visited.length,5+(showDeskInterlude?2:0)+(includeNewBooks?5:0));
-  if(!includeNewBooks)assert(!r.scenes.some(s=>s.background==='new-books'||s.markerNumber===5||s.gameUrl?.includes('book-order')));
+  const r=new StoryRuntime(createChapters({showDeskInterlude,includeNewBooks}),puzzles),visited=[];r.jump('general-room-intro');
+  while(r.currentId!=='lobby-ending-entry'){visited.push(r.currentId);assert(r.advance({review:true}).ok);assert(visited.length<60);}
+  assert(visited.indexOf('general-room-puzzle')<visited.indexOf('newbooks-order-game'));
+  assert(visited.indexOf('newbooks-order-game')<visited.indexOf('newbooks-puzzle'));
+  assert(visited.indexOf('newbooks-puzzle')<visited.indexOf('general-book-catch'));
+  assert.equal(visited.at(-1),'travel-to-ending-lobby');assert(!visited.some(id=>id.includes('booksort')));
  }
 });
+
 test('숫자 문제만 NFKC/공백 규칙을 쓰고 두 문제의 풀이/입력/팝업은 독립이다',()=>{
  const r=new StoryRuntime(chapters,puzzles);r.jump('general-room-puzzle');r.updateSceneState({answer:'２'});
  for(const input of ['22','2.0','+2','둘','2!','2?'])assert.equal(r.submit(input).ok,false);
  for(const input of ['2',' ２ ','２\n'])assert.equal(normalizeNumericAnswer(input),'2');
  assert(r.submit('２').ok);assert.equal(r.pendingSuccess.popup.title,'정답이야!');assert.equal(r.currentId,'general-room-puzzle');
- r.confirmSuccess();assert.equal(r.currentId,'general-book-catch');r.jump('newbooks-puzzle');
+ r.confirmSuccess();assert.equal(r.currentId,'general-order-bridge');r.jump('newbooks-puzzle');
  assert.equal(r.sceneState.answer,undefined);assert(!r.solved.has('newbooks-placeholder-v1'));assert.equal(r.advance().reason,'answer-required');
  r.submit('2');assert.equal(r.pendingSuccess.popup.title,'와! 맞았어!');assert.equal(r.solved.has('newbooks-placeholder-v1'),false);
  r.confirmSuccess();assert(r.solved.has('general-room-placeholder-v1'));assert(r.solved.has('newbooks-placeholder-v1'));
@@ -332,7 +333,7 @@ test('책 꽂기는 실제10권 완료 배열만 인정하고 성공 결과 확�
  assert.equal(r.completeMinigame({kind:'book-order',cleared:true,complete:true,shelf:[...shelf].reverse(),cart:Array(10).fill(null)}).ok,false);
  assert(r.completeMinigame({kind:'book-order',cleared:true,complete:true,shelf:[...shelf],cart:Array(10).fill(null)}).ok);
  assert.equal(r.submit('제자리').reason,'game-clear-required');assert.equal(r.pendingSuccess,null);assert.equal(r.currentId,'newbooks-order-game');
- assert.equal(r.advance().scene.id,'newbooks-after-order');assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'lobby-ending-entry');
+ assert.equal(r.advance().scene.id,'newbooks-after-order');assert.equal(r.scene.type,'dialogue');r.jump('travel-to-ending-lobby');assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).scene.id,'lobby-ending-entry');
 });
 
 test('옛2층 키워드 팝업은 제거하되 클리어 증거·앞선 풀이·runId는 보존한다',()=>{

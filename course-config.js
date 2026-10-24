@@ -1,4 +1,4 @@
-// Producer settings for a new play. Existing plays keep their saved route options.
+// Legacy producer settings are kept for save compatibility. As of 2026-10-24, the full 2F desk/order/shelf/catch route is required regardless of these old optional flags.
 export const courseSettings = {
   showDeskInterlude:true,
   includeNewBooks:true,

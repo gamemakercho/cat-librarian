@@ -42,3 +42,7 @@
 - 마지막 정답은 고양이와 사서가 돌아왔다만 허용한다. NFC·공백·? ! ？ ！ 제거,한글11글자 안내·maxlength80·ART 키패드 숨김이다. 찾아냈다!/우리 이야기의 마지막 한 줄이네!/다음으로 팝업에서 다음으로를 눌러 solved를 확정한 뒤 ending-impact를 별도 시작 없이 재생한다.
 - 접기 안내는 assets/ending의 fold-hint/step-1/step-2.svg만 쓴다. 흰 종이·두 노란 귀퉁이·뒤로 접는 화살표만 공개하고 완성된 엽서·캐릭터·문장 조각·QR·머리 모양을 힌트/alt에 추가하지 않는다. fold-step-3.svg는 사용/배포하지 않는다. 첨부 충돌 그림은 ending/assets/postcard-impact.webp와 원본 표시 좌표[122,328,536,323] 그대로 정답 뒤 약1.05초 표시한다.
 - ending-bridge/ending-ui는 iframe창·정확한 origin·session·runId·gameId·part·결과를 확인한다. endingContactReached/endingRescueComplete/endingContactPoster를 분리 저장하고,앞부분 완료/닫기/시간 경과만으로 복구를 확정하지 않는다. v13 미답 접기는 접근부로,기존 정답/팝업은 새 후반으로 이어 준다. 문서 숨김은 시간을 멈추며 동작 줄이기는 강한 빛을 쓰지 않는다. 완료 뒤 다시 보기는 full,전체 처음부터는 사진/플래그/풀이를 초기화한다.
+
+- 2026-10-24 최신 story-ending-update(v16)는 위 v15 동선/후반 연출 지시를 대체한다. general-course.js의 필수 경로는 십진분류표 문제→책 꽂기→서가 도착→얼굴 교체 현장 문제→책 받기→1층 로비 도착이며 booksort를 넣지 않는다. 옛 선택 옵션은 필수 코스를 생략하지 않는다. 기존 두 현장 시안 정답2는 확정 전까지 유지하며 다른 정답/키워드를 만들지 않는다. 확정 키워드가 없어 두 게임의 기존 결과 버튼 방식을 유지했다.
+- 마지막 추격은 games/ending-chase의 기존 balance6 본편 사본이다. 물리·점수·만화5장은 유지하고 검증된 approach 결과로 본편 접기 문제에 복귀한다. 다른 달리기 저장소는 수정하지 않는다.
+- 마지막 문제만 successMode:immediate 예외다. 정답 즉시 ending-impact(600ms 쿵!)→ending-returned/ending-cat/ending-returned-joke(복귀 그림)→ending-thanks/ending-promise/ending-loan-joke(포옹 그림)→ending-complete다. 모든 대사는 첨부 원고 그대로이며 마지막 감사 대사 뒤에만 endingCompleted와 완료 이벤트를 한 번 기록한다. 새 그림3장을 마지막 문제에서 미리 읽되 정답 전에 표시하지 않는다. WebP 실패 시 PNG, 전체 실패 시 재시도, 이미지 준비 뒤 타이머,숨김 정지,동작 줄이기,단계 복원을 유지한다. 옛 정답 팝업은 새 충돌로 이어 주고 새 충돌 도중 저장은 복귀 그림부터 잇는다.
