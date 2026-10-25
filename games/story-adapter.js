@@ -9,7 +9,10 @@
  let lastClear='',height=visualViewport?.height||innerHeight,width=innerWidth,touchY=0;
  const send=(type,extra={})=>{if(host)parent.postMessage({type:'cat-librarian:'+type,version:1,...host,...extra},host.origin);};
  function resize(){if(!host)return;const h=visualViewport?.height||innerHeight; height=innerWidth!==width?h:Math.min(height,h);width=innerWidth;document.documentElement.style.setProperty('--game-height',height+'px');}
+ const restoreHandlers=new Set();
+ addEventListener('message',event=>{const d=event.data;if(!host||event.source!==parent||event.origin!==host.origin||d?.type!=='cat-librarian:minigame-restore'||d.version!==1||d.session!==host.session||d.gameId!==host.gameId)return;for(const fn of restoreHandlers)fn(d.progress);});
  const api={embedded:!!host,runId,
+  progress(progress){send('minigame-progress',{progress});},onRestore(fn){restoreHandlers.add(fn);},
   ready(){send('minigame-ready');},error(error){console.error(error);send('minigame-error');},
   clear(result){if(!host||!result?.cleared)return;const signature=JSON.stringify(result);if(signature!==lastClear){lastClear=signature;send('minigame-clear',{result});}},
   reset(){lastClear='';},
@@ -33,7 +36,7 @@
  if(host){document.documentElement.classList.add('story-embedded');resize();addEventListener('resize',resize);visualViewport?.addEventListener('resize',resize);
   document.addEventListener('touchstart',e=>{touchY=e.touches[0]?.clientY||0;},{passive:true});
   document.addEventListener('touchmove',e=>{const y=e.touches[0]?.clientY||touchY,dy=y-touchY;touchY=y;
-   const box=e.target.closest?.('.story-result-card,.card,#overlay article');
+   const box=e.target.closest?.('.story-result-card,.card,#overlay article,.letter-panel,.letter-success');
    const scrollable=box&&box.scrollHeight>box.clientHeight+1&&(dy>0?box.scrollTop>0:dy<0?box.scrollTop+box.clientHeight<box.scrollHeight-1:false);
    if(!scrollable&&e.cancelable)e.preventDefault();
   },{passive:false});

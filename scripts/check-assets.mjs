@@ -9,14 +9,17 @@ for(const config of [uiText.successPopup,...Object.values(puzzles).map(p=>p.succ
 for(const p of Object.values(puzzles))for(const icon of Object.values(p.icons||{}))used.add(icon.assetKey);
 used.add('cat:neutral');
 for(const s of chapters.flatMap(c=>c.scenes)){
-  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop'],['cipher','prop'],['endingArt','ending']]){
+  for(const [field,prefix] of [['background','bg'],['cat','cat'],['comic','comic'],['illustration','prop'],['decoration','prop'],['cipher','prop'],['endingArt','ending'],['storyArt','story']]){
     if(s[field])used.add(prefix+':'+s[field]);
   }
+  if(s.shelfActor)used.add('actor:shelf-librarian');if(s.noticeText)used.add('icon:rule_book_cart');
   if(s.actor)used.add('actor:'+s.actor);
   if(s.staff)used.add('actor:staff');if(s.sleeping)used.add('actor:sleeping');if(s.marker)used.add('prop:marker');
 }
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);
   if(statSync(file).size!==manifest[key].bytes)throw Error('자산 크기 불일치 '+key);
+  if(manifest[key].fallback)statSync(resolve(root,manifest[key].fallback));
+  if(manifest[key].sha256&&createHash('sha256').update(readFileSync(file)).digest('hex')!==manifest[key].sha256)throw Error('제공 그림 원본 변경 '+key);
   if(manifest[key].render?.clip)statSync(resolve(root,manifest[key].render.clip));
 }
 const html=readFileSync(resolve(root,'index.html'),'utf8');
@@ -41,3 +44,5 @@ for(const asset of [...games.assets,...games.unchangedRules]){
 console.log(JSON.stringify({gameAssets:games.assets.length,gameAssetBytes:games.assets.reduce((sum,a)=>sum+a.bytes,0),unchangedRuleFiles:games.unchangedRules.length}));
 
 await import('./check-ending.mjs');
+
+await import('./check-order-letters.mjs');

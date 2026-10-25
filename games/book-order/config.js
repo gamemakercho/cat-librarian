@@ -19,4 +19,4 @@ export const CONFIG = {
   }
 };
 
-if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='책등의 번호를 살펴보세요';CONFIG.text.start='번호가 작은 책부터 왼쪽에 꽂아 주세요';}
+if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='현장의 십진분류표와 책띠를 살펴보세요';CONFIG.text.start='현장의 십진분류표와 책띠 색·분류명을 보고 열 권을 주제 순서대로 정리해 주세요. 책을 끌거나, 책과 자리를 차례로 눌러 꽂아요.';}

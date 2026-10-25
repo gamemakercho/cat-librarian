@@ -1,10 +1,11 @@
 // 화면 문구/표정/순서는 여기서 수정합니다. 렌더러는 바꾸지 않아도 됩니다.
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
+import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
 import {createGeneralScenes,generalPuzzles} from './general-course.js';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js';
-export const STORY_VERSION = 'opening-source-24-ending-v16-20261024';
+export const STORY_VERSION = 'opening-source-24-order-paws-v18-20261025';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},
@@ -49,7 +50,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text: '오늘 아침에도 평소처럼 도서관에\n출근 중이었어', next: 'opening-comic-1' },
   ...[6,7,8,9].map((number, i) => ({
     id: `opening-comic-${i+1}`, sourceNumber: number, type: 'comic', background: null,
-    comic: i+1, textGroup:'morning-memory', textMode:'static', text: '오늘 아침에도 평소처럼 도서관에\n출근 중이었어',
+    comic: i+1, narrationKey:sceneCopy.intro.panels[i].semantic_key, textMode:'static', text:sceneCopy.intro.panels[i].narration,
     effect: number === 9 ? 'collision' : null,
     next: number === 9 ? 'opening-swapped' : `opening-comic-${i+2}`
   })),
@@ -106,7 +107,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     location:locations.learning.name, cat:'neutral', layout:'art',
     decoration:'paint-marks',
     text:'엽서를 활용해 물감 자국을 완성하면\n무슨 글자가 보이는 것 같아',
-    instruction:'영어 3자리(소문자)',next:'learning-room-trail',
+    instruction:'영어 4글자',next:'learning-room-trail',
     geometry:{cat:[40,175,140,154],dialogue:[32,340,436,235],answerForm:[29,595,442,230]} },
   { id:'learning-room-trail',sourceNumber:null,type:'dialogue',background:'learning-paint',location:locations.learning.name,
     cat:'bewildered',layout:'arrival',fontSize:28,
@@ -158,17 +159,20 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     text:'상자만 보면 들어가고 싶나 봐\n앗, 2층으로 도망갔어!',nextLabel:'다음으로',next:'sterilizer-failure',geometry:followDialogueGeometry },
   { id:'sterilizer-failure',sourceNumber:null,role:'S04',type:'dialogue',background:'sterilizer-clean',
     cat:'worried',location:'1.5층 책소독기',layout:'arrival',machineState:'stopped',
-    text:'잠깐, 소독기가 멈췄어\n저 녀석이 고장 낸 것 같아!',nextLabel:'다음으로',next:'sterilizer-color-puzzle',geometry:followDialogueGeometry },
+    text:sceneCopy.sanitizer.before[0],nextLabel:'다음으로',next:'sterilizer-big-body',geometry:followDialogueGeometry },
+  {id:'sterilizer-big-body',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'self-mockery',location:'1.5층 책소독기',layout:'arrival',machineState:'stopped',text:sceneCopy.sanitizer.before[1],next:'sterilizer-new-lamp',geometry:followDialogueGeometry},
+  {id:'sterilizer-new-lamp',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'worried',location:'1.5층 책소독기',layout:'arrival',machineState:'stopped',text:sceneCopy.sanitizer.before[2],next:'sterilizer-color-puzzle',geometry:followDialogueGeometry},
   { id:'sterilizer-color-puzzle',sourceNumber:null,role:'S05',type:'puzzle',puzzleId:'sterilizer-color-command-v1',
     background:'sterilizer-clean',cat:'worried',location:'1.5층 책소독기',layout:'sterilizer',fontSize:25,machineState:'stopped',
     cipher:'sterilizer-command',cipherAlt:'첫 묶음은 위 초록, 아래 하늘색. 둘째 묶음은 왼쪽 빨강, 오른쪽 보라. 셋째 묶음은 왼쪽 초록, 오른쪽 보라',
     text:'색깔 신호가 떴어\n이름표가 단서인가 봐!',
     puzzleGuide:'책소독기 이름표의 색을 보고,\n색깔 신호를 글자로 바꿔 줘!',
-    onSuccess:{sterilizerRepaired:true},next:'sterilizer-repaired',
+    onSuccess:{sterilizerRepaired:true},preloadAssets:['story:sanitizer-repaired'],next:'sterilizer-repaired',
     geometry:{locationBanner:[31,50,438,66],cat:[38,145,140,130],dialogue:[32,284,436,119],cipherPanel:[32,419,436,213],answerForm:[29,650,442,175]} },
-  { id:'sterilizer-repaired',sourceNumber:null,role:'S06',type:'dialogue',background:'sterilizer-clean',
-    cat:'happy',location:'1.5층 책소독기',layout:'arrival',machineState:'repaired',
-    text:'고쳤다! 이제 다시 쓸 수 있겠어',nextLabel:'다음으로',next:'travel-to-general',geometry:followDialogueGeometry },
+  {id:'sterilizer-repaired',sourceNumber:null,role:'S06',type:'dialogue',background:null,storyArt:'sanitizer-repaired',layout:'story-illustration',textMode:'static',fontSize:27,
+    text:sceneCopy.sanitizer.result.dialogue[0],nextLabel:'다음으로',next:'sterilizer-repaired-relief',geometry:{storyArt:[32,120,436,436],dialogue:[32,570,436,180],nextButton:[138,790,224,63]}},
+  {id:'sterilizer-repaired-relief',sourceNumber:null,type:'dialogue',background:null,storyArt:'sanitizer-repaired',layout:'story-illustration',textMode:'static',fontSize:27,
+    text:sceneCopy.sanitizer.result.dialogue[1],nextLabel:'다음으로',next:'travel-to-general',geometry:{storyArt:[32,120,436,436],dialogue:[32,570,436,180],nextButton:[138,790,224,63]}},
   { id:'travel-to-general',sourceNumber:null,role:'S07',type:'move',background:'sterilizer-clean',
     cat:'neutral',location:'2층 종합자료실',layout:'move',fontSize:23,marker:true,markerNumber:locations.general.markerNumber,
     destination:'2층 종합자료실',
@@ -194,8 +198,8 @@ export const puzzles = {
     successPopup:{title:'정답이야!', body:'잘했어!\n다음 이야기를 이어가 보자!', buttonLabel:'다음으로', cat:'happy', tone:'gold'}
   },
   'learning-room-art':{
-    status:'confirmed',answerMode:'english-three',acceptedAnswers:['art'],placeholder:'소문자 3자리',
-    answerLabel:'영어 3자리(소문자)',ariaLabel:'정답: 영어 3자리, 소문자',checkLabel:'정답 확인',
+    status:'confirmed',answerMode:'english-four',acceptedAnswers:['book'],placeholder:'영어 4글자',
+    answerLabel:'영어 4글자',ariaLabel:'정답: 영어 4글자',checkLabel:'정답 확인',
     hints:['네 컷 만화가 있는 면에서 네 귀퉁이의 물감 모양을 찾아보세요.',
       '같은 색과 모양끼리 맞대세요. 엽서 아래쪽의 글자 조각이 이어져요.'],
     incorrectMessage:'조금만 다시 볼까? 아래쪽에 이어진 영어를 확인해 봐.',missing:'',
@@ -214,7 +218,7 @@ export const puzzles = {
     successPopup:{title:'훌륭해!',body:'잘했어!',buttonLabel:'다음으로',cat:'happy',tone:'mint'}
   },
   'sterilizer-color-command-v1':{
-    status:'confirmed',acceptedAnswers:['고치기'],repairFlag:'sterilizerRepaired',
+    status:'confirmed',acceptedAnswers:['고치기'],repairFlag:'sterilizerRepaired',successMode:'immediate',
     answerLabel:'한글 3글자',placeholder:'정답 입력',ariaLabel:'정답: 한글 3글자',checkLabel:'정답 확인',hintLabel:'힌트',
     incorrectMessage:'조금 달라! 이름표의 색을 다시 확인해 봐',
     hints:['책소독기에 붙은 이름표에서 같은 색의 자모를 찾아봐',
@@ -252,7 +256,7 @@ const overrides = {
 export function createChapters(value) {
  const options=normalizeCourseOptions(value),chapters=structuredClone(openingChapters);
  const intro=chapters[0].scenes.find(s=>s.id==='general-room-intro');
- intro.text='여기는 종합자료실이야\n여러 분야의 책을 찾아 읽고 빌리는 곳이지';intro.next='general-shelf-guide';intro.nextLabel='다음으로';
+ intro.text='여기는 여러 분야의 책을 찾아 읽고 빌리는 종합자료실이야.';intro.next='general-order-bridge';intro.nextLabel='다음으로';
  chapters[0].scenes.push(...createGeneralScenes(options));
  for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};

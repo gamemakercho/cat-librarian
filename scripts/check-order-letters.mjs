@@ -1,0 +1,6 @@
+import {readFileSync,statSync,existsSync} from 'node:fs';import {resolve,dirname} from 'node:path';import {LETTER_PUZZLE as C} from '../games/book-order/letter-puzzle-config.js';
+const root=resolve(import.meta.dirname,'..'),read=f=>readFileSync(resolve(root,f),'utf8');const html=read('games/book-order/index.html');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);if(new Set(ids).size!==ids.length)throw Error('책 게임 HTML 중복ID');
+const files=['answer-rules.js','course-migration.js','shelf-motion.js','games/book-order/letter-puzzle-config.js','games/book-order/letter-state.js','games/book-order/letter-ui.js'];
+for(const file of files){const code=read(file);for(const m of code.matchAll(/from\s+['"]([^'"]+)['"]/g))if(m[1].startsWith('.')&&!existsSync(resolve(root,dirname(file),m[1])))throw Error('없는 글자문제 모듈 '+m[1]);if(file.endsWith('letter-ui.js'))for(const m of code.matchAll(/\$\('([^']+)'\)/g))if(!ids.includes(m[1]))throw Error('없는 글자문제ID '+m[1]);}
+if(C.readingBookIds.map(id=>C.letters[id]).join('')!==C.answer)throw Error('글자문제 정답 매핑 불일치');if(statSync(resolve(root,'games/book-order/paw-strip.png')).size>30000)throw Error('발자국 장식 예산 초과');
+console.log(JSON.stringify({bookLetters:'ID별10글자·읽기 순서·상대 모듈·HTML ID 확인',pawImageBytes:statSync(resolve(root,'games/book-order/paw-strip.png')).size}));

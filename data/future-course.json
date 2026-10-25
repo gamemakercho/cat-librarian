@@ -1,31 +1,28 @@
 {
   "implementedInThisKit": true,
   "implementedSegments": [
-    "초반 24장",
-    "평생학습실 ART",
-    "유아자료실 02 이동 확인",
-    "유아자료실 14아이콘 문제",
-    "청소 게임 시작/복귀",
-    "청소 완료 뒤 책소독기 03 이동·색 암호·수리",
-    "종합자료실 04 도착 소개·서가 안내·선택 PC 대화",
-    "종합자료실 임시 숫자 문제·책 받기·성공 결과 진행",
-    "선택 신간코너 05 소개·임시 숫자 문제·책 꽂기·성공 결과 진행",
-    "1층 로비 츄르 질주·구출·접촉 정지",
-    "마지막 엽서 접기 문제·정답 확정 뒤 충돌/몸 복구",
-    "사람 사서 감사·엔딩·다시 보기"
+    "초반24장·도입4컷별 내레이션",
+    "평생학습실 BOOK",
+    "유아자료실 아이콘4개·청소",
+    "1.5층 책소독기 고치기·UV램프 교체 삽화2대사",
+    "종합자료실 도착·10권 책 정리",
+    "같은 책 정리판의 글자·발자국 문제와 칭찬 팝업",
+    "서가 도착 확인·책 밀기·책 받기",
+    "책 받기 뒤 반납 안내·천천히 로비 이동",
+    "기존 사서 따라잡기·엽서 접기·충돌·복귀·직접 감사 엔딩"
   ],
   "route": [
     "로비",
     "평생학습실(강의실1)",
     "유아자료실",
     "1.5층 책소독기",
-    "2층 종합자료실",
-    "신간코너 (선택)",
+    "2층 종합자료실 책 정리",
+    "반납 안내문이 있는 서가",
     "1층 로비"
   ],
   "confirmedAnswers": {
     "first": "고양이와 사서가 뒤바뀌었다",
-    "learningOverlay": "art",
+    "learningOverlay": "book",
     "final": "고양이와 사서가 돌아왔다",
     "infantIcons": [
       "rule_food_water",
@@ -33,10 +30,11 @@
       "rule_quiet_walk",
       "rule_guardian"
     ],
-    "sterilizerColor": "고치기"
+    "sterilizerColor": "고치기",
+    "orderPawsConfig": "games/book-order/letter-puzzle-config.js"
   },
   "answerNormalization": "NFC 후 공백·?·! 제거",
-  "artNormalization": "NFKC 후 모든 공백 제거·소문자화·ASCII 영문 3자 검사·art 비교. 기호는 무시하지 않음.",
+  "artNormalization": "NFKC 후 모든 공백 제거·소문자화·ASCII 영문 4자 검사·book 비교. 기호는 무시하지 않음.",
   "markerNumbers": {
     "평생학습실(강의실1)": 1,
     "유아자료실": 2,
@@ -45,11 +43,7 @@
     "신간코너": 5
   },
   "pending": [
-    "종합자료실·신간코너 실제 현장 문제·정답",
-    "PC 중간 대화 포함 여부 최종 확정",
-    "신간코너 포함 여부",
-    "신간코너 상세 위치와05번 현장 마크 설치",
-    "실제 스마트폰/실물 엽서·이번 버전 공개 배포 확인"
+    "실제 스마트폰/소프트 키보드·실물 엽서·현장 설치·공개 배포 확인"
   ],
   "cleaningMiniGameFlow": [
     "게임 시작 전 연결 대사와 전용 시작 버튼",
@@ -79,8 +73,25 @@
         "B"
       ]
     },
-    "bookCatch": {"mode": "result", "target": 20},
-    "bookOrder": {"mode": "result", "correctOrder": ["000", "100", "200", "300", "400", "500", "600", "700", "800", "900"]}
+    "bookCatch": {
+      "mode": "result",
+      "target": 20
+    },
+    "bookOrder": {
+      "mode": "result",
+      "correctOrder": [
+        "000",
+        "100",
+        "200",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900"
+      ]
+    }
   },
   "currentFollowupHook": {
     "sceneId": "ending-complete",
@@ -94,10 +105,7 @@
     "fixedWithinPlay": true,
     "shelfDirection": "입구에서 안쪽을 볼 때 왼쪽 아동서가·오른쪽 일반서가 (사용자 확인)"
   },
-  "previewPuzzles": {
-    "general-room-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"},
-    "newbooks-placeholder-v1": {"question": "1 + 1 = ?", "acceptedAnswers": ["2"], "status": "임시·현장 정답 최종 확정 전"}
-  },
+  "previewPuzzles": {},
   "resultGameFlow": {
     "userChoice": "2층도1층 청소처럼 클리어 결과 버튼으로 진행",
     "outerReturnAlwaysAvailable": false,
@@ -106,7 +114,26 @@
     "keywordInput": false,
     "primaryLabel": "성공! 사서를 따라가자!",
     "retryLabel": "다시하기",
-    "sequence": ["시작 버튼", "클리어 기준 달성", "성공 결과 버튼", "다음 이동 장면"],
-    "newPlayIsolation": "runId를 책 꽂기의 게임ID·저장 키에 포함"
-  }
+    "sequence": [
+      "시작 버튼",
+      "클리어 기준 달성",
+      "성공 결과 버튼",
+      "다음 이동 장면"
+    ],
+    "newPlayIsolation": "runId를 책 꽂기의 게임ID·저장 키에 포함",
+    "bookOrder": {
+      "sequence": [
+        "원본10권 정리",
+        "글자/엽서 문제 공개",
+        "정답 칭찬 팝업",
+        "다음으로에서 본편 복귀"
+      ],
+      "configuration": "games/book-order/letter-puzzle-config.js",
+      "noSecondAnswerInMain": true
+    }
+  },
+  "retiredPuzzleIds": [
+    "general-room-placeholder-v1",
+    "newbooks-placeholder-v1"
+  ]
 }

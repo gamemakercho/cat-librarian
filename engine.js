@@ -1,10 +1,11 @@
+import {migrateCourseSnapshot} from './course-migration.js';
+import {validOrderProgress} from './games/book-order/letter-state.js';
+import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
 import {isMinigameClear} from './minigame-bridge.js';
 import {isEndingResult,isEndingContact,isEndingPoster,migrateEndingSnapshot,ENDING_PUZZLE_ID} from './ending-bridge.js';
 
-export function normalizeAnswer(value) {
-  return String(value ?? '').normalize('NFC').replace(/[\s?？!！]/gu, '').toLowerCase();
-}
+export const normalizeAnswer=normalizeKoreanAnswer;
 
 export function normalizeArtAnswer(value) {
   return String(value ?? '').normalize('NFKC').replace(/\s/gu, '').toLowerCase();
@@ -35,7 +36,7 @@ export function validateStory(chapters, puzzles) {
 
 export class StoryRuntime {
   constructor(chapters, puzzles, snapshot = {}, successDefaults = {}, rng = Math.random, courseOptions = {}) {
-    snapshot=migrateEndingSnapshot(snapshot);
+    snapshot=migrateCourseSnapshot(migrateEndingSnapshot(snapshot));
     this.scenes = validateStory(chapters, puzzles);
     this.index = new Map(this.scenes.map(s => [s.id, s]));
     this.puzzles = puzzles;
@@ -48,12 +49,14 @@ export class StoryRuntime {
       if(puzzles[id]?.answerMode==='icons')this.puzzleStates[id]=initializePuzzle(saved,rng);
     }
     this.currentId = this.index.has(snapshot.currentId) ? snapshot.currentId : this.scenes[0].id;
+    this.minigameProgress={};for(const [id,value] of Object.entries(snapshot.minigameProgress||{})){if(puzzles[id]?.resultKind==='book-order'){const p=validOrderProgress(value);if(p)this.minigameProgress[id]=p;}}
     this.minigameResults={};
     for(const [id,result] of Object.entries(snapshot.minigameResults||{})){
-      if((puzzles[id]?.completionMode==='result'||puzzles[id]?.requiresGameClear)&&isMinigameClear(result,puzzles[id]))this.minigameResults[id]={...result};
+      if((puzzles[id]?.completionMode==='result'||puzzles[id]?.requiresGameClear)&&(isMinigameClear(result,puzzles[id])||(snapshot.legacyOrderPassed&&puzzles[id]?.resultKind==='book-order'&&isMinigameClear(result,{...puzzles[id],requiresLetterPuzzle:false}))))this.minigameResults[id]={...result};
     }
     this.solved = new Set((snapshot.solved ?? []).filter(id => puzzles[id]?.answerMode==='icons'?this.puzzleStates[id]?.completed:
       puzzles[id]?.completionMode==='result'||puzzles[id]?.requiresGameClear?Boolean(this.minigameResults[id]):puzzles[id]?.acceptedAnswers?.length));
+    this.legacyOrderPassed=snapshot.legacyOrderPassed===true;
     this.flags={...snapshot.flags};
     this.endingContactPoster=isEndingPoster(snapshot.endingContactPoster)?snapshot.endingContactPoster:null;
     this.sceneStates={};
@@ -80,6 +83,8 @@ export class StoryRuntime {
     }
     if(this.pendingSuccess)this.solved.delete(this.pendingSuccess.puzzleId);
     for(const [id,puzzle] of Object.entries(puzzles))if(puzzle.repairFlag)this.flags[puzzle.repairFlag]=this.solved.has(id);
+    // Old repair success popups now resume at the actual repair illustration.
+    if(this.pendingSuccess&&this.puzzles[this.pendingSuccess.puzzleId]?.successMode==='immediate')this.confirmSuccess();
     this.lastResult = null;
   }
   get scene() { return this.index.get(this.currentId); }
@@ -112,7 +117,8 @@ export class StoryRuntime {
     return {fromSceneId:s.id,nextSceneId:s.next,puzzleId:s.puzzleId,
       popup:{...this.successDefaults,...this.puzzles[s.puzzleId]?.successPopup,...s.successPopup}};
   }
-  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults, flags:this.flags,sceneStates:this.sceneStates,runId:this.runId,courseOptions:this.courseOptions,endingContactPoster:this.endingContactPoster }; }
+  snapshot() { return { currentId: this.currentId, solved: [...this.solved], history: this.history, pendingSuccessId:this.pendingSuccessId, pendingSuccess:this.pendingSuccess, puzzleStates:this.puzzleStates, minigameResults:this.minigameResults,minigameProgress:this.minigameProgress,courseRevision:18,legacyOrderPassed:this.legacyOrderPassed===true, flags:this.flags,sceneStates:this.sceneStates,runId:this.runId,courseOptions:this.courseOptions,endingContactPoster:this.endingContactPoster }; }
+  recordMinigameProgress(value){const p=this.puzzles[this.scene.puzzleId];if(this.scene.type!=='minigame'||p?.resultKind!=='book-order')return false;const progress=validOrderProgress(value);if(!progress)return false;const old=this.minigameProgress[this.scene.puzzleId];if(old?.letters.revision>progress.letters.revision)return false;this.minigameProgress[this.scene.puzzleId]=progress;return true;}
   completeMinigame(result,{recordOnly=false}={}) {
     const s=this.scene,p=this.puzzles[s.puzzleId];
     if(s.type!=='minigame'||!(p?.completionMode==='result'||p?.requiresGameClear)||!isMinigameClear(result,p))return {ok:false,reason:'game-clear-required'};
@@ -175,15 +181,15 @@ export class StoryRuntime {
       if(!this.pendingSuccess)this.pendingSuccess=this.createPendingSuccess();
       return {ok:true,reason:'correct'};
     }
-    const normalize=p.answerMode==='english-three'?normalizeArtAnswer:p.answerMode==='numeric-string'?normalizeNumericAnswer:normalizeAnswer;
+    const normalize=p.answerMode==='english-four'?normalizeArtAnswer:p.answerMode==='numeric-string'?normalizeNumericAnswer:normalizeAnswer;
     const answer=normalize(value);
     if (!answer) return {ok:false,reason:'empty'};
     if (!p.acceptedAnswers?.length) return {ok:false,reason:'not-configured'};
-    if ((p.answerMode==='english-three'&&!/^[a-z]{3}$/u.test(answer)) || !p.acceptedAnswers.some(a => normalize(a) === answer)) {
+    if ((p.answerMode==='english-four'&&!/^[a-z]{4}$/u.test(answer)) || !p.acceptedAnswers.some(a => normalize(a) === answer)) {
       return {ok:false,reason:'incorrect'};
     }
     if(p.successMode==='immediate'){
-      this.solved.add(s.puzzleId);this.pendingSuccess=null;
+      this.solved.add(s.puzzleId);Object.assign(this.flags,s.onSuccess||{});this.pendingSuccess=null;
       this.history.push(this.currentId);this.currentId=s.next;
       return {ok:true,reason:'correct',immediate:true};
     }
@@ -213,5 +219,5 @@ export class StoryRuntime {
     if (!this.history.length) return false;
     this.clearPending();this.currentId=this.history.pop();return true;
   }
-  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={};this.minigameResults={};this.flags={};this.sceneStates={};this.endingContactPoster=null;this.runId=newRunId(); }
+  reset() { this.currentId=this.scenes[0].id;this.solved.clear();this.history=[];this.pendingSuccess=null;this.puzzleStates={};this.minigameResults={};this.minigameProgress={};this.legacyOrderPassed=false;this.flags={};this.sceneStates={};this.endingContactPoster=null;this.runId=newRunId(); }
 }

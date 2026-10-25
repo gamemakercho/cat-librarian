@@ -1,4 +1,6 @@
 import '../story-adapter.js';
+import {createLetterUI} from './letter-ui.js';
+import {validOrderProgress} from './letter-state.js';
 import {CONFIG} from './config.js';
 import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
 import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
@@ -12,6 +14,12 @@ const loading=document.querySelector('#loading'),help=document.querySelector('#h
 const order=CONFIG.correctOrder;
 let bundle,state,selected=null,gesture=null,ready=false,started=false,completeTimer=null,animation=null,epoch=0;
 let bookMasks=new Map(),pawMasks=new Map(),cartMask=null,completionSent=false,completionStart=0;
+const letterUI=createLetterUI({storageKey:CONFIG.storageKey+':letters:v1',getGame:()=>state,getLayout:()=>bundle.layout,
+ onProgress:progress=>storyBridge?.progress(progress),
+ onFinish(result,firstCompletion){if(firstCompletion){const detail=Object.freeze({gameId:CONFIG.gameId,status:'complete',complete:true,letterPuzzle:result.letterPuzzle});window.dispatchEvent(new CustomEvent('bookband:complete',{detail}));const callback=CONFIG.onGameComplete||window.onGameComplete;if(typeof callback==='function'){try{callback(detail);}catch(error){console.error('onGameComplete:',error);}}}
+  storyBridge?.clear(result);storyBridge?.returnToStory(result);
+ }});
+ storyBridge?.onRestore(progress=>{if(!ready)return;const p=validOrderProgress(progress);if(!p)return;const candidate={version:1,gameId:CONFIG.gameId,shelf:p.shelf,cart:p.cart,complete:true};if(!validState(candidate,order,CONFIG.gameId))return;state=candidate;started=true;intro.hidden=true;save();letterUI.restore(p);render();syncAccess();});
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelector('#start-text').textContent=CONFIG.text.start;
 
@@ -165,8 +173,8 @@ function render(now=performance.now()) {
   fit(CONFIG.text.footer,...l.footer_center,27,l.footer_max_width,'#ffdaeb');
   message.classList.toggle('complete',state.complete);
   message.textContent=state.complete?CONFIG.text.complete:state.shelf.every(Boolean)?CONFIG.text.incorrect:'';
-  storyBridge?.syncOrderResult(document.querySelector('#game'),state.complete?{kind:'book-order',cleared:true,complete:true,shelf:[...state.shelf],cart:[...state.cart]}:null,()=>document.querySelector('#restart').click());
-  if(state.complete) {
+  letterUI.sync();
+  if(state.complete&&now-completionStart<Math.min(800,l.sparkle.duration_ms)&&!reducedMotion) {
     const elapsed=now-completionStart;
     const phase=reducedMotion?0:elapsed/280;
     for(let i=0;i<l.sparkle.particle_count;i++){
@@ -177,19 +185,7 @@ function render(now=performance.now()) {
     if(!reducedMotion&&elapsed<l.sparkle.duration_ms)animation=requestAnimationFrame(render);
   }
 }
-function complete() {
-  // Each fresh completion has exactly one notification. Restores do not enter this function.
-  completionStart=performance.now();const run=epoch;
-  completeTimer=setTimeout(()=>{
-    if(epoch!==run||!state.complete||completionSent)return;
-    completionSent=true;
-    const detail=Object.freeze({gameId:CONFIG.gameId,status:'complete',complete:true});
-    window.dispatchEvent(new CustomEvent('bookband:complete',{detail}));
-    const callback=CONFIG.onGameComplete||window.onGameComplete;
-    if(typeof callback==='function'){try{callback(detail);}catch(error){console.error('onGameComplete:',error);}}
-    if(CONFIG.nextUrl)location.assign(new URL(CONFIG.nextUrl,location.href).href);
-  },CONFIG.completionDelayMs);
-}
+function complete(){completionStart=performance.now();letterUI.sync();}
 function syncAccess() {
   const holder=document.querySelector('#a11y');holder.replaceChildren();
   if(!active())return;
@@ -205,7 +201,7 @@ document.querySelector('#close-help').onclick=()=>{help.close();syncAccess();};
 help.addEventListener('close',()=>syncAccess());
 document.querySelector('#restart').onclick=()=>{
   if(!ready)return;storyBridge?.reset();epoch++;clearTimeout(completeTimer);cancelAnimationFrame(animation);completionSent=false;
-  state=freshState(order,CONFIG.gameId);selected=null;gesture=null;started=true;intro.hidden=true;
+  state=freshState(order,CONFIG.gameId);letterUI.reset();selected=null;gesture=null;started=true;intro.hidden=true;
   try{localStorage.removeItem(CONFIG.storageKey);}catch{}save();render();syncAccess();
 };
 document.querySelector('#retry').onclick=()=>location.reload();

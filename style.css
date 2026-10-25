@@ -380,3 +380,20 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 
 .ending-tab-hidden .ending-art{animation-play-state:paused!important}
 .stage[data-layout="ending-illustration"] .scene-layer{background:#fff7e3}
+
+/* One tuning point for story image → dialogue → next. Backgrounds and games stay put. */
+:root{--story-flow-shift:32px;--story-flow-gap:14px;--story-flow-bottom:12px}
+.stage[data-story-flow="true"]{height:min(var(--story-native-height,900px),calc(100svh - 60px - env(safe-area-inset-bottom,0px)));aspect-ratio:auto}
+.stage[data-story-flow="true"] .dialogue{overflow:auto;overscroll-behavior:contain}
+.stage[data-story-flow="true"] .next-button{min-height:44px}
+.story-art-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.story-scene-art{position:absolute;object-fit:contain;image-rendering:auto;border-radius:3cqw}
+.stage[data-layout="story-illustration"] .scene-layer{background:#fff7e3}
+.player-tools{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+@media(max-height:700px){:root{--story-flow-shift:16px;--story-flow-gap:12px}}
+
+.return-notice{position:absolute;display:flex;align-items:center;gap:1cqw;padding:1.5cqw;border:2px solid #897353;border-radius:2cqw;background:#fff9e4;color:#3a4936;box-shadow:0 3px 6px #49362433}.return-notice-icon{width:25%;height:100%;object-fit:contain}.return-notice p{word-break:keep-all;flex:1;margin:0;font-size:4.5cqw;line-height:1.5}
+.shelf-actor{object-fit:contain;image-rendering:auto}
+
+.story-flee{animation:story-flee 1.1s ease-in both}@keyframes story-flee{from{transform:translateX(0);opacity:1}to{transform:translateX(180%);opacity:0}}
+@media(prefers-reduced-motion:reduce){.story-flee{animation:none;transform:none}}

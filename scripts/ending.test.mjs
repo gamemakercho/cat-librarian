@@ -152,7 +152,7 @@ test('실제 자산 로더는 정답 전에는 새 충돌 그림을 요청하지
 
 test('첨부 장면 순서/대사 데이터와 현재 엔딩 장면이 일치한다',()=>{
  const data=JSON.parse(readFileSync(new URL('../assets/ending/sequence.json',import.meta.url),'utf8'));
- const actual=createEndingScenes(),ids=['ending-impact','ending-returned','ending-cat','ending-returned-joke','ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
+ const actual=createEndingScenes(),ids=['ending-impact','ending-returned','ending-cat','ending-returned-joke','ending-returned-relief','ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
  const start=actual.findIndex(s=>s.id==='ending-impact');assert.deepEqual(actual.slice(start).map(s=>s.id),ids);
  for(const group of data.post_answer_sequence.filter(s=>s.dialogue)){
   const expected=group.dialogue.map(d=>d.text.replace(/\s/gu,''));

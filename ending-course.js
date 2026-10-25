@@ -14,20 +14,21 @@ export const endingArtIds=['ending-03-impact','ending-04-returned','ending-05-th
 export function createEndingScenes(){
  const art=(id,asset,text,next,speaker='사서')=>({id,type:'dialogue',endingArt:asset,layout:'ending-illustration',background:null,textMode:'static',speaker,text,next,geometry:{dialogue:[25,500,450,225],nextButton:[110,790,280,63]}});
  return [
- {id:'lobby-ending-entry',type:'dialogue',cat:'neutral',text:'돌고 돌아, 처음 만났던 로비네',next:'ending-one-left'},
- {id:'ending-one-left',type:'dialogue',cat:'resigned',text:'책도 바닥도 제자리인데…\n내 몸만 아직 돌아다니고 있어',next:'ending-found'},
- {id:'ending-found',type:'dialogue',cat:'shocked',text:'저기 있다!',next:'ending-postcard-clue'},
- {id:'ending-postcard-clue',type:'dialogue',cat:'worried',text:'이번엔 꼭 붙잡자\n나도 두 발로 퇴근하고 싶어!',next:'ending-rescue'},
- {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'마지막 추격 시작',next:'ending-fold-puzzle'},
+ {id:'lobby-ending-entry',type:'dialogue',cat:'neutral',text:'저기 있다!',next:'ending-one-left'},
+ {id:'ending-one-left',type:'dialogue',cat:'bewildered',text:'다리가 네 개나 있는데 왜 못 따라잡지?',next:'ending-found'},
+ {id:'ending-found',type:'dialogue',cat:'resigned',text:'아. 전부 짧구나.',next:'ending-postcard-clue'},
+ {id:'ending-postcard-clue',type:'dialogue',cat:'worried',text:'책은 피하고, 저 녀석은 놓치지 말자!',next:'ending-rescue'},
+ {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'사서 따라잡기',next:'ending-fold-puzzle'},
  {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'잠깐! 고양이로 끝낼 순 없지!\n엽서 속 마지막 한 줄을 찾아줘!',instruction:'한글 11글자 · 느낌표 제외\n띄어쓰기는 해도 되고 안 해도 돼',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
  {id:'ending-not-yet',type:'dialogue',cat:'bewildered',text:'우리 이야기의 마지막 장면이야!',next:'ending-impact'},
  {id:'ending-impact',type:'impact',endingArt:'ending-03-impact',background:null,layout:'ending-illustration',durationMs:600,text:'쿵!',next:'ending-returned'},
  art('ending-returned','ending-04-returned','앗… 돌아왔다!','ending-cat'),
  art('ending-cat','ending-04-returned','야옹~!','ending-returned-joke','고양이'),
- art('ending-returned-joke','ending-04-returned','너는 야옹 한마디면 끝이지?','ending-thanks'),
- art('ending-thanks','ending-05-thanks','고마워. 책도 바닥도,\n나까지 제자리로 돌려놔 줬네.','ending-promise'),
- art('ending-promise','ending-05-thanks','다음에도 도서관에 놀러 와.\n그땐 책만 빌려줄게.','ending-loan-joke'),
- art('ending-loan-joke','ending-05-thanks','오늘은 내 몸까지 대출 중이었거든.','ending-complete'),
+ art('ending-returned-joke','ending-04-returned','머리를 부딪혀서 돌아왔나 봐! :O','ending-returned-relief'),
+ art('ending-returned-relief','ending-04-returned','휴. 이제 ‘고양이가 그랬어요’라고 해도 되겠다.','ending-thanks'),
+ art('ending-thanks','ending-05-thanks','도와줘서 정말 고마워.\n네 덕분에 책도 정리하고, 내 몸도 찾았어.','ending-promise'),
+ art('ending-promise','ending-05-thanks','다음에 오면 내가 재미있는 책 골라줄게.','ending-loan-joke'),
+ art('ending-loan-joke','ending-05-thanks','그때는 앉아서 보자. 오늘 너무 많이 뛰었다.','ending-complete'),
  {id:'ending-complete',type:'ending',endingArt:'ending-05-thanks',background:null,layout:'ending-illustration',text:'고양이와 사서가 돌아왔다!',next:null}
  ].map(s=>({sourceNumber:null,location:s.endingArt?null:'1층 로비',nextLabel:'다음으로',...s,geometry:{...talk,...s.geometry}}));
 }

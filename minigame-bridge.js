@@ -1,3 +1,4 @@
+import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
 // Shared contract for games: send this message only from the successful result's return button.
 export const MINIGAME_RETURN = 'cat-librarian:minigame-return';
 export const MINIGAME_CLEAR = 'cat-librarian:minigame-clear';
@@ -7,7 +8,7 @@ export function isMinigameClear(result, config = {}) {
     Number.isSafeInteger(result.totalBooks)&&result.totalBooks>=result.score&&Number.isSafeInteger(result.missed)&&result.missed>=0);
   if(config.resultKind==='book-order')return Boolean(result?.kind==='book-order'&&result.cleared===true&&result.complete===true&&
     config.correctOrder?.length===10&&Array.isArray(result.shelf)&&result.shelf.length===10&&result.shelf.every((id,i)=>id===config.correctOrder[i])&&
-    Array.isArray(result.cart)&&result.cart.length===10&&result.cart.every(id=>id===null));
+    Array.isArray(result.cart)&&result.cart.length===10&&result.cart.every(id=>id===null)&&(!config.requiresLetterPuzzle||(result.letterPuzzle?.id===LETTER_PUZZLE.id&&result.letterPuzzle.completed===true&&result.letterPuzzle.stage==='complete')));
   if(!result || result.cleared !== true || !(config.allowedGrades || ['A','B']).includes(result.grade))return false;
   const {generated,cleaned,remaining,ratio}=result;
   return [generated,cleaned,remaining].every(Number.isSafeInteger) && generated>0 && cleaned>=0 && remaining>=0 &&

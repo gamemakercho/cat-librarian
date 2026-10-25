@@ -1,11 +1,13 @@
 import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
-import {isMinigameReturn,isMinigameMessage,MINIGAME_CLEAR} from './minigame-bridge.js';
+import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 import {endingArtIds} from './ending-course.js';
 import {createIllustrationUI} from './ending-illustrations.js';
+import {showShelfActor} from './shelf-motion.js';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -55,7 +57,7 @@ const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:(
  onStart:()=>{runtime.flags.endingIllustrationStarted=true;save();},
  onImpactDone:()=>{if(runtime.completeIllustratedImpact().ok){save();advance();}},
  onComplete:()=>{if(runtime.completeStory()){save();window.dispatchEvent(new CustomEvent('escape-room:complete',{detail:{puzzleId:'cat-librarian-ending',completed:true,runId:runtime.runId}}));}}});
-let nextReadyAt=0;
+let arrivalReadyAt=0;let nextReadyAt=0;let stopShelfMotion=()=>{};
 
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}}
 function imageURL(key){if(!assets[key])throw Error(`자산 없음: ${key}`);return assets[key].src;}
@@ -64,7 +66,7 @@ function loadImage(key){
   if(!imageCache.has(src)){
     const raster=new Promise((resolve,reject)=>{
       const im=new Image();let fallback=false;
-      im.onload=()=>{assets[key].loadedSrc=im.src;resolve(im);};
+      im.onload=async()=>{try{if(assets[key].decodeBeforeDisplay&&im.decode)await im.decode();assets[key].loadedSrc=im.src;resolve(im);}catch{im.onerror();}};
       im.onerror=()=>{if(assets[key].fallback&&!fallback){fallback=true;im.src=assets[key].fallback;}else{imageCache.delete(src);reject(Error('이미지를 읽을 수 없어요.'));}};
       im.src=src;
     });
@@ -107,6 +109,9 @@ function createImage(key,className,alt=''){
 function sceneAssetKeys(s){
   const keys=[];
   if(s.endingArt)keys.push(`ending:${s.endingArt}`);
+  if(s.storyArt)keys.push(`story:${s.storyArt}`);
+  if(s.shelfActor)keys.push('actor:shelf-librarian');
+  if(s.noticeText)keys.push('icon:rule_book_cart');
   if(s.background)keys.push(`bg:${s.background}`);
   if(s.cat)keys.push(`cat:${s.cat}`);
   if(s.staff)keys.push('actor:staff');
@@ -169,19 +174,19 @@ function advance(opts={}){
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  closeMinigame();endingUI.stop();illustrationUI.stop();
+  closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;
   hintLevel=runtime.sceneState.hintLevel||0;locationHintLevel=runtime.sceneState.locationHintLevel||0;
   $('locationHintDialog').close();$('puzzleHintDialog').close();closeEnglishKeypad();$('successDialog').close();
-  const stage=$('stage');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
+  const stage=$('stage');stage.dataset.storyFlow=String(usesStoryFlow(s));stage.style.setProperty('--story-native-height',stage.clientWidth*1.8+'px');stage.dataset.type=s.type;stage.dataset.layout=s.layout||'';stage.dataset.scene=s.id;stage.dataset.background=s.background||'';
   stage.dataset.frame=s.backgroundFrame||'normal';
   stage.style.setProperty('--dim-opacity',s.dimOpacity||0);
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
   for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls','machineStatus','cipherPanel'])applyRect($(name),s.geometry[name]);
-  $('retryScene').hidden=true;$('endingArtLayer').replaceChildren();$('endingImpactText').hidden=true;
+  $('retryScene').hidden=true;$('storyArtLayer').replaceChildren();$('endingArtLayer').replaceChildren();$('endingImpactText').hidden=true;
   $('loading').textContent='장면을 불러오고 있어요…';$('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -192,6 +197,7 @@ async function render(){
   if(serial!==renderSerial)return;
   $('loading').hidden=true;sceneReady=true;nextReadyAt=performance.now()+300;
   if(s.endingArt){const im=createImage(`ending:${s.endingArt}`,'ending-art',s.type==='impact'?'사서와 고양이의 이마가 부딪히는 순간':s.endingArt==='ending-04-returned'?'바닥에 앉아 돌아온 걸 깨달은 사서와 놀라 물러나는 고양이':'작은 고양이를 안고 웃는 사서');$('endingArtLayer').append(im);}
+  if(s.storyArt)$('storyArtLayer').append(createImage(`story:${s.storyArt}`,'story-scene-art','UV 램프 교체를 마친 책소독기와 감은 눈의 고양이, 바닥 상자의 빼낸 램프'));
   const bg=$('sceneLayer');bg.replaceChildren();
   bg.style.backgroundImage=s.background?`url("${imageURL(`bg:${s.background}`)}")`:'none';
   bg.style.opacity=s.backgroundOpacity||1;
@@ -202,9 +208,11 @@ async function render(){
   if(s.sleeping){const im=createImage('actor:sleeping','character sleeping');applyRect(im,s.geometry.sleeping);cl.append(im);}
   if(s.staff){const im=createImage('actor:staff','character staff');applyRect(im,s.geometry.staff);cl.append(im);}
   if(s.cat){const im=createImage(`cat:${s.cat}`,'character cat');applyRect(im,s.geometry.cat);im.style.transform=s.flipCat?'scaleX(-1)':'';cl.append(im);}
-  if(s.actor){const im=createImage(`actor:${s.actor}`,'character ending-actor');applyRect(im,s.geometry.actor);cl.append(im);}
+  if(s.shelfActor){const canvas=document.createElement('canvas');canvas.className='character shelf-actor';canvas.setAttribute('aria-label','서가 위에서 책을 미는 사서 몸의 고양이');applyRect(canvas,s.geometry.shelfActor);cl.append(canvas);stopShelfMotion=showShelfActor(canvas,await loadImage('actor:shelf-librarian'),{animate:s.shelfMotion,reducedMotion:prefersReducedMotion});}
+  if(s.actor){const im=createImage(`actor:${s.actor}`,'character ending-actor'+(s.actorMotion==='flee'?' story-flee':''));applyRect(im,s.geometry.actor);cl.append(im);}
   if(s.comic){const im=createImage(`comic:${s.comic}`,'comic-panel'+(s.effect?' bump':''));applyRect(im,s.geometry.comic);cl.append(im);}
   if(s.marker){const marker=createMarker(s);applyRect(marker,s.geometry.marker);$('effectLayer').append(marker);}
+  if(s.noticeText){const notice=document.createElement('aside');notice.className='return-notice';const text=document.createElement('p');text.textContent=s.noticeText;notice.append(createImage('icon:rule_book_cart','return-notice-icon'),text);applyRect(notice,[145,155,310,150]);$('effectLayer').append(notice);}
   $('effectLayer').className='effect-layer';
   if(s.effect&&!prefersReducedMotion){void $('effectLayer').offsetWidth;$('effectLayer').classList.add(s.effect);}
   $('locationBanner').hidden=!s.location;$('locationBanner').textContent=s.location||'';$('locationBanner').style.background=palette[s.layout==='arrival'?'pink':'yellow'];
@@ -253,10 +261,10 @@ async function render(){
   $('iconPuzzle').hidden=!isIcons;
   if(isIcons)renderIconPuzzle();
   $('minigameControls').hidden=s.type!=='minigame';
-  const savedGameClear=s.type==='minigame'&&puzzle?.completionMode==='result'&&Boolean(runtime.minigameResults[s.puzzleId]);
+  const savedGameClear=s.type==='minigame'&&puzzle?.completionMode==='result'&&isMinigameClear(runtime.minigameResults[s.puzzleId],puzzle);
   $('continueMinigame').hidden=!savedGameClear;
   if(savedGameClear){const [x,y,w,h]=s.geometry.minigameControls;applyRect($('minigameControls'),[x,y,w,Math.max(h,160)]);}
-  $('startMinigame').textContent=savedGameClear?'다시하기':s.gameStartLabel||'게임 시작';
+  $('startMinigame').textContent=savedGameClear?'다시하기':runtime.minigameProgress[s.puzzleId]?'발자국 문제 이어하기':s.gameStartLabel||'게임 시작';
   $('startMinigame').classList.toggle('retry-small',savedGameClear);
   $('minigameNote').hidden=keywordGame||savedGameClear;
   $('minigameNote').textContent=puzzle?.completionMode==='result'?(puzzle.clearInstruction||'B등급 이상으로 청소하면 이야기를 이어갈 수 있어'):
@@ -270,7 +278,7 @@ async function render(){
   composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent='';
   $('hintButton').hidden=s.type!=='puzzle'||!puzzle?.hints?.length;
   $('hintButton').textContent=puzzle?.hintLabel||'힌트 보기';
-  const p=puzzles[s.puzzleId],english=p?.answerMode==='english-three';
+  const p=puzzles[s.puzzleId],english=p?.answerMode==='english-four';
   $('answerForm').dataset.english=String(Boolean(english));
   $('englishKeypadButton').hidden=!english;
   $('answerLabel').textContent=p?.answerLabel||'입력';
@@ -283,15 +291,16 @@ async function render(){
   $('answer').autocomplete='off';$('answer').spellcheck=false;$('answer').enterKeyHint='done';
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
-  renderedScene=s;updateReview(s);endingUI.render(s);
+  renderedScene=s;layoutStoryFlow(stage,s);updateReview(s);endingUI.render(s);
   illustrationUI.render(s);
+  for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
   if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
   if(runtime.pendingSuccessId===s.id)showSuccess();
   // Preload only the immediate next scene; no full-route or raw-screen preloading.
   // Arrival questions intentionally pause speculative downloads while walking.
   if(s.next && !['puzzle','move','continuation','minigame','cinematic','impact','ending'].includes(s.type)){
     const next=runtime.index.get(s.next);
-    if(!next?.endingArt&&next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
+    if(!next?.endingArt&&!next?.storyArt&&next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
   }
 }
 
@@ -333,7 +342,9 @@ function sizeMinigame(){
   if(!activeMinigame)return;
   const height=window.visualViewport?.height||innerHeight,width=innerWidth;
   // Address/tool bars collapsing must not enlarge or rescale a game under the finger.
-  activeMinigame.height=width!==activeMinigame.width?height:Math.min(activeMinigame.height,height);
+  if(width!==activeMinigame.width){activeMinigame.viewportCeiling=height;activeMinigame.height=height;}
+  else if(puzzles[runtime.scene.puzzleId]?.requiresLetterPuzzle&&runtime.minigameProgress[runtime.scene.puzzleId])activeMinigame.height=Math.min(activeMinigame.viewportCeiling||height,height);
+  else activeMinigame.height=Math.min(activeMinigame.height,height);
   activeMinigame.width=width;$('minigameOverlay').style.height=`${activeMinigame.height}px`;
 }
 
@@ -416,7 +427,7 @@ $('retryScene').addEventListener('click',()=>render());
 $('nextButton').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat)e.preventDefault();});
 $('dialogue').addEventListener('click',()=>{if(!textComplete)finishText();});
 $('backButton').addEventListener('click',()=>{if(runtime.back()){save();render();}});
-$('arrivedButton').addEventListener('click',()=>advance({arrived:true}));
+$('arrivedButton').addEventListener('click',()=>{if(runtime.scene.type!=='move'||performance.now()<arrivalReadyAt)return;arrivalReadyAt=performance.now()+400;advance({arrived:true});});
 $('checkIcons').addEventListener('click',()=>{
   if(!sceneReady||runtime.pendingSuccessId)return;
   if(runtime.getIconState()?.completed){advance();return;}
@@ -436,7 +447,7 @@ async function openMinigame(){
   if(!textComplete)finishText();save();
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
-    scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,width:innerWidth};
+    scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,viewportCeiling:window.visualViewport?.height||innerHeight,width:innerWidth};
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);
   const config=puzzles[runtime.scene.puzzleId],keywordMode=config.completionMode==='keyword';
@@ -462,9 +473,10 @@ $('retryMinigame').addEventListener('click',()=>{closeMinigame();openMinigame();
 window.addEventListener('message',event=>{
   const config=puzzles[runtime.scene.puzzleId];
   if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-ready')){
-    clearTimeout(minigameLoadTimer);$('minigameLoadError').hidden=true;return;
+    clearTimeout(minigameLoadTimer);$('minigameLoadError').hidden=true;const progress=runtime.minigameProgress[runtime.scene.puzzleId];if(progress)$('minigameFrame').contentWindow.postMessage({type:'cat-librarian:minigame-restore',version:1,session:activeMinigame.session,gameId:activeMinigame.gameId,progress},activeMinigame.origin);return;
   }
   if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-error')){$('minigameLoadError').hidden=false;return;}
+  if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-progress')){if(runtime.recordMinigameProgress(event.data.progress))save();return;}
   if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,MINIGAME_CLEAR)){
     if(runtime.completeMinigame(event.data.result,{recordOnly:true}).ok)save();return;
   }
@@ -510,19 +522,19 @@ $('morePuzzleHint').addEventListener('click',()=>{hintLevel+=1;showPuzzleHints()
 $('closePuzzleHint').addEventListener('click',()=>{$('puzzleHintDialog').close();$('hintButton').focus();});
 
 function updateKeypad(){
-  $('keypadValue').textContent=$('answer').value||'— — —';
+  $('keypadValue').textContent=$('answer').value||'— — — —';
   $('keypadDelete').disabled=!$('answer').value;
-  const full=$('answer').value.length>=3;
+  const full=$('answer').value.length>=4;
   $('englishKeys').querySelectorAll('button').forEach(b=>b.disabled=full);
 }
 function openEnglishKeypad(){
-  if(puzzles[runtime.scene.puzzleId]?.answerMode!=='english-three'||runtime.pendingSuccessId)return;
+  if(puzzles[runtime.scene.puzzleId]?.answerMode!=='english-four'||runtime.pendingSuccessId)return;
   const input=$('answer');
   keypadInputState={inputMode:input.inputMode,readOnly:input.readOnly};
   input.blur();input.inputMode='none';input.readOnly=true;
   const normalized=normalizeArtAnswer(input.value);
   // Opening the fallback keypad never silently truncates an existing raw answer.
-  if(/^[a-z]{0,3}$/.test(normalized))input.value=normalized;
+  if(/^[a-z]{0,4}$/.test(normalized))input.value=normalized;
   $('keypadFeedback').textContent='';updateKeypad();$('englishKeypadDialog').showModal();
 }
 function closeEnglishKeypad(){
@@ -530,7 +542,7 @@ function closeEnglishKeypad(){
   if(keypadInputState){$('answer').inputMode=keypadInputState.inputMode;$('answer').readOnly=keypadInputState.readOnly;keypadInputState=null;}
 }
 function keypadLetter(letter){
-  if($('answer').value.length>=3)return;
+  if($('answer').value.length>=4)return;
   $('answer').value+=letter;updateKeypad();
 }
 for(const row of ['qwertyuiop','asdfghjkl','zxcvbnm']){
@@ -588,4 +600,7 @@ window.visualViewport?.addEventListener('resize',()=>{
   sizeMinigame();
   if(document.activeElement===$('answer'))$('answerForm').scrollIntoView({block:'center',behavior:'instant'});
 });
+const storyResize=new ResizeObserver(()=>{if(sceneReady&&renderedScene?.id===runtime.currentId)layoutStoryFlow($('stage'),runtime.scene);});
+storyResize.observe($('stage'));
+document.fonts.ready.then(()=>{if(sceneReady)layoutStoryFlow($('stage'),runtime.scene);});
 await render();
