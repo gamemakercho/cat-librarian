@@ -1,0 +1,549 @@
+diff --git a/book-order/game.js b/book-order/game.js
+--- a/book-order/game.js
++++ b/book-order/game.js
+@@ -1,221 +1,221 @@
+-import {CONFIG} from './config.js';
+-import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
+-import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
+-import {inside,localPoint,slotAt,shelfPlacement,cartPlacements} from './geometry.js';
+-
+-const canvas=document.querySelector('#board'),ctx=canvas.getContext('2d');
+-const message=document.querySelector('#message'),intro=document.querySelector('#intro');
+-const loading=document.querySelector('#loading'),help=document.querySelector('#help-dialog');
+-const order=CONFIG.correctOrder;
+-let bundle,state,selected=null,gesture=null,ready=false,started=false,completeTimer=null,animation=null,epoch=0;
+-let bookMasks=new Map(),pawMasks=new Map(),cartMask=null,completionSent=false,completionStart=0;
+-const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+-document.querySelector('#start-text').textContent=CONFIG.text.start;
+-
+-function readSave() {
+-  try {const raw=localStorage.getItem(CONFIG.storageKey);if(!raw)return null;const saved=JSON.parse(raw);if(validState(saved,order,CONFIG.gameId))return saved;localStorage.removeItem(CONFIG.storageKey);}catch{/* Storage may be unavailable. Play remains possible. */}
+-  return null;
+-}
+-function save() {try {localStorage.setItem(CONFIG.storageKey,JSON.stringify(state));}catch{/* Private mode/quota: retain in-memory state. */}}
+-function maskFor(image,rect,glow=false) {
+-  const c=document.createElement('canvas');c.width=rect[2];c.height=rect[3];const x=c.getContext('2d',{willReadFrequently:true});
+-  x.drawImage(image,...rect,0,0,c.width,c.height);
+-  const mask={data:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height};
+-  if(glow){x.globalCompositeOperation='source-in';x.fillStyle='#fff1b7';x.fillRect(0,0,c.width,c.height);mask.silhouette=c;}
+-  return mask;
+-}
+-function opaque(mask,point,size) {
+-  if(!mask||point[0]<0||point[1]<0||point[0]>=size[0]||point[1]>=size[1])return false;
+-  const x=Math.min(mask.w-1,Math.floor(point[0]/size[0]*mask.w)),y=Math.min(mask.h-1,Math.floor(point[1]/size[1]*mask.h));
+-  return mask.data[(y*mask.w+x)*4+3]>35;
+-}
+-function cartPositions(){return cartPlacements(bundle.layout,state.cart,gesture?.dragging?gesture.book:selected?.id);}
+-function placement(id) {const p=locate(state,id);return p.zone==='shelf'?shelfPlacement(bundle.layout,p.index):cartPositions()[p.index];}
+-function heldPlacement() {
+-  if(!selected&&!gesture?.dragging)return null;
+-  const id=gesture?.dragging?gesture.book:selected.id;
+-  const side=gesture?.dragging?gesture.side:selected.side;
+-  const [w,h]=bundle.layout.held_book_size;
+-  const anchor=gripPlacement(bundle,{center:[0,0],size:[w,h],grip_side:side}).anchor;
+-  // The fingertip follows the lower paw contact, keeping the title above the finger.
+-  const base=gesture?.dragging?[gesture.point[0]-anchor[0],gesture.point[1]-anchor[1]]:placement(id).center;
+-  return {center:[Math.max(w/2,Math.min(941-w/2,base[0])),Math.max(h/2,Math.min(1672-h/2,base[1]))],size:[w,h],grip_side:side,rotation_deg:0};
+-}
+-function hitBook(p,includeHeld=true) {
+-  if(includeHeld&&selected) {
+-    const q=heldPlacement(),grip=gripPlacement(bundle,q),[x,y,w,h]=grip.dest;
+-    if(inside(localPoint(p,q),[0,0,...q.size])||opaque(pawMasks.get(grip.side),[p[0]-x,p[1]-y],[w,h]))return selected.id;
+-  }
+-  // Shelf hit regions include the full spine, even transparent rounded corners.
+-  for(let i=0;i<order.length;i++)if(state.shelf[i]) {const q=shelfPlacement(bundle.layout,i);if(inside(localPoint(p,q),[0,0,...q.size]))return state.shelf[i];}
+-  const r=bundle.layout.cart.dest_content_rect;
+-  const cartFront=bundle.layout.cart.foreground_clip_rects||[];
+-  if(cartFront.some(rect=>inside(p,rect))&&opaque(cartMask,[p[0]-r[0],p[1]-r[1]],[r[2],r[3]]))return null;
+-  // Traverse back to front and use actual sprite alpha, so covered books are not grabbed through another book/cart.
+-  const positions=cartPositions();
+-  for(let i=state.cart.length-1;i>=0;i--) {const id=state.cart[i];if(!id||id===selected?.id)continue;const q=positions[i];if(opaque(bookMasks.get(id),localPoint(p,q),q.size))return id;}
+-  return null;
+-}
+-function toPoint(e) {const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*941,(e.clientY-r.top)/r.height*1672];}
+-function active() {return ready&&started&&!state.complete&&!help.open;}
+-function select(id,p) {selected={id,side:p[0]<470.5?'left':'right'};render();syncAccess();}
+-function clearInteraction() {gesture=null;selected=null;render();syncAccess();}
+-function cancelGesture(e) {if(!gesture||e&&e.pointerId!==gesture.pointerId)return;clearInteraction();}
+-function commit(action) {
+-  const next=transition(state,action,order,CONFIG.gameId);selected=null;
+-  if(next!==state) {state=next;save();if(state.complete)complete();}
+-  render();syncAccess();
+-}
+-function tap(p,hit=hitBook(p)) {
+-  if(!active())return;
+-  if(hit) {
+-    if(selected?.id===hit){selected=null;render();syncAccess();return;}
+-    if(selected&&locate(state,hit).zone==='shelf') {commit({type:'move',id:selected.id,zone:'shelf',index:locate(state,hit).index});return;}
+-    select(hit,p);return;
+-  }
+-  if(selected) {
+-    const index=slotAt(p,bundle.layout);
+-    if(index>=0){commit({type:'move',id:selected.id,zone:'shelf',index});return;}
+-    if(inside(p,bundle.layout.cart.hit_rect)){commit({type:'move',id:selected.id,zone:'cart'});return;}
+-  }
+-  selected=null;render();syncAccess();
+-}
+-canvas.addEventListener('pointerdown',e=>{
+-  if(!active()||gesture||e.isPrimary===false||e.button!==0)return;
+-  e.preventDefault();const point=toPoint(e),book=hitBook(point);
+-  gesture={pointerId:e.pointerId,book,point,start:point,startCss:[e.clientX,e.clientY],side:selected?.id===book?selected.side:(point[0]<470.5?'left':'right'),dragging:false};
+-  canvas.setPointerCapture(e.pointerId);
+-});
+-canvas.addEventListener('pointermove',e=>{
+-  if(!gesture||e.pointerId!==gesture.pointerId)return;
+-  e.preventDefault();gesture.point=toPoint(e);
+-  if(gesture.book&&!gesture.dragging&&Math.hypot(e.clientX-gesture.startCss[0],e.clientY-gesture.startCss[1])>=CONFIG.dragThresholdCss){gesture.dragging=true;selected=null;}
+-  if(gesture.dragging)render();
+-});
+-canvas.addEventListener('pointerup',e=>{
+-  if(!gesture||e.pointerId!==gesture.pointerId)return;
+-  e.preventDefault();const g=gesture,p=toPoint(e);g.point=p;
+-  const dropPoint=g.dragging?heldPlacement().center:p;
+-  gesture=null;
+-  if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+-  if(!active()){clearInteraction();return;}
+-  if(g.dragging) {
+-    if(!inside(p,[0,0,941,1672])){clearInteraction();return;}
+-    const index=slotAt(dropPoint,bundle.layout);
+-    if(index>=0)commit({type:'move',id:g.book,zone:'shelf',index});
+-    else if(inside(dropPoint,bundle.layout.cart.hit_rect))commit({type:'move',id:g.book,zone:'cart'});
+-    else clearInteraction();
+-  }else if(Math.hypot(e.clientX-g.startCss[0],e.clientY-g.startCss[1])<CONFIG.dragThresholdCss)tap(p,hitBook(p));
+-  else clearInteraction();
+-});
+-canvas.addEventListener('pointercancel',cancelGesture);
+-canvas.addEventListener('lostpointercapture',cancelGesture);
+-window.addEventListener('blur',()=>{if(ready)clearInteraction();});
+-document.addEventListener('visibilitychange',()=>{if(document.hidden&&ready)clearInteraction();});
+-
+-function fit(text,x,y,size,maxWidth,color='#fff1b4') {
+-  while(size>14) {ctx.font=`bold ${size}px system-ui, sans-serif`;if(ctx.measureText(text).width<=maxWidth)break;size--;}
+-  ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y);
+-}
+-function outline(q,color='#fff0a3') {
+-  ctx.save();ctx.translate(...q.center);ctx.rotate((q.rotation_deg||0)*Math.PI/180);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.setLineDash([12,6]);ctx.strokeRect(-q.size[0]/2-3,-q.size[1]/2-3,q.size[0]+6,q.size[1]+6);ctx.restore();
+-}
+-function resizeCanvas() {
+-  const rect=canvas.getBoundingClientRect(),dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
+-  if(!rect.width||!rect.height)return;
+-  const width=Math.max(1,Math.round(rect.width*dpr)),height=Math.max(1,Math.round(rect.height*dpr));
+-  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
+-}
+-window.addEventListener('resize',()=>render());
+-window.visualViewport?.addEventListener('resize',()=>render());
+-if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>render()).observe(canvas);
+-function render(now=performance.now()) {
+-  if(!bundle||!state)return;
+-  resizeCanvas();
+-  // Reset before each render. Pointer coordinates stay in the 941 × 1672 design space.
+-  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);
+-  ctx.setTransform(canvas.width/941,0,0,canvas.height/1672,0,0);
+-  const l=bundle.layout;ctx.imageSmoothingEnabled=false;ctx.drawImage(bundle.background,0,0,941,1672);
+-  // Shelf labels belong to the scenery, behind the movable book and gripping paw.
+-  for(let i=0;i<order.length;i++)fit(String(i),shelfPlacement(l,i).center[0],l.shelf.number_baseline-10,28,60,'#392517');
+-  const heldId=gesture?.dragging?gesture.book:selected?.id;
+-  state.shelf.forEach((id,i)=>{if(id&&id!==heldId)drawBook(ctx,bundle,id,shelfPlacement(l,i));});
+-  if(heldId) {
+-    for(let i=0;i<order.length;i++)if(!state.shelf[i]) {const q=shelfPlacement(l,i);ctx.fillStyle='#fff2c615';ctx.fillRect(q.center[0]-q.size[0]/2,q.center[1]-q.size[1]/2,...q.size);}
+-    if(gesture?.dragging){const n=slotAt(heldPlacement().center,l);if(n>=0&&shelfDropPlan(state,heldId,n))outline(shelfPlacement(l,n));}
+-  }
+-  drawCart(ctx,bundle);
+-  const positions=cartPositions(),cssScale=canvas.getBoundingClientRect().width/941;
+-  state.cart.forEach((id,i)=>{if(id&&id!==heldId){
+-    drawBookGlow(ctx,bookMasks.get(id).silhouette,positions[i],cssScale);
+-    drawBook(ctx,bundle,id,positions[i]);
+-  }});
+-  drawCartForeground(ctx,bundle);
+-  if(heldId){const q=heldPlacement();drawBook(ctx,bundle,heldId,q);outline(q);drawGripPaws(ctx,bundle,q);}else drawIdlePaws(ctx,bundle);
+-  // The exact title is split into two lines within the blank header panel.
+-  const [hx,hy]=l.header_title_center;
+-  const split=CONFIG.text.title.lastIndexOf(' ');
+-  fit(CONFIG.text.title.slice(0,split),hx,hy-21,47,l.header_title_max_width);
+-  fit(CONFIG.text.title.slice(split+1),hx,hy+23,46,l.header_title_max_width);
+-  fit(CONFIG.text.subtitle,...l.header_subtitle_center,25,l.header_title_max_width,'#ffd0eb');
+-  fit(CONFIG.text.sign,...l.sign_label_center,38,l.sign_max_width,'#23263b');
+-  fit(CONFIG.text.footer,...l.footer_center,27,l.footer_max_width,'#ffdaeb');
+-  message.classList.toggle('complete',state.complete);
+-  message.textContent=state.complete?CONFIG.text.complete:state.shelf.every(Boolean)?CONFIG.text.incorrect:'';
+-  if(state.complete) {
+-    const elapsed=now-completionStart;
+-    const phase=reducedMotion?0:elapsed/280;
+-    for(let i=0;i<l.sparkle.particle_count;i++){
+-      const x=l.shelf.left+(i+.5)/l.sparkle.particle_count*(l.shelf.right-l.shelf.left),y=i%2?l.shelf.baseline+11:l.shelf.baseline-l.shelf.book_height-12;
+-      const radius=6+(Math.sin(phase+i*1.9)+1)*4;
+-      ctx.save();ctx.translate(x,y);ctx.fillStyle=l.sparkle.colors[i%l.sparkle.colors.length];ctx.beginPath();ctx.moveTo(0,-radius);ctx.lineTo(3,-3);ctx.lineTo(radius,0);ctx.lineTo(3,3);ctx.lineTo(0,radius);ctx.lineTo(-3,3);ctx.lineTo(-radius,0);ctx.lineTo(-3,-3);ctx.closePath();ctx.fill();ctx.restore();
+-    }
+-    if(!reducedMotion&&elapsed<l.sparkle.duration_ms)animation=requestAnimationFrame(render);
+-  }
+-}
+-function complete() {
+-  // Each fresh completion has exactly one notification. Restores do not enter this function.
+-  completionStart=performance.now();const run=epoch;
+-  completeTimer=setTimeout(()=>{
+-    if(epoch!==run||!state.complete||completionSent)return;
+-    completionSent=true;
+-    const detail=Object.freeze({gameId:CONFIG.gameId,status:'complete',complete:true});
+-    window.dispatchEvent(new CustomEvent('bookband:complete',{detail}));
+-    const callback=CONFIG.onGameComplete||window.onGameComplete;
+-    if(typeof callback==='function'){try{callback(detail);}catch(error){console.error('onGameComplete:',error);}}
+-    if(CONFIG.nextUrl)location.assign(new URL(CONFIG.nextUrl,location.href).href);
+-  },CONFIG.completionDelayMs);
+-}
+-function syncAccess() {
+-  const holder=document.querySelector('#a11y');holder.replaceChildren();
+-  if(!active())return;
+-  const add=(text,fn)=>{const b=document.createElement('button');b.textContent=text;b.onclick=()=>{if(active())fn();};holder.append(b);};
+-  // Unordered cart controls and numbered shelf controls allow keyboard/screen-reader play without exposing the answer order.
+-  state.cart.forEach(id=>{if(id)add(`카트: ${bundle.bookFrames.get(id).name_ko}`,()=>tap(placement(id).center,id));});
+-  state.shelf.forEach((id,i)=>add(`${i}번 자리${id?': '+bundle.bookFrames.get(id).name_ko:': 비어 있음'}`,()=>tap(shelfPlacement(bundle.layout,i).center,id||null)));
+-  if(selected)add('선택 취소',()=>{selected=null;render();syncAccess();});
+-}
+-document.querySelector('#start').onclick=()=>{started=true;intro.hidden=true;save();render();syncAccess();};
+-document.querySelector('#help').onclick=()=>{clearInteraction();help.showModal();};
+-document.querySelector('#close-help').onclick=()=>{help.close();syncAccess();};
+-help.addEventListener('close',()=>syncAccess());
+-document.querySelector('#restart').onclick=()=>{
+-  if(!ready)return;epoch++;clearTimeout(completeTimer);cancelAnimationFrame(animation);completionSent=false;
+-  state=freshState(order,CONFIG.gameId);selected=null;gesture=null;started=true;intro.hidden=true;
+-  try{localStorage.removeItem(CONFIG.storageKey);}catch{}save();render();syncAccess();
+-};
+-document.querySelector('#retry').onclick=()=>location.reload();
+-try {
+-  bundle=await loadAssetBundle('reshelve');
+-  if(order.length!==bundle.layout.shelf.slot_count||new Set(order).size!==order.length||!order.every(id=>bundle.bookFrames.has(id))||bundle.layout.cart_book_samples.length!==order.length)throw new Error('책 또는 배치 데이터가 맞지 않습니다.');
+-  for(const id of order)bookMasks.set(id,maskFor(bundle.bookImage,bundle.bookFrames.get(id).content_rect,true));
+-  for(const side of ['left','right'])pawMasks.set(side,maskFor(bundle.pawImage,bundle.pawFrames.get('grip_'+side).content_rect));
+-  cartMask=maskFor(bundle.cartImage,bundle.cart.content_rect);
+-  const restored=readSave();state=restored||freshState(order,CONFIG.gameId);started=!!restored;completionSent=!!restored?.complete;completionStart=performance.now()-bundle.layout.sparkle.duration_ms;
+-  loading.hidden=true;intro.hidden=started;ready=true;render();syncAccess();
+-  // Read-only snapshot for integration monitoring and developer verification; never exposes state mutation.
+-  window.Bookband=Object.freeze({getState:()=>JSON.parse(JSON.stringify(state)),getInteraction:()=>({selected:selected?.id||null,side:selected?.side||gesture?.side||null,dragging:!!gesture?.dragging}),get ready(){return ready;},gameId:CONFIG.gameId});
+-} catch(error) {
+-  console.error(error);document.querySelector('#load-text').textContent='이미지를 불러오지 못했어요. 연결을 확인한 뒤 다시 불러와 주세요.';
+-  document.querySelector('#retry').hidden=false;
+-}
++import '../story-adapter.js';
++import {createLetterUI} from './letter-ui.js';
++import {validOrderProgress} from './letter-state.js';
++import {CONFIG} from './config.js';
++import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261025-upstream19';
++import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
++import {inside,localPoint,slotAt,shelfPlacement,cartPlacements} from './geometry.js';
++
++const storyBridge=window.CatStoryBridge;
++if(storyBridge?.embedded){document.documentElement.classList.add('book-order');document.querySelector('#intro h1').textContent=CONFIG.text.title;document.querySelector('#intro p').textContent='책등의 번호를 살펴보고, 번호가 작은 책부터 왼쪽에 꽂아 줘!';}
++const canvas=document.querySelector('#board'),ctx=canvas.getContext('2d');
++const message=document.querySelector('#message'),intro=document.querySelector('#intro');
++const loading=document.querySelector('#loading'),help=document.querySelector('#help-dialog');
++const order=CONFIG.correctOrder;
++let bundle,state,selected=null,gesture=null,ready=false,started=false,completeTimer=null,animation=null,epoch=0;
++let bookMasks=new Map(),pawMasks=new Map(),cartMask=null,completionSent=false,completionStart=0;
++const letterUI=createLetterUI({storageKey:CONFIG.storageKey+':letters:v1',getGame:()=>state,getLayout:()=>bundle.layout,
++ onProgress:progress=>storyBridge?.progress(progress),
++ onFinish(result,firstCompletion){if(firstCompletion){const detail=Object.freeze({gameId:CONFIG.gameId,status:'complete',complete:true,letterPuzzle:result.letterPuzzle});window.dispatchEvent(new CustomEvent('bookband:complete',{detail}));const callback=CONFIG.onGameComplete||window.onGameComplete;if(typeof callback==='function'){try{callback(detail);}catch(error){console.error('onGameComplete:',error);}}}
++  storyBridge?.clear(result);storyBridge?.returnToStory(result);
++ }});
++ storyBridge?.onRestore(progress=>{if(!ready)return;const p=validOrderProgress(progress);if(!p)return;const candidate={version:1,gameId:CONFIG.gameId,shelf:p.shelf,cart:p.cart,complete:true};if(!validState(candidate,order,CONFIG.gameId))return;state=candidate;started=true;intro.hidden=true;save();letterUI.restore(p);render();syncAccess();});
++const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
++document.querySelector('#start-text').textContent=CONFIG.text.start;
++
++function readSave() {
++  try {const raw=localStorage.getItem(CONFIG.storageKey);if(!raw)return null;const saved=JSON.parse(raw);if(validState(saved,order,CONFIG.gameId))return saved;localStorage.removeItem(CONFIG.storageKey);}catch{/* Storage may be unavailable. Play remains possible. */}
++  return null;
++}
++function save() {try {localStorage.setItem(CONFIG.storageKey,JSON.stringify(state));}catch{/* Private mode/quota: retain in-memory state. */}}
++function maskFor(image,rect,glow=false) {
++  const c=document.createElement('canvas');c.width=rect[2];c.height=rect[3];const x=c.getContext('2d',{willReadFrequently:true});
++  x.drawImage(image,...rect,0,0,c.width,c.height);
++  const mask={data:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height};
++  if(glow){x.globalCompositeOperation='source-in';x.fillStyle='#fff1b7';x.fillRect(0,0,c.width,c.height);mask.silhouette=c;}
++  return mask;
++}
++function opaque(mask,point,size) {
++  if(!mask||point[0]<0||point[1]<0||point[0]>=size[0]||point[1]>=size[1])return false;
++  const x=Math.min(mask.w-1,Math.floor(point[0]/size[0]*mask.w)),y=Math.min(mask.h-1,Math.floor(point[1]/size[1]*mask.h));
++  return mask.data[(y*mask.w+x)*4+3]>35;
++}
++function cartPositions(){return cartPlacements(bundle.layout,state.cart,gesture?.dragging?gesture.book:selected?.id);}
++function placement(id) {const p=locate(state,id);return p.zone==='shelf'?shelfPlacement(bundle.layout,p.index):cartPositions()[p.index];}
++function heldPlacement() {
++  if(!selected&&!gesture?.dragging)return null;
++  const id=gesture?.dragging?gesture.book:selected.id;
++  const side=gesture?.dragging?gesture.side:selected.side;
++  const [w,h]=bundle.layout.held_book_size;
++  const anchor=gripPlacement(bundle,{center:[0,0],size:[w,h],grip_side:side}).anchor;
++  // The fingertip follows the lower paw contact, keeping the title above the finger.
++  const base=gesture?.dragging?[gesture.point[0]-anchor[0],gesture.point[1]-anchor[1]]:placement(id).center;
++  return {center:[Math.max(w/2,Math.min(941-w/2,base[0])),Math.max(h/2,Math.min(1672-h/2,base[1]))],size:[w,h],grip_side:side,rotation_deg:0};
++}
++function hitBook(p,includeHeld=true) {
++  if(includeHeld&&selected) {
++    const q=heldPlacement(),grip=gripPlacement(bundle,q),[x,y,w,h]=grip.dest;
++    if(inside(localPoint(p,q),[0,0,...q.size])||opaque(pawMasks.get(grip.side),[p[0]-x,p[1]-y],[w,h]))return selected.id;
++  }
++  // Shelf hit regions include the full spine, even transparent rounded corners.
++  for(let i=0;i<order.length;i++)if(state.shelf[i]) {const q=shelfPlacement(bundle.layout,i);if(inside(localPoint(p,q),[0,0,...q.size]))return state.shelf[i];}
++  const r=bundle.layout.cart.dest_content_rect;
++  const cartFront=bundle.layout.cart.foreground_clip_rects||[];
++  if(cartFront.some(rect=>inside(p,rect))&&opaque(cartMask,[p[0]-r[0],p[1]-r[1]],[r[2],r[3]]))return null;
++  // Traverse back to front and use actual sprite alpha, so covered books are not grabbed through another book/cart.
++  const positions=cartPositions();
++  for(let i=state.cart.length-1;i>=0;i--) {const id=state.cart[i];if(!id||id===selected?.id)continue;const q=positions[i];if(opaque(bookMasks.get(id),localPoint(p,q),q.size))return id;}
++  return null;
++}
++function toPoint(e) {const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*941,(e.clientY-r.top)/r.height*1672];}
++function active() {return ready&&started&&!state.complete&&!help.open;}
++function select(id,p) {selected={id,side:p[0]<470.5?'left':'right'};render();syncAccess();}
++function clearInteraction() {gesture=null;selected=null;render();syncAccess();}
++function cancelGesture(e) {if(!gesture||e&&e.pointerId!==gesture.pointerId)return;clearInteraction();}
++function commit(action) {
++  const next=transition(state,action,order,CONFIG.gameId);selected=null;
++  if(next!==state) {state=next;save();if(state.complete)complete();}
++  render();syncAccess();
++}
++function tap(p,hit=hitBook(p)) {
++  if(!active())return;
++  if(hit) {
++    if(selected?.id===hit){selected=null;render();syncAccess();return;}
++    if(selected&&locate(state,hit).zone==='shelf') {commit({type:'move',id:selected.id,zone:'shelf',index:locate(state,hit).index});return;}
++    select(hit,p);return;
++  }
++  if(selected) {
++    const index=slotAt(p,bundle.layout);
++    if(index>=0){commit({type:'move',id:selected.id,zone:'shelf',index});return;}
++    if(inside(p,bundle.layout.cart.hit_rect)){commit({type:'move',id:selected.id,zone:'cart'});return;}
++  }
++  selected=null;render();syncAccess();
++}
++canvas.addEventListener('pointerdown',e=>{
++  if(!active()||gesture||e.isPrimary===false||e.button!==0)return;
++  e.preventDefault();const point=toPoint(e),book=hitBook(point);
++  gesture={pointerId:e.pointerId,book,point,start:point,startCss:[e.clientX,e.clientY],side:selected?.id===book?selected.side:(point[0]<470.5?'left':'right'),dragging:false};
++  canvas.setPointerCapture(e.pointerId);
++});
++canvas.addEventListener('pointermove',e=>{
++  if(!gesture||e.pointerId!==gesture.pointerId)return;
++  e.preventDefault();gesture.point=toPoint(e);
++  if(gesture.book&&!gesture.dragging&&Math.hypot(e.clientX-gesture.startCss[0],e.clientY-gesture.startCss[1])>=CONFIG.dragThresholdCss){gesture.dragging=true;selected=null;}
++  if(gesture.dragging)render();
++});
++canvas.addEventListener('pointerup',e=>{
++  if(!gesture||e.pointerId!==gesture.pointerId)return;
++  e.preventDefault();const g=gesture,p=toPoint(e);g.point=p;
++  const dropPoint=g.dragging?heldPlacement().center:p;
++  gesture=null;
++  if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
++  if(!active()){clearInteraction();return;}
++  if(g.dragging) {
++    if(!inside(p,[0,0,941,1672])){clearInteraction();return;}
++    const index=slotAt(dropPoint,bundle.layout);
++    if(index>=0)commit({type:'move',id:g.book,zone:'shelf',index});
++    else if(inside(dropPoint,bundle.layout.cart.hit_rect))commit({type:'move',id:g.book,zone:'cart'});
++    else clearInteraction();
++  }else if(Math.hypot(e.clientX-g.startCss[0],e.clientY-g.startCss[1])<CONFIG.dragThresholdCss)tap(p,hitBook(p));
++  else clearInteraction();
++});
++canvas.addEventListener('pointercancel',cancelGesture);
++canvas.addEventListener('lostpointercapture',cancelGesture);
++window.addEventListener('blur',()=>{if(ready)clearInteraction();});
++document.addEventListener('visibilitychange',()=>{if(document.hidden&&ready)clearInteraction();});
++
++function fit(text,x,y,size,maxWidth,color='#fff1b4') {
++  while(size>14) {ctx.font=`bold ${size}px system-ui, sans-serif`;if(ctx.measureText(text).width<=maxWidth)break;size--;}
++  ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y);
++}
++function outline(q,color='#fff0a3') {
++  ctx.save();ctx.translate(...q.center);ctx.rotate((q.rotation_deg||0)*Math.PI/180);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.setLineDash([12,6]);ctx.strokeRect(-q.size[0]/2-3,-q.size[1]/2-3,q.size[0]+6,q.size[1]+6);ctx.restore();
++}
++function resizeCanvas() {
++  const rect=canvas.getBoundingClientRect(),dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
++  if(!rect.width||!rect.height)return;
++  const width=Math.max(1,Math.round(rect.width*dpr)),height=Math.max(1,Math.round(rect.height*dpr));
++  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
++}
++window.addEventListener('resize',()=>render());
++window.visualViewport?.addEventListener('resize',()=>render());
++if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>render()).observe(canvas);
++function render(now=performance.now()) {
++  if(!bundle||!state)return;
++  resizeCanvas();
++  // Reset before each render. Pointer coordinates stay in the 941 × 1672 design space.
++  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);
++  ctx.setTransform(canvas.width/941,0,0,canvas.height/1672,0,0);
++  const l=bundle.layout;ctx.imageSmoothingEnabled=false;ctx.drawImage(bundle.background,0,0,941,1672);
++  // Shelf labels belong to the scenery, behind the movable book and gripping paw.
++  for(let i=0;i<order.length;i++)fit(String(i),shelfPlacement(l,i).center[0],l.shelf.number_baseline-10,28,60,'#392517');
++  const heldId=gesture?.dragging?gesture.book:selected?.id;
++  state.shelf.forEach((id,i)=>{if(id&&id!==heldId)drawBook(ctx,bundle,id,shelfPlacement(l,i));});
++  if(heldId) {
++    for(let i=0;i<order.length;i++)if(!state.shelf[i]) {const q=shelfPlacement(l,i);ctx.fillStyle='#fff2c615';ctx.fillRect(q.center[0]-q.size[0]/2,q.center[1]-q.size[1]/2,...q.size);}
++    if(gesture?.dragging){const n=slotAt(heldPlacement().center,l);if(n>=0&&shelfDropPlan(state,heldId,n))outline(shelfPlacement(l,n));}
++  }
++  drawCart(ctx,bundle);
++  const positions=cartPositions(),cssScale=canvas.getBoundingClientRect().width/941;
++  state.cart.forEach((id,i)=>{if(id&&id!==heldId){
++    drawBookGlow(ctx,bookMasks.get(id).silhouette,positions[i],cssScale);
++    drawBook(ctx,bundle,id,positions[i]);
++  }});
++  drawCartForeground(ctx,bundle);
++  if(heldId){const q=heldPlacement();drawBook(ctx,bundle,heldId,q);outline(q);drawGripPaws(ctx,bundle,q);}else drawIdlePaws(ctx,bundle);
++  // The exact title is split into two lines within the blank header panel.
++  const [hx,hy]=l.header_title_center;
++  const split=CONFIG.text.title.lastIndexOf(' ');
++  fit(CONFIG.text.title.slice(0,split),hx,hy-21,47,l.header_title_max_width);
++  fit(CONFIG.text.title.slice(split+1),hx,hy+23,46,l.header_title_max_width);
++  fit(CONFIG.text.subtitle,...l.header_subtitle_center,25,l.header_title_max_width,'#ffd0eb');
++  fit(CONFIG.text.sign,...l.sign_label_center,38,l.sign_max_width,'#23263b');
++  fit(CONFIG.text.footer,...l.footer_center,27,l.footer_max_width,'#ffdaeb');
++  message.classList.toggle('complete',state.complete);
++  message.textContent=state.complete?CONFIG.text.complete:state.shelf.every(Boolean)?CONFIG.text.incorrect:'';
++  letterUI.sync();
++  if(state.complete&&now-completionStart<Math.min(800,l.sparkle.duration_ms)&&!reducedMotion) {
++    const elapsed=now-completionStart;
++    const phase=reducedMotion?0:elapsed/280;
++    for(let i=0;i<l.sparkle.particle_count;i++){
++      const x=l.shelf.left+(i+.5)/l.sparkle.particle_count*(l.shelf.right-l.shelf.left),y=i%2?l.shelf.baseline+11:l.shelf.baseline-l.shelf.book_height-12;
++      const radius=6+(Math.sin(phase+i*1.9)+1)*4;
++      ctx.save();ctx.translate(x,y);ctx.fillStyle=l.sparkle.colors[i%l.sparkle.colors.length];ctx.beginPath();ctx.moveTo(0,-radius);ctx.lineTo(3,-3);ctx.lineTo(radius,0);ctx.lineTo(3,3);ctx.lineTo(0,radius);ctx.lineTo(-3,3);ctx.lineTo(-radius,0);ctx.lineTo(-3,-3);ctx.closePath();ctx.fill();ctx.restore();
++    }
++    if(!reducedMotion&&elapsed<l.sparkle.duration_ms)animation=requestAnimationFrame(render);
++  }
++}
++function complete(){completionStart=performance.now();letterUI.sync();}
++function syncAccess() {
++  const holder=document.querySelector('#a11y');holder.replaceChildren();
++  if(!active())return;
++  const add=(text,fn)=>{const b=document.createElement('button');b.textContent=text;b.onclick=()=>{if(active())fn();};holder.append(b);};
++  // Unordered cart controls and numbered shelf controls allow keyboard/screen-reader play without exposing the answer order.
++  state.cart.forEach(id=>{if(id)add(`카트: ${bundle.bookFrames.get(id).name_ko}`,()=>tap(placement(id).center,id));});
++  state.shelf.forEach((id,i)=>add(`${i}번 자리${id?': '+bundle.bookFrames.get(id).name_ko:': 비어 있음'}`,()=>tap(shelfPlacement(bundle.layout,i).center,id||null)));
++  if(selected)add('선택 취소',()=>{selected=null;render();syncAccess();});
++}
++document.querySelector('#start').onclick=()=>{started=true;intro.hidden=true;save();render();syncAccess();};
++document.querySelector('#help').onclick=()=>{clearInteraction();help.showModal();};
++document.querySelector('#close-help').onclick=()=>{help.close();syncAccess();};
++help.addEventListener('close',()=>syncAccess());
++document.querySelector('#restart').onclick=()=>{
++  if(!ready)return;storyBridge?.reset();epoch++;clearTimeout(completeTimer);cancelAnimationFrame(animation);completionSent=false;
++  state=freshState(order,CONFIG.gameId);letterUI.reset();selected=null;gesture=null;started=true;intro.hidden=true;
++  try{localStorage.removeItem(CONFIG.storageKey);}catch{}save();render();syncAccess();
++};
++document.querySelector('#retry').onclick=()=>location.reload();
++try {
++  bundle=await loadAssetBundle('reshelve');
++  if(order.length!==bundle.layout.shelf.slot_count||new Set(order).size!==order.length||!order.every(id=>bundle.bookFrames.has(id))||bundle.layout.cart_book_samples.length!==order.length)throw new Error('책 또는 배치 데이터가 맞지 않습니다.');
++  for(const id of order)bookMasks.set(id,maskFor(bundle.bookImage,bundle.bookFrames.get(id).content_rect,true));
++  for(const side of ['left','right'])pawMasks.set(side,maskFor(bundle.pawImage,bundle.pawFrames.get('grip_'+side).content_rect));
++  cartMask=maskFor(bundle.cartImage,bundle.cart.content_rect);
++  const restored=readSave();state=restored||freshState(order,CONFIG.gameId);started=!!restored;completionSent=!!restored?.complete;completionStart=performance.now()-bundle.layout.sparkle.duration_ms;
++  loading.hidden=true;intro.hidden=started;ready=true;storyBridge?.ready();render();syncAccess();
++  // Read-only snapshot for integration monitoring and developer verification; never exposes state mutation.
++  window.Bookband=Object.freeze({getState:()=>JSON.parse(JSON.stringify(state)),getInteraction:()=>({selected:selected?.id||null,side:selected?.side||gesture?.side||null,dragging:!!gesture?.dragging}),get ready(){return ready;},gameId:CONFIG.gameId});
++} catch(error) {
++  storyBridge?.error(error);console.error(error);document.querySelector('#load-text').textContent='이미지를 불러오지 못했어요. 연결을 확인한 뒤 다시 불러와 주세요.';
++  document.querySelector('#retry').hidden=false;
++}
+diff --git a/book-order/config.js b/book-order/config.js
+--- a/book-order/config.js
++++ b/book-order/config.js
+@@ -1,20 +1,22 @@
+-// 행사에 맞게 이 파일과 layout.json을 수정하세요.
+-export const CONFIG = {
+-  gameId: 'library-bookband-reshelve-v2',
+-  storageKey: 'bookband:library-bookband-reshelve-v2:v1',
+-  correctOrder: ['000','100','200','300','400','500','600','700','800','900'],
+-  dragThresholdCss: 7,
+-  completionDelayMs: 1400,
+-  nextUrl: '',
+-  // (detail) => { ... } 또는 window.onGameComplete(detail)로 연결합니다.
+-  onGameComplete: null,
+-  text: {
+-    title: '책을 올바른 순서로 제자리에!',
+-    subtitle: '실제 서가의 책띠를 살펴보세요',
+-    sign: '신간도서 코너',
+-    start: '사서가 어지른 책을 정리해 주세요! 실제 서가의 책띠를 살펴보고, 책 10권을 왼쪽부터 올바른 순서로 꽂아 주세요.',
+-    footer: '끌어서 꽂기 · 찬 자리에는 밀어 넣기',
+-    incorrect: '아직 순서가 맞지 않아요',
+-    complete: '클리어!'
+-  }
+-};
++// 행사에 맞게 이 파일과 layout.json을 수정하세요.
++export const CONFIG = {
++  gameId: 'library-bookband-reshelve-v2',
++  storageKey: 'bookband:library-bookband-reshelve-v2:v1',
++  correctOrder: ['000','100','200','300','400','500','600','700','800','900'],
++  dragThresholdCss: 7,
++  completionDelayMs: 1400,
++  nextUrl: '',
++  // (detail) => { ... } 또는 window.onGameComplete(detail)로 연결합니다.
++  onGameComplete: null,
++  text: {
++    title: '책을 올바른 순서로 제자리에!',
++    subtitle: '실제 서가의 책띠를 살펴보세요',
++    sign: '신간도서 코너',
++    start: '사서가 어지른 책을 정리해 주세요! 실제 서가의 책띠를 살펴보고, 책 10권을 왼쪽부터 올바른 순서로 꽂아 주세요.',
++    footer: '끌어서 꽂기 · 찬 자리에는 밀어 넣기',
++    incorrect: '아직 순서가 맞지 않아요',
++    complete: '클리어!'
++  }
++};
++
++if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='현장의 십진분류표와 책띠를 살펴보세요';CONFIG.text.start='현장의 십진분류표와 책띠 색·분류명을 보고 열 권을 주제 순서대로 정리해 주세요. 책을 끌거나, 책과 자리를 차례로 눌러 꽂아요.';}
+diff --git a/book-order/index.html b/book-order/index.html
+--- a/book-order/index.html
++++ b/book-order/index.html
+@@ -1,25 +1,28 @@
+-<!doctype html>
+-<html lang="ko">
+-<head>
+-  <meta charset="utf-8">
+-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+-  <meta name="theme-color" content="#291d27">
+-  <meta name="description" content="고양이 사서와 함께 책 10권을 올바른 순서로 꽂아 주세요.">
+-  <title>책을 올바른 순서로 제자리에!</title>
+-  <link rel="icon" href="data:,">
+-  <link rel="stylesheet" href="./style.css">
+-</head>
+-<body>
+-  <main id="game" aria-label="책을 올바른 순서로 제자리에!">
+-    <canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas>
+-    <div id="message" role="status" aria-live="polite"></div>
+-    <div id="loading" class="overlay"><section class="card"><div class="eyebrow">고양이 사서의 도서관</div><h1>서가를 준비하고 있어요</h1><p id="load-text">책과 북카트를 불러오는 중…</p><button id="retry" hidden>다시 불러오기</button></section></div>
+-    <div id="intro" class="overlay" hidden><section class="card"><div class="eyebrow">고양이 사서의 부탁</div><h1>뒤바뀐 영혼,<br>뒤섞인 책들</h1><p>사서와 고양이의 영혼이 뒤바뀌었어요.<br>고양이가 된 사서를 도와주세요.</p><p id="start-text"></p><button id="start">책 정리 시작</button><small>시간제한 없이, 천천히 살펴보세요.</small></section></div>
+-    <nav class="tools" aria-label="게임 도움"><button id="help" aria-label="조작 방법 보기">도움말</button><button id="restart" aria-label="책 배열을 초기화하고 다시 시작">다시 시작</button></nav>
+-    <dialog id="help-dialog"><section class="card"><h2>고양이 앞발로 정리해요</h2><p>책을 끌어 원하는 자리에 놓으세요.<br>책을 누른 뒤 자리를 눌러도 돼요.</p><p>빈자리에 놓으면 그 책만 이동해요. 찬 자리에 놓으면 오른쪽의 책들이 첫 빈칸까지 한 칸씩 밀려요. 오른쪽이 끝까지 차 있으면 왼쪽 빈칸을 이용해요.</p><p>카트로 끌어 빼거나, 책을 선택한 뒤 카트의 빈 공간을 눌러 돌려놓을 수도 있어요. 같은 책이나 배경을 누르면 선택이 취소돼요. 서가 밖에 놓으면 원래 자리로 돌아가요.</p><button id="close-help">계속 정리하기</button></section></dialog>
+-    <div id="a11y" class="sr-only"></div>
+-  </main>
+-  <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
+-  <script type="module" src="./game.js"></script>
+-</body>
+-</html>
++<!doctype html>
++<html lang="ko">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
++  <meta name="theme-color" content="#291d27">
++  <meta name="description" content="고양이 사서와 함께 책 10권을 올바른 순서로 꽂아 주세요.">
++  <title>책을 올바른 순서로 제자리에!</title>
++  <link rel="icon" href="data:,">
++  <link rel="stylesheet" href="./style.css">
++  <link rel="stylesheet" href="../story-adapter.css"><link rel="stylesheet" href="./letter.css">
++</head>
++<body>
++  <main id="game" aria-label="책을 올바른 순서로 제자리에!">
++    <div id="boardViewport"><canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas><div id="bookLetters" hidden aria-label="책 위 글자"></div></div>
++    <div id="message" role="status" aria-live="polite"></div>
++    <div id="loading" class="overlay"><section class="card"><div class="eyebrow">고양이 사서의 도서관</div><h1>서가를 준비하고 있어요</h1><p id="load-text">책과 북카트를 불러오는 중…</p><button id="retry" hidden>다시 불러오기</button></section></div>
++    <div id="intro" class="overlay" hidden><section class="card"><div class="eyebrow">고양이 사서의 부탁</div><h1>뒤바뀐 영혼,<br>뒤섞인 책들</h1><p>사서와 고양이의 영혼이 뒤바뀌었어요.<br>고양이가 된 사서를 도와주세요.</p><p id="start-text"></p><button id="start">책 정리 시작</button><small>시간제한 없이, 천천히 살펴보세요.</small></section></div>
++    <nav class="tools" aria-label="게임 도움"><button id="help" aria-label="조작 방법 보기">도움말</button><button id="restart" aria-label="책 배열을 초기화하고 다시 시작">다시 시작</button></nav>
++    <dialog id="help-dialog"><section class="card"><h2>고양이 앞발로 정리해요</h2><p>책을 끌어 원하는 자리에 놓으세요.<br>책을 누른 뒤 자리를 눌러도 돼요.</p><p>빈자리에 놓으면 그 책만 이동해요. 찬 자리에 놓으면 오른쪽의 책들이 첫 빈칸까지 한 칸씩 밀려요. 오른쪽이 끝까지 차 있으면 왼쪽 빈칸을 이용해요.</p><p>카트로 끌어 빼거나, 책을 선택한 뒤 카트의 빈 공간을 눌러 돌려놓을 수도 있어요. 같은 책이나 배경을 누르면 선택이 취소돼요. 서가 밖에 놓으면 원래 자리로 돌아가요.</p><button id="close-help">계속 정리하기</button></section></dialog>
++    <section id="letterPanel" class="letter-panel" hidden aria-label="엽서 발자국 문제"><div class="letter-intro-row"><p id="letterIntro"></p><button id="letterIntroNext" class="intro-next" type="button">다음</button></div><div class="paw-window" aria-hidden="true"><img id="letterPaws" alt=""></div><p id="letterInstruction" class="letter-instruction"></p><form id="letterForm"><label for="letterAnswer">한글 4글자</label><input id="letterAnswer" type="text" maxlength="80" autocomplete="off" enterkeyhint="done" aria-describedby="letterFeedback"><button id="letterCheck" type="submit">정답 확인</button><p id="letterFeedback" role="status"></p></form><button id="letterHint" type="button">힌트</button><section id="letterHints" class="letter-hints" hidden><p id="letterHintBody"></p><button id="letterMoreHint" type="button">힌트 하나 더</button></section></section>
++    <dialog id="letterSuccess" class="letter-success" aria-labelledby="letterSuccessTitle"><h2 id="letterSuccessTitle">정답이야!</h2><img id="letterHappy" alt="기뻐하는 삼색 고양이"><p>잘했어! 이야기를 이어가 보자!</p><button id="letterSuccessNext" type="button">다음으로</button></dialog>
++    <div id="a11y" class="sr-only"></div>
++  </main>
++  <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
++  <script type="module" src="./game.js?v=20261025-upstream19"></script>
++</body>
++</html>

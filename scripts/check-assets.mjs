@@ -46,3 +46,5 @@ console.log(JSON.stringify({gameAssets:games.assets.length,gameAssetBytes:games.
 await import('./check-ending.mjs');
 
 await import('./check-order-letters.mjs');
+
+await import('./check-game-sources.mjs');

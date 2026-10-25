@@ -204,3 +204,5 @@ story.js의 cleaning-keyword는 completionMode:'result',minimumRatio:.7,allowedG
 앱 진행 테스트35개·첨부 보조 테스트9개·자산/폰트/문법 검사를 통과했습니다. 실제 HTTP Chrome의 /cat-librarian/ 하위 경로에서 전체 새 구간·오답/IME·팝업/수리/두 도착의 저장 복원·기존 ART/아이콘 저장을 확인했습니다.320/360/390px × 844/380px의6조건과 키보드 공간을 모사한320px 높이에서 모든 새 장면과 입력·버튼 접근을 검증했습니다. 기존 청소 연결도 서로 다른 로컬 origin의 두 실제 저장소로6조건 재검증했습니다.
 
 실제 삼성 인터넷/카카오톡·Android/iOS 자판, 현장 이름표와03/04 마크 설치, 새 버전 공개 배포는 미확인입니다. 이번 변경은 cat-librarian 폴더이며 cleaning-game 실행 코드와 미정 키워드는 수정하지 않았습니다. GitHub Desktop에서 cat-librarian의 변경을 Commit/Push하여 반영하세요.
+
+2026-10-25 최신 게임 원본 반영은 `node scripts/sync-games.mjs`(또는 `npm run sync:games`) 후 `node scripts/check-assets.mjs`로 검사한다. 원본 폴더와 명시적 연결 패치는 scripts/game-sources.json 및 scripts/game-adaptations에 있다. 패치 충돌은 먼저 병합하고 새 실행 자산도 목록에 추가한다. 실제 검증/변경 파일/배포 범위는 VERIFICATION-20261025-UPSTREAM19.md가 최신 기준이다. 본편과 독립 달리기를 모두 배포하려면 GitHub Desktop의 cat-librarian과 catch-librarian을 각각 Commit/Push한다.

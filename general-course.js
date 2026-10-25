@@ -14,14 +14,14 @@ export function createGeneralScenes(){
  talk('general-order-bridge','저 녀석이 책 순서를 몽땅 바꿔놨어.','general-order-plan','worried');
  talk('general-order-plan','책은 주제별로 모아둬야 찾는 사람이 헤매지 않거든.','general-order-paws');
  talk('general-order-paws','자료실에 있는 십진분류표를 보고, 책띠 색과 분류명을 맞춰서 열 권을 정리해 줘.','newbooks-order-game');
- scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'general-mess',cat:'self-mockery',layout:'result-game',text:'네 손 좀 빌릴게. 내 건 지금 다른 분이 쓰고 있어서.',gameUrl:'./games/book-order/',gameTitle:'책 정리와 엽서 발자국',gameStartLabel:'책 정리하기',next:'newbooks-after-order',geometry:gameGeometry});
+ scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'general-mess',cat:'self-mockery',layout:'result-game',text:'십진분류표는 책을 주제별로 나누고, 어떤 순서로 꽂는지 알려 주는 표야',gameUrl:'./games/book-order/',gameTitle:'책 정리와 엽서 발자국',gameStartLabel:'책 정리하기',next:'newbooks-after-order',geometry:gameGeometry});
  talk('newbooks-after-order','맞아. 정리 완료!','general-breath','happy','general-clean');
  talk('general-breath','책 열 권은 제자리로 돌아갔네. 이제 나도 좀…','general-crash','neutral','general-clean');
  talk('general-crash','쿠당탕!','general-no-rest','shocked','general-clean',{effect:'bump'});
  talk('general-no-rest','…책만 돌아갔구나.','general-shelf-direction','resigned','general-clean');
  talk('general-shelf-direction','반납 안내문이 있는 서가 쪽이야. 가 보자.','general-shelf-arrival','worried','general-clean');
- scenes.push({id:'general-shelf-arrival',type:'move',background:'general-clean',cat:'worried',layout:'move',location:'2층 종합자료실 서가',destination:'반납 안내문이 있는 서가',marker:false,guideText:'반납 안내문이 있는 서가로 이동하세요.',locationHints:['종합자료실에서 반납 안내문과 북트럭이 있는 서가 쪽을 찾아보세요.'],next:'general-book-drop',geometry:movement});
- const shelf={shelfActor:true,geometry:{...dialogue,shelfActor:[210,-10,245,294]}};
+ scenes.push({id:'general-shelf-arrival',type:'move',background:'general-clean',cat:'worried',layout:'move',location:'2층 종합자료실 서가',fontSize:22,destination:'반납 안내문이 있는 서가',marker:true,markerNumber:5,guideText:'반납 안내문이 있는 서가로\n이동해 주세요\n고양이 마크 {markerNumber}번을 찾아주세요',locationHints:['종합자료실에서 반납 안내문과 북트럭이 있는 서가 쪽을 찾아보세요.'],next:'general-book-drop',geometry:{...movement,cat:[43,428,135,152],marker:[205,425,225,225]}});
+ const shelf={shelfActor:true,shelfSurface:{width:1103,height:1426,y:365,anchorY:560/768},geometry:{...dialogue,locationBanner:[31,20,438,60],shelfActor:[210,-10,245,294]}};
  talk('general-book-drop','찾았다. 너 거기서 뭐 해?','general-cattower','shocked','book-catch-shelf',shelf);
  talk('general-cattower','내 몸이 저기까지 올라갈 수 있었어?','general-stare','bewildered','book-catch-shelf',shelf);
  talk('general-stare','그 책 내려놔.','general-my-face','worried','book-catch-shelf',shelf);

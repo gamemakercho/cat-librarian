@@ -1,0 +1,106 @@
+{
+  "book-order": {
+    "source": "C:/Users/user/Documents/GitHub/bookband",
+    "repository": "https://github.com/gamemakercho/bookband",
+    "commit": "a4618a6d7bc0aecb23bc3ef30c86735dc496b845",
+    "files": [
+      "assets/book-cart.json",
+      "assets/book-cart.webp",
+      "assets/books-atlas-crisp-v2.json",
+      "assets/books-atlas-crisp-v2.webp",
+      "assets/cat-paws-atlas.json",
+      "assets/cat-paws-atlas.webp",
+      "assets/library-background.webp",
+      "assets-loader.js",
+      "config.js",
+      "game.js",
+      "geometry.js",
+      "index.html",
+      "layout.json",
+      "state.js",
+      "style.css"
+    ],
+    "adapted": [
+      "game.js",
+      "config.js",
+      "index.html"
+    ]
+  },
+  "book-catch": {
+    "source": "C:/Users/user/Documents/GitHub/library-game1",
+    "repository": "https://github.com/gamemakercho/library-game1",
+    "commit": "9d4539d2e2cd5ba9049d5274f3cf933e78faea1b",
+    "files": [
+      "assets/cat-reshelve-5frames.webp",
+      "assets/clear-failure.webp",
+      "assets/clear-success.webp",
+      "assets/empty-cart.webp",
+      "assets/falling-book-red-trim.webp",
+      "assets/falling-book-teal-trim.webp",
+      "assets/floor-book-trim.webp",
+      "assets/librarian-drop-5frames.webp",
+      "assets/librarian-idle.webp",
+      "assets/library-background.webp",
+      "assets/perfect-clear.webp",
+      "assets/pushing-cat.webp",
+      "assets/stack-gold.webp",
+      "assets/stack-red.webp",
+      "assets/stack-teal.webp",
+      "config.js",
+      "engine.js",
+      "game.js",
+      "index.html",
+      "motion-data.js",
+      "style.css"
+    ],
+    "adapted": [
+      "game.js",
+      "index.html"
+    ]
+  },
+  "ending-chase": {
+    "source": "C:/Users/user/Documents/Codex/2026-10-23/codex-prompt-md-x20/outputs/github/catch-librarian",
+    "repository": "https://github.com/gamemakercho/catch-librarian",
+    "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+    "files": [
+      "after-ending/after-ending.css",
+      "after-ending/after-ending.js",
+      "after-ending/assets/returned-scene.webp",
+      "app.js",
+      "assets/background/background-layout.json",
+      "assets/background/library-background-sideview.webp",
+      "assets/ending/ending-01-chase.webp",
+      "assets/ending/ending-02-treat.webp",
+      "assets/ending/ending-03-sparkle.webp",
+      "assets/ending/ending-04-trip.webp",
+      "assets/ending/ending-05-jump.webp",
+      "assets/librarian/librarian-motion-layout.json",
+      "assets/librarian/librarian-run-aligned.webp",
+      "assets/librarian/librarian-run.json",
+      "assets/librarian/librarian-stumble-aligned.webp",
+      "assets/librarian/librarian-stumble.json",
+      "assets/librarian/librarian-throw-aligned.webp",
+      "assets/librarian/librarian-throw.json",
+      "assets/props/book-stack-double.json",
+      "assets/props/book-stack-double.webp",
+      "assets/props/library-props-sideview.webp",
+      "assets/props/props-layout.json",
+      "assets/puzzle/fold-guide.svg",
+      "assets/sprites/cat-hit-recover-v2.webp",
+      "assets/sprites/cat-run-thin-v2.webp",
+      "assets/sprites/sprite-layout-v2.json",
+      "collision.js",
+      "config.js",
+      "engine.js",
+      "index.html",
+      "librarian-motion.js",
+      "props.js",
+      "renderer.js",
+      "scene-data.js",
+      "styles.css"
+    ],
+    "adapted": [
+      "app.js"
+    ]
+  }
+}

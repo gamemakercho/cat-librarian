@@ -2,10 +2,10 @@
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
-import {createGeneralScenes,generalPuzzles} from './general-course.js';
+import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261025-upstream19';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js';
-export const STORY_VERSION = 'opening-source-24-order-paws-v18-20261025';
+export const STORY_VERSION = 'opening-source-24-upstream-v19-20261025';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},
   infant:{name:'유아자료실',markerNumber:2},

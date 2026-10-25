@@ -1,27 +1,27 @@
 {
   "source": "C:/Users/user/Documents/Codex/2026-10-23/codex-prompt-md-x20/outputs/github/catch-librarian",
-  "version": "balance6",
+  "version": "fullscreen7",
   "adaptation": "app.js: exact-origin story contact/ready/error only; original runner physics and five comics retained; final rescue comic held as postcard still, not the empty runner canvas",
   "unchanged": [
     {
       "file": "engine.js",
-      "sha256": "f820bb6fe4166e1968bbb8a3c8465574f9bb2122399e2ec3b7a1703d27dc1595"
+      "sha256": "728382c2b2032bb15457ab2f91f5efe4fadfc5a6cc27dbbb630e7051237a9dab"
     },
     {
       "file": "renderer.js",
-      "sha256": "18346b216fac4994b44bfc03e64aeec274c806e467deab56cad37a3060d1f4a6"
+      "sha256": "cd3b2b39fadeaf6ccaebd48abb410f216c01defd1cdd12fa7b32cf1a2708ad02"
     },
     {
       "file": "collision.js",
-      "sha256": "d338d6734512f2e253d478ab9025a0b04639fb8fd1071d791e24637f694b81e0"
+      "sha256": "6628ccb6383cccf0ba0cf7d5ebe41027df252fdfd94a495aa63440cc32b58f38"
     },
     {
       "file": "props.js",
-      "sha256": "187a2a30ef7ed6c60f7706d6338682a688867666665db9997a8d775cc9246cf2"
+      "sha256": "fa1dd53ab05845b92fda873e215a441776acb6faa6abe444de5757431bd55ee7"
     },
     {
       "file": "librarian-motion.js",
-      "sha256": "5e495b6342320dc0e5d3997f2cfffae988113586b9b83c5dcf636a04141a0ef3"
+      "sha256": "a3e0bd1089d4ea14352304f5d3cda3403da4e2774d78b90864dbe9725488be6d"
     },
     {
       "file": "scene-data.js",
@@ -31,5 +31,7 @@
       "file": "config.js",
       "sha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9"
     }
-  ]
+  ],
+  "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+  "localChanges": "2026-10-25 fullscreen/touch-only controls and mixed second burst; original repository and bundled runtime match"
 }

@@ -103,6 +103,16 @@
       "file": "book-order/assets/library-background.webp",
       "bytes": 138358,
       "sha256": "fcdc9843380a17b50f1fe2cc4d5819c048e57807560425d8f69ec5f2d0ddd783"
+    },
+    {
+      "file": "book-catch/assets/clear-success.webp",
+      "bytes": 109528,
+      "sha256": "6af21f329bbebb2ec406158ee6a794824dd4ef2895f0291f9e6c8a98cb1f14fc"
+    },
+    {
+      "file": "book-catch/assets/clear-failure.webp",
+      "bytes": 154918,
+      "sha256": "4d948213663e2731c24fa6fd2febfa4add13d25ac72d74145d8452c33ec5c890"
     }
   ],
   "unchangedRules": [

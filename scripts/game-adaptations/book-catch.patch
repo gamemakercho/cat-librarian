@@ -1,0 +1,68 @@
+diff --git a/book-catch/game.js b/book-catch/game.js
+--- a/book-catch/game.js
++++ b/book-catch/game.js
+@@ -1,3 +1,5 @@
++const storyBridge=window.CatStoryBridge;
++if(storyBridge?.embedded){document.documentElement.classList.add('book-catch');CONFIG.nextPuzzleUrl='';document.querySelector('#story').textContent='1~4열로 카트를 움직이고, 책 꽂기 버튼으로 카트를 비워 줘!';}
+ const $ = s => document.querySelector(s);
+ const canvas = $('#canvas'), ctx = canvas.getContext('2d');
+ const L = CONFIG.layout, game = new BookGame(CONFIG), images = {};
+@@ -8,22 +10,22 @@ laneButtons.forEach((b,i)=>{b.style.left=(L.columns[i]/L.width*100)+'%';b.addEve
+ $('#shelve').addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase==='playing')game.shelve();render();});
+ canvas.addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase!=='playing')return;const x=(e.clientX-canvas.getBoundingClientRect().left)/canvas.getBoundingClientRect().width*L.width;if(x>855)return;let lane=L.columns.reduce((a,v,i)=>Math.abs(v-x)<Math.abs(L.columns[a]-x)?i:a,0);game.move(lane);render();});
+ document.addEventListener('keydown',e=>{if(e.repeat)return;if(['1','2','3','4',' ','Escape'].includes(e.key)){e.preventDefault();sync();if(e.key==='Escape')pause();else if(phase==='playing'){if(e.key===' ')game.shelve();else game.move(Number(e.key)-1);}render();}});
+-$('#primary').addEventListener('click',()=>{if(phase==='error')load();else if(phase==='paused')resume();else if(phase==='won' && CONFIG.nextPuzzleUrl)location.href=CONFIG.nextPuzzleUrl;else start();});
++$('#primary').addEventListener('click',()=>{if(phase==='error')load();else if(phase==='paused')resume();else if(phase==='won'&&storyBridge?.embedded)storyBridge.returnToStory(storyResult());else if(phase==='won' && CONFIG.nextPuzzleUrl)location.href=CONFIG.nextPuzzleUrl;else start();});
+ $('#pause').addEventListener('click',pause);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+ function show(title,body,label,story='') {
+   $('#overlay').className='';$('h1').textContent=title;$('#story').innerHTML=story;
+-  $('#perfect-image').hidden=true;
++  $('#perfect-image').hidden=true;document.querySelector('#storyRetry')?.remove();
+   $('#result-visual').hidden=true;
+   $('#instructions').innerHTML=body;$('#primary').textContent=label;$('#primary').disabled=false;$('#status').textContent='';
+ }
+ async function load(){
+   phase='loading';assetsReady=false;$('#primary').disabled=true;
+   try { await Promise.all(names.map(name=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[name]=im;resolve();};im.onerror=()=>reject(new Error(name));im.src='assets/'+name+'.webp';})));
+-    assetsReady=true;phase='ready';$('#instructions').innerHTML='<p>카트를 움직여 책을 받아주세요.<br>카트에는 <b>'+CONFIG.capacity+'권</b>까지 담을 수 있어요.<br>오른쪽 <b>‘책 꽂기’</b>로 한 권씩 빠르게 정리하세요!<br><b>'+CONFIG.duration/1000+'초 동안 최대한 많이</b> · 목표 '+CONFIG.target+'권</p><div class="tips">① ② ③ ④ 이동 · ▣ 책 꽂기<br><small>한 권당 '+CONFIG.shelvePerBook/1000+'초!<br>마지막 책을 받은 뒤 '+CONFIG.cleanupGrace/1000+'초의 정리 시간이 있어요.</small></div>';$('#primary').textContent='시작하기';$('#primary').disabled=false;$('#status').textContent='터치 또는 키보드 1–4 · 스페이스로 책 꽂기';render();
+-  }catch(e){phase='error';show('그림을 불러오지 못했어요',`<p>assets 폴더가 index.html 옆에 있는지 확인해주세요.<br>불러오지 못한 그림: ${e.message}</p>`,'다시 불러오기');}
++    assetsReady=true;phase='ready';storyBridge?.ready();$('#instructions').innerHTML='<p>카트를 움직여 책을 받아주세요.<br>카트에는 <b>'+CONFIG.capacity+'권</b>까지 담을 수 있어요.<br>오른쪽 <b>‘책 꽂기’</b>로 한 권씩 빠르게 정리하세요!<br><b>'+CONFIG.duration/1000+'초 동안 최대한 많이</b> · 목표 '+CONFIG.target+'권</p><div class="tips">① ② ③ ④ 이동 · ▣ 책 꽂기<br><small>한 권당 '+CONFIG.shelvePerBook/1000+'초!<br>마지막 책을 받은 뒤 '+CONFIG.cleanupGrace/1000+'초의 정리 시간이 있어요.</small></div>';$('#primary').textContent='시작하기';$('#primary').disabled=false;$('#status').textContent='터치 또는 키보드 1–4 · 스페이스로 책 꽂기';render();
++  }catch(e){phase='error';storyBridge?.error(e);show('그림을 불러오지 못했어요',`<p>assets 폴더가 index.html 옆에 있는지 확인해주세요.<br>불러오지 못한 그림: ${e.message}</p>`,'다시 불러오기');}
+ }
+-function start(){game.reset();completed=false;phase='countdown';countdown=3000;last=performance.now();$('#perfect-image').hidden=true;$('#result-visual').hidden=true;$('#overlay').className='countdown';$('h1').textContent='3';render();}
++function start(){storyBridge?.reset();document.querySelector('#storyRetry')?.remove();game.reset();completed=false;phase='countdown';countdown=3000;last=performance.now();$('#perfect-image').hidden=true;$('#result-visual').hidden=true;$('#overlay').className='countdown';$('h1').textContent='3';render();}
+ function sync(now=performance.now()){
+   const dt=Math.max(0,now-last);last=now;
+   if(phase==='countdown'){
+@@ -34,6 +36,7 @@ function sync(now=performance.now()){
+ }
+ function pause(){if(!['playing','countdown'].includes(phase))return;sync();if(!['playing','countdown'].includes(phase))return;pausedPhase=phase;phase='paused';show('잠시 쉬는 중', '<p>시간과 책의 움직임을 멈췄어요.<br>준비가 되면 이어서 플레이하세요.</p>','계속하기');}
+ function resume(){phase=pausedPhase;last=performance.now();$('#overlay').className=phase==='countdown'?'countdown':'hidden';render();}
++function storyResult(){return {kind:'book-catch',cleared:game.state==='won',score:game.score,elapsedMs:game.time,totalBooks:game.serial,missed:game.missed};}
+ function finish(){
+  phase=game.state;
+  const won=phase==='won', perfect=game.isPerfect;
+@@ -45,6 +48,7 @@ function finish(){
+  $('#result-image').alt=won?'책을 정리한 서가를 바라보는 고양이':'어질러진 책 사이에서 울고 있는 고양이';
+  $('#result-visual').hidden=false;
+  if(perfect){$('#overlay').classList.add('perfect-result');$('#perfect-image').src=images['perfect-clear'].src;$('#perfect-image').hidden=false;}
++ if(won)storyBridge?.addCatchResult(storyResult(),start);
+  if(won&&!completed){completed=true;const detail={score:game.score,elapsedMs:game.time,perfect,totalBooks:game.serial,missed:game.missed};window.dispatchEvent(new CustomEvent('bookcatch:complete',{detail}));if(typeof window.onGameComplete==='function'){try{window.onGameComplete(detail);}catch(e){console.error('onGameComplete',e);}}}
+ }
+ function draw(name,x,y,w,h){const im=images[name];if(im)ctx.drawImage(im,Math.round(x),Math.round(y),Math.round(w),Math.round(h??w*im.height/im.width));}
+diff --git a/book-catch/index.html b/book-catch/index.html
+--- a/book-catch/index.html
++++ b/book-catch/index.html
+@@ -1,9 +1,9 @@
+ <!doctype html>
+-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2b1c2d"><title>뒤바뀐 도서관 · 책을 부탁해!</title><link rel="stylesheet" href="style.css?v=9"></head>
++<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2b1c2d"><title>뒤바뀐 도서관 · 책을 부탁해!</title><link rel="stylesheet" href="style.css?v=9"><link rel="stylesheet" href="../story-adapter.css"></head>
+ <body><main id="game" aria-label="도서관 책 받기 게임">
+ <header><div class="stat"><span id="time-label">⌛ 남은 시간</span><strong id="time">30<small>초</small></strong></div><div class="stat"><span>⭐ 점수</span><strong id="score">0<small>점</small></strong></div><div class="stat"><span>▤ 카트</span><strong id="load">0<small>/5</small></strong></div><div class="time-track"><i id="timebar"></i></div></header>
+ <section class="scene"><canvas id="canvas" width="1103" height="1426" aria-label="네 열의 서가. 아래 숫자 버튼으로 카트를 움직이세요."></canvas><div id="notice" aria-live="polite"></div></section>
+ <nav aria-label="카트 조작"><button data-lane="0" aria-label="1열로 이동">1</button><button data-lane="1" aria-label="2열로 이동">2</button><button data-lane="2" aria-label="3열로 이동">3</button><button data-lane="3" aria-label="4열로 이동">4</button><button id="shelve"><span>▣</span>책 꽂기</button></nav>
+ <div class="bottom-note">책을 받아서, 서가에 쏙! <button id="pause" aria-label="일시정지">Ⅱ</button></div>
+ <div id="overlay"><article><p class="eyebrow">도서관 방탈출 · 작은 임무</p><h1>뒤바뀐 도서관<span>책을 부탁해!</span></h1><div id="result-visual" hidden><img id="result-image" width="1024" height="1536" alt=""><div id="result-sparkles" aria-hidden="true"><span style="--x:12%;--y:16%;--delay:0s;--size:23px">✦</span><span style="--x:76%;--y:10%;--delay:0.45s;--size:18px">✦</span><span style="--x:36%;--y:37%;--delay:0.9s;--size:21px">✦</span><span style="--x:86%;--y:45%;--delay:1.35s;--size:25px">✦</span><span style="--x:18%;--y:65%;--delay:1.8s;--size:18px">✦</span><span style="--x:65%;--y:73%;--delay:0.7s;--size:23px">✦</span><span style="--x:44%;--y:14%;--delay:1.5s;--size:15px">✦</span><span style="--x:88%;--y:88%;--delay:2.1s;--size:17px">✦</span></div><img id="perfect-image" alt="완벽하게 정리완료! PERFECT!" width="559" height="585" hidden></div><p id="story">사서와 고양이의 영혼이 바뀌었어요.<br>장난꾸러기 사서가 떨어뜨리는 책을<br>작은 고양이와 함께 정리해주세요.</p><div id="instructions"><p>카트를 움직여 책을 받아주세요.<br>카트에는 <b>5권</b>까지 담을 수 있어요.<br>오른쪽 <b>‘책 꽂기’</b>로 한 권씩 빠르게 정리하세요!<br><b>30초 동안 최대한 많이</b> · 목표 20권</p><div class="tips">① ② ③ ④ 이동 &nbsp; · &nbsp; ▣ 책 꽂기<br><small>한 권당 0.2초! 마지막 책을 받은 뒤 2초의 정리 시간이 있어요.</small></div></div><button id="primary" disabled>그림 불러오는 중…</button><p id="status" role="status">잠깐만 기다려주세요</p></article></div>
+-</main><script src="config.js?v=8"></script><script src="motion-data.js?v=7"></script><script src="engine.js?v=6"></script><script src="game.js?v=9"></script></body></html>
++</main><script src="../story-adapter.js"></script><script src="config.js?v=8"></script><script src="motion-data.js?v=7"></script><script src="engine.js?v=6"></script><script src="game.js?v=9"></script></body></html>

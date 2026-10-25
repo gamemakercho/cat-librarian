@@ -35,7 +35,8 @@ export function layoutStoryFlow(stage,scene){
  d.h=Math.max(50,Math.min(d.h,n.y-gap-d.y));set(box,d);set(button,n);
  for(const [selector,key]of [['.character.cat','cat'],['.character.staff','staff'],['.ending-actor','actor'],['.shelf-actor','shelfActor']]){
   const el=stage.querySelector(selector);if(!el)continue;const r=rect(g[key]);r.y+=shift;
-  if(r.y+r.h>d.y-gap)r.y=Math.max(0,d.y-gap-r.h);set(el,r);
+  if(key==='shelfActor'&&scene.shelfSurface){const s=scene.shelfSurface,bgScale=Math.max(width/s.width,height/s.height),cropY=(height-s.height*bgScale)/2;r.y=cropY+s.y*bgScale-r.h*s.anchorY;}
+  else if(r.y+r.h>d.y-gap)r.y=Math.max(0,d.y-gap-r.h);set(el,r);
  }
  stage.dataset.flowShift=String(shift);stage.dataset.flowGap=String(gap);
 }

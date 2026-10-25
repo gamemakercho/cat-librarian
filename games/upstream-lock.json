@@ -1,0 +1,449 @@
+{
+  "version": 1,
+  "sources": {
+    "book-order": {
+      "repository": "https://github.com/gamemakercho/bookband",
+      "commit": "a4618a6d7bc0aecb23bc3ef30c86735dc496b845",
+      "files": [
+        {
+          "file": "assets/book-cart.json",
+          "sourceSha256": "eeac54c547aa74b5e0db45a812627a8da9ab91822335945d932d41db85681f34",
+          "adapted": false,
+          "bundledSha256": "eeac54c547aa74b5e0db45a812627a8da9ab91822335945d932d41db85681f34"
+        },
+        {
+          "file": "assets/book-cart.webp",
+          "sourceSha256": "19a545c815b70fec6bfbff8cea92bb5820a9eb2f94e8aeeb1642ed780ced2384",
+          "adapted": false,
+          "bundledSha256": "19a545c815b70fec6bfbff8cea92bb5820a9eb2f94e8aeeb1642ed780ced2384"
+        },
+        {
+          "file": "assets/books-atlas-crisp-v2.json",
+          "sourceSha256": "f88d1aebaae2e36251cd610943296bc529e04028f293ff285d7aa2702e0e15c9",
+          "adapted": false,
+          "bundledSha256": "f88d1aebaae2e36251cd610943296bc529e04028f293ff285d7aa2702e0e15c9"
+        },
+        {
+          "file": "assets/books-atlas-crisp-v2.webp",
+          "sourceSha256": "97ef042a1e9cf8bbb3fe04a8310a7865b8c7819133c2d9c01113ec090b044d01",
+          "adapted": false,
+          "bundledSha256": "97ef042a1e9cf8bbb3fe04a8310a7865b8c7819133c2d9c01113ec090b044d01"
+        },
+        {
+          "file": "assets/cat-paws-atlas.json",
+          "sourceSha256": "54ba4ed7203ce70518f9accf3a67898c0ca5f3e7312db4eb2b7e0a1496c23514",
+          "adapted": false,
+          "bundledSha256": "54ba4ed7203ce70518f9accf3a67898c0ca5f3e7312db4eb2b7e0a1496c23514"
+        },
+        {
+          "file": "assets/cat-paws-atlas.webp",
+          "sourceSha256": "6661a6dc003be0c0fc30622dd23806baf1373457ba7a4e15d7e576ff418c2633",
+          "adapted": false,
+          "bundledSha256": "6661a6dc003be0c0fc30622dd23806baf1373457ba7a4e15d7e576ff418c2633"
+        },
+        {
+          "file": "assets/library-background.webp",
+          "sourceSha256": "fcdc9843380a17b50f1fe2cc4d5819c048e57807560425d8f69ec5f2d0ddd783",
+          "adapted": false,
+          "bundledSha256": "fcdc9843380a17b50f1fe2cc4d5819c048e57807560425d8f69ec5f2d0ddd783"
+        },
+        {
+          "file": "assets-loader.js",
+          "sourceSha256": "f9c3a2222892b49094c7c4ead396127a8a953cf2ec8a11ffabbe0af412aaabfe",
+          "adapted": false,
+          "bundledSha256": "f9c3a2222892b49094c7c4ead396127a8a953cf2ec8a11ffabbe0af412aaabfe"
+        },
+        {
+          "file": "config.js",
+          "sourceSha256": "afa7b93d56de2f45985438164366ba9a0328d06215c4513d389344acffb08563",
+          "adapted": true,
+          "bundledSha256": "e6f1f6304961f74f1e3356adb47fd14283877ae0c35d1f92bf7dd82591890cb8"
+        },
+        {
+          "file": "game.js",
+          "sourceSha256": "e0974951a38cf11ee4bbbef11646cb1a11aa4d61ef3c462a3cd2851138db1a6f",
+          "adapted": true,
+          "bundledSha256": "a8883292c7b254219c5719403d35157c0caf752a7fed28aeaa42b4b0e7cb5d8a"
+        },
+        {
+          "file": "geometry.js",
+          "sourceSha256": "6cd8bad66610d5e0f71f2690846e9acf2b17146492120e393a337873c79695a6",
+          "adapted": false,
+          "bundledSha256": "6cd8bad66610d5e0f71f2690846e9acf2b17146492120e393a337873c79695a6"
+        },
+        {
+          "file": "index.html",
+          "sourceSha256": "93287ba6ebfe8680cf2650893ba5b605aee952f0c28efadf5d26837824a72738",
+          "adapted": true,
+          "bundledSha256": "a1c908a36bd8ed52aae65a3cb146b17e50ea51baa4867f2c2358256cc404eca3"
+        },
+        {
+          "file": "layout.json",
+          "sourceSha256": "1bf2505017585911075c60ffab9334da19586eec335c0ac303915196874162a3",
+          "adapted": false,
+          "bundledSha256": "1bf2505017585911075c60ffab9334da19586eec335c0ac303915196874162a3"
+        },
+        {
+          "file": "state.js",
+          "sourceSha256": "16a2f11c25a05b9c33c0839be2db9ba6c574eb0c2276a1b089dc66485d7e8a3a",
+          "adapted": false,
+          "bundledSha256": "16a2f11c25a05b9c33c0839be2db9ba6c574eb0c2276a1b089dc66485d7e8a3a"
+        },
+        {
+          "file": "style.css",
+          "sourceSha256": "e082043fadaac167b3eea7ce8f1b95633b92f7f35f036324616c28f275455b64",
+          "adapted": false,
+          "bundledSha256": "e082043fadaac167b3eea7ce8f1b95633b92f7f35f036324616c28f275455b64"
+        }
+      ]
+    },
+    "book-catch": {
+      "repository": "https://github.com/gamemakercho/library-game1",
+      "commit": "9d4539d2e2cd5ba9049d5274f3cf933e78faea1b",
+      "files": [
+        {
+          "file": "assets/cat-reshelve-5frames.webp",
+          "sourceSha256": "ac8a3fc48917ab548eeb56d78b6cd585e9198774c11404b84ecd3722a4eb89a5",
+          "adapted": false,
+          "bundledSha256": "ac8a3fc48917ab548eeb56d78b6cd585e9198774c11404b84ecd3722a4eb89a5"
+        },
+        {
+          "file": "assets/clear-failure.webp",
+          "sourceSha256": "4d948213663e2731c24fa6fd2febfa4add13d25ac72d74145d8452c33ec5c890",
+          "adapted": false,
+          "bundledSha256": "4d948213663e2731c24fa6fd2febfa4add13d25ac72d74145d8452c33ec5c890"
+        },
+        {
+          "file": "assets/clear-success.webp",
+          "sourceSha256": "6af21f329bbebb2ec406158ee6a794824dd4ef2895f0291f9e6c8a98cb1f14fc",
+          "adapted": false,
+          "bundledSha256": "6af21f329bbebb2ec406158ee6a794824dd4ef2895f0291f9e6c8a98cb1f14fc"
+        },
+        {
+          "file": "assets/empty-cart.webp",
+          "sourceSha256": "909b82169d12fa4fbc3cd9a8f2b3787d6c381e714213bfc5b2661e364cdae015",
+          "adapted": false,
+          "bundledSha256": "909b82169d12fa4fbc3cd9a8f2b3787d6c381e714213bfc5b2661e364cdae015"
+        },
+        {
+          "file": "assets/falling-book-red-trim.webp",
+          "sourceSha256": "682a005610667d95b431d6f6e7330fbab57cc7c5fc1dbcf938a315b895f283ab",
+          "adapted": false,
+          "bundledSha256": "682a005610667d95b431d6f6e7330fbab57cc7c5fc1dbcf938a315b895f283ab"
+        },
+        {
+          "file": "assets/falling-book-teal-trim.webp",
+          "sourceSha256": "6d941fa92883698325610e2d9618b8e0e2ce737f7857054782d92540196354a6",
+          "adapted": false,
+          "bundledSha256": "6d941fa92883698325610e2d9618b8e0e2ce737f7857054782d92540196354a6"
+        },
+        {
+          "file": "assets/floor-book-trim.webp",
+          "sourceSha256": "55b4d9f575e80d35ef0d7adc0cd609ab1bb0ab918bacb7b53e09aa909effe109",
+          "adapted": false,
+          "bundledSha256": "55b4d9f575e80d35ef0d7adc0cd609ab1bb0ab918bacb7b53e09aa909effe109"
+        },
+        {
+          "file": "assets/librarian-drop-5frames.webp",
+          "sourceSha256": "8b5c6d8f1144df6839abcfdc88626a960e6a519bb543609dd5f584a143aaa81f",
+          "adapted": false,
+          "bundledSha256": "8b5c6d8f1144df6839abcfdc88626a960e6a519bb543609dd5f584a143aaa81f"
+        },
+        {
+          "file": "assets/librarian-idle.webp",
+          "sourceSha256": "bc52879cb3687bcf2011fd96abffec1a50e036ddba92282988bbd3532c8f7c14",
+          "adapted": false,
+          "bundledSha256": "bc52879cb3687bcf2011fd96abffec1a50e036ddba92282988bbd3532c8f7c14"
+        },
+        {
+          "file": "assets/library-background.webp",
+          "sourceSha256": "f3e823211a7b215a247a3a978b611f567c828b9d027a249c435df33942813183",
+          "adapted": false,
+          "bundledSha256": "f3e823211a7b215a247a3a978b611f567c828b9d027a249c435df33942813183"
+        },
+        {
+          "file": "assets/perfect-clear.webp",
+          "sourceSha256": "242937fa58e2167389316b6433572f9d06dccdafc4c082302e7ed28ab229d26b",
+          "adapted": false,
+          "bundledSha256": "242937fa58e2167389316b6433572f9d06dccdafc4c082302e7ed28ab229d26b"
+        },
+        {
+          "file": "assets/pushing-cat.webp",
+          "sourceSha256": "40fe6ab9041b37c9773d699fcabae6488c77ea1600bdb0c85595d9df0d4ae40c",
+          "adapted": false,
+          "bundledSha256": "40fe6ab9041b37c9773d699fcabae6488c77ea1600bdb0c85595d9df0d4ae40c"
+        },
+        {
+          "file": "assets/stack-gold.webp",
+          "sourceSha256": "f6a9183682dff857f42c20233bd51e36d2090575a610f196e6636165d9b6f2a1",
+          "adapted": false,
+          "bundledSha256": "f6a9183682dff857f42c20233bd51e36d2090575a610f196e6636165d9b6f2a1"
+        },
+        {
+          "file": "assets/stack-red.webp",
+          "sourceSha256": "ea54c4515bdacea7497f8060527c0290ee16583ce65987c1fb7ba3f5e625b235",
+          "adapted": false,
+          "bundledSha256": "ea54c4515bdacea7497f8060527c0290ee16583ce65987c1fb7ba3f5e625b235"
+        },
+        {
+          "file": "assets/stack-teal.webp",
+          "sourceSha256": "4f850aa2480255158411cf8abc4399e7c42ba71360bf75570fb96d599fe112cc",
+          "adapted": false,
+          "bundledSha256": "4f850aa2480255158411cf8abc4399e7c42ba71360bf75570fb96d599fe112cc"
+        },
+        {
+          "file": "config.js",
+          "sourceSha256": "13c506a7ad8b7d8ce04e4160af69dc47395ade3c01792a03a63e1e529e322282",
+          "adapted": false,
+          "bundledSha256": "13c506a7ad8b7d8ce04e4160af69dc47395ade3c01792a03a63e1e529e322282"
+        },
+        {
+          "file": "engine.js",
+          "sourceSha256": "9eab02a991134496e338478646287f2f308c09dbc371e0007fac1add43479ce7",
+          "adapted": false,
+          "bundledSha256": "9eab02a991134496e338478646287f2f308c09dbc371e0007fac1add43479ce7"
+        },
+        {
+          "file": "game.js",
+          "sourceSha256": "ce61d30bffcbfb7daa7a4b1eb2288bcf9cda97835600efccb0f044c8bec127e7",
+          "adapted": true,
+          "bundledSha256": "da429c7644c9f1c474f34c334aebe644fb2da6507b15a170a808e16d5be0f027"
+        },
+        {
+          "file": "index.html",
+          "sourceSha256": "e0b1eb156236a715033b04f759cda319d8a7b2f360547030b2f1b3b566103293",
+          "adapted": true,
+          "bundledSha256": "bd759c276a85240bfc3c49dc50011e8800cdf2414272cde74f85a9ef37d316a1"
+        },
+        {
+          "file": "motion-data.js",
+          "sourceSha256": "5a53e6362cc52ec4cca3534297af37d97523ce5ff65d894b4bd8ffb9d4bbceaa",
+          "adapted": false,
+          "bundledSha256": "5a53e6362cc52ec4cca3534297af37d97523ce5ff65d894b4bd8ffb9d4bbceaa"
+        },
+        {
+          "file": "style.css",
+          "sourceSha256": "64f62153de12b5a89ad1404892b5b823dc8f3a179cf892c2af5d30d6e7ff5123",
+          "adapted": false,
+          "bundledSha256": "64f62153de12b5a89ad1404892b5b823dc8f3a179cf892c2af5d30d6e7ff5123"
+        }
+      ]
+    },
+    "ending-chase": {
+      "repository": "https://github.com/gamemakercho/catch-librarian",
+      "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+      "files": [
+        {
+          "file": "after-ending/after-ending.css",
+          "sourceSha256": "660a38204c829591d6a499214f9043347ef60afd57a368bfb4e3650ac1cd9f80",
+          "adapted": false,
+          "bundledSha256": "660a38204c829591d6a499214f9043347ef60afd57a368bfb4e3650ac1cd9f80"
+        },
+        {
+          "file": "after-ending/after-ending.js",
+          "sourceSha256": "ef5e500bf3e6c4a45d2a795fd49c3fa8bf2737c32b73ce0d85f1de3a15a98062",
+          "adapted": false,
+          "bundledSha256": "ef5e500bf3e6c4a45d2a795fd49c3fa8bf2737c32b73ce0d85f1de3a15a98062"
+        },
+        {
+          "file": "after-ending/assets/returned-scene.webp",
+          "sourceSha256": "32ed7e819967a471f2729043e7e15bdf1612895a6c3209fa04dc9e0caab9d118",
+          "adapted": false,
+          "bundledSha256": "32ed7e819967a471f2729043e7e15bdf1612895a6c3209fa04dc9e0caab9d118"
+        },
+        {
+          "file": "app.js",
+          "sourceSha256": "f4037044970e5b312f1dc5bc8d9c4883337a89eaef6b461ab37e718dcf02ad2a",
+          "adapted": true,
+          "bundledSha256": "e7147e29ae08c7b4952fabc3892e88b6df6ee066e9eb54f520dd0fa0b2842ed2"
+        },
+        {
+          "file": "assets/background/background-layout.json",
+          "sourceSha256": "738ac6a29b708ce9bf35efc8aa4bd3e4b06a39737051a46e0f161c8d41f7c756",
+          "adapted": false,
+          "bundledSha256": "738ac6a29b708ce9bf35efc8aa4bd3e4b06a39737051a46e0f161c8d41f7c756"
+        },
+        {
+          "file": "assets/background/library-background-sideview.webp",
+          "sourceSha256": "242d7ecdec2b2670575f25ebd44c8a3120945e83e37624604105c771c6787967",
+          "adapted": false,
+          "bundledSha256": "242d7ecdec2b2670575f25ebd44c8a3120945e83e37624604105c771c6787967"
+        },
+        {
+          "file": "assets/ending/ending-01-chase.webp",
+          "sourceSha256": "7b0c186cfdf4643c084e60e813ef6a62dc7a282abb28479841d722794f0d8013",
+          "adapted": false,
+          "bundledSha256": "7b0c186cfdf4643c084e60e813ef6a62dc7a282abb28479841d722794f0d8013"
+        },
+        {
+          "file": "assets/ending/ending-02-treat.webp",
+          "sourceSha256": "408235f6b29ad1612119286f6579681bc8dd8ed0024d85d40544d360ba11edcf",
+          "adapted": false,
+          "bundledSha256": "408235f6b29ad1612119286f6579681bc8dd8ed0024d85d40544d360ba11edcf"
+        },
+        {
+          "file": "assets/ending/ending-03-sparkle.webp",
+          "sourceSha256": "7f227b2a8e16c4a9c780e9948f45676f235bdbb29406affa1886339648dcfc1f",
+          "adapted": false,
+          "bundledSha256": "7f227b2a8e16c4a9c780e9948f45676f235bdbb29406affa1886339648dcfc1f"
+        },
+        {
+          "file": "assets/ending/ending-04-trip.webp",
+          "sourceSha256": "1552d3df67671a8ebd0b0356debbc78c403c2f7ebc21cb11f1d2375f044141da",
+          "adapted": false,
+          "bundledSha256": "1552d3df67671a8ebd0b0356debbc78c403c2f7ebc21cb11f1d2375f044141da"
+        },
+        {
+          "file": "assets/ending/ending-05-jump.webp",
+          "sourceSha256": "2dc479cbe1488b99f46153392aac15c6cdcb6642304b3691fb6e05cca6b7aa9f",
+          "adapted": false,
+          "bundledSha256": "2dc479cbe1488b99f46153392aac15c6cdcb6642304b3691fb6e05cca6b7aa9f"
+        },
+        {
+          "file": "assets/librarian/librarian-motion-layout.json",
+          "sourceSha256": "6b2d02002faad551a0018a395b801fb10bcbd9ceaa6584d1f7a8db257cb40459",
+          "adapted": false,
+          "bundledSha256": "6b2d02002faad551a0018a395b801fb10bcbd9ceaa6584d1f7a8db257cb40459"
+        },
+        {
+          "file": "assets/librarian/librarian-run-aligned.webp",
+          "sourceSha256": "6019741ec9e220d693aed22a3b1339fe80d324650191a7d391f1cd693eef491d",
+          "adapted": false,
+          "bundledSha256": "6019741ec9e220d693aed22a3b1339fe80d324650191a7d391f1cd693eef491d"
+        },
+        {
+          "file": "assets/librarian/librarian-run.json",
+          "sourceSha256": "503ffb17f2bc847edf38c93c6c97749ad219ace400685e487e6829f0aa81e533",
+          "adapted": false,
+          "bundledSha256": "503ffb17f2bc847edf38c93c6c97749ad219ace400685e487e6829f0aa81e533"
+        },
+        {
+          "file": "assets/librarian/librarian-stumble-aligned.webp",
+          "sourceSha256": "ed08d987ac47d5cf4b2e7bf3ac3a38802e61fd2f3291580c7e02d338993e08f0",
+          "adapted": false,
+          "bundledSha256": "ed08d987ac47d5cf4b2e7bf3ac3a38802e61fd2f3291580c7e02d338993e08f0"
+        },
+        {
+          "file": "assets/librarian/librarian-stumble.json",
+          "sourceSha256": "6ea7305a236461b08ecdd77828b9881de7a6a809a39830df4b6f5fd2e5a368e3",
+          "adapted": false,
+          "bundledSha256": "6ea7305a236461b08ecdd77828b9881de7a6a809a39830df4b6f5fd2e5a368e3"
+        },
+        {
+          "file": "assets/librarian/librarian-throw-aligned.webp",
+          "sourceSha256": "d9278457a8d4cb5f3035bb1ed34b6492679f87ee68f6db30e7291dc854ecb74b",
+          "adapted": false,
+          "bundledSha256": "d9278457a8d4cb5f3035bb1ed34b6492679f87ee68f6db30e7291dc854ecb74b"
+        },
+        {
+          "file": "assets/librarian/librarian-throw.json",
+          "sourceSha256": "19d89e47d5796ffdef808d4c4868720d093c0511971f0affa1349b57cddd3c45",
+          "adapted": false,
+          "bundledSha256": "19d89e47d5796ffdef808d4c4868720d093c0511971f0affa1349b57cddd3c45"
+        },
+        {
+          "file": "assets/props/book-stack-double.json",
+          "sourceSha256": "64b70fba03b0da567e95bf8c272827df55c9407efc57c370a698e16ab7ffd4c1",
+          "adapted": false,
+          "bundledSha256": "64b70fba03b0da567e95bf8c272827df55c9407efc57c370a698e16ab7ffd4c1"
+        },
+        {
+          "file": "assets/props/book-stack-double.webp",
+          "sourceSha256": "e0c4d1bcfe3df02b95e1a3d9f43fe305a6c973538e735e97287e96a001ae3c17",
+          "adapted": false,
+          "bundledSha256": "e0c4d1bcfe3df02b95e1a3d9f43fe305a6c973538e735e97287e96a001ae3c17"
+        },
+        {
+          "file": "assets/props/library-props-sideview.webp",
+          "sourceSha256": "ac9038d5b43d3490cf46e6c0ac93fdfc8a2d9fc30a840d1a17acb067a0299979",
+          "adapted": false,
+          "bundledSha256": "ac9038d5b43d3490cf46e6c0ac93fdfc8a2d9fc30a840d1a17acb067a0299979"
+        },
+        {
+          "file": "assets/props/props-layout.json",
+          "sourceSha256": "00bf0077dea3655ad4a3ef0bda7c2c23b06a3a56fc7dd94f4ae7cf703c6d7d85",
+          "adapted": false,
+          "bundledSha256": "00bf0077dea3655ad4a3ef0bda7c2c23b06a3a56fc7dd94f4ae7cf703c6d7d85"
+        },
+        {
+          "file": "assets/puzzle/fold-guide.svg",
+          "sourceSha256": "47e5153fc63be052ca2e53856bda92bb60c364dda31c402aa73f7746f8ca12cc",
+          "adapted": false,
+          "bundledSha256": "47e5153fc63be052ca2e53856bda92bb60c364dda31c402aa73f7746f8ca12cc"
+        },
+        {
+          "file": "assets/sprites/cat-hit-recover-v2.webp",
+          "sourceSha256": "070097436650679b79e6fff3fbfee878cbe37948ea38fcb7e9d9b1f33cb19b62",
+          "adapted": false,
+          "bundledSha256": "070097436650679b79e6fff3fbfee878cbe37948ea38fcb7e9d9b1f33cb19b62"
+        },
+        {
+          "file": "assets/sprites/cat-run-thin-v2.webp",
+          "sourceSha256": "568699710c8080a592aa6b95780d2683e7fd6210a55ddf9cd50f6617413717aa",
+          "adapted": false,
+          "bundledSha256": "568699710c8080a592aa6b95780d2683e7fd6210a55ddf9cd50f6617413717aa"
+        },
+        {
+          "file": "assets/sprites/sprite-layout-v2.json",
+          "sourceSha256": "64daea52f21dda569911acb9ace586bad7a8bdceceba2abbdb30d20da36bd3c0",
+          "adapted": false,
+          "bundledSha256": "64daea52f21dda569911acb9ace586bad7a8bdceceba2abbdb30d20da36bd3c0"
+        },
+        {
+          "file": "collision.js",
+          "sourceSha256": "6628ccb6383cccf0ba0cf7d5ebe41027df252fdfd94a495aa63440cc32b58f38",
+          "adapted": false,
+          "bundledSha256": "6628ccb6383cccf0ba0cf7d5ebe41027df252fdfd94a495aa63440cc32b58f38"
+        },
+        {
+          "file": "config.js",
+          "sourceSha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9",
+          "adapted": false,
+          "bundledSha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9"
+        },
+        {
+          "file": "engine.js",
+          "sourceSha256": "728382c2b2032bb15457ab2f91f5efe4fadfc5a6cc27dbbb630e7051237a9dab",
+          "adapted": false,
+          "bundledSha256": "728382c2b2032bb15457ab2f91f5efe4fadfc5a6cc27dbbb630e7051237a9dab"
+        },
+        {
+          "file": "index.html",
+          "sourceSha256": "f51ad1ca990a8fa64502aec8cbfe97bbfd22b682a3cca04ebf5de57743fe7e1b",
+          "adapted": false,
+          "bundledSha256": "f51ad1ca990a8fa64502aec8cbfe97bbfd22b682a3cca04ebf5de57743fe7e1b"
+        },
+        {
+          "file": "librarian-motion.js",
+          "sourceSha256": "a3e0bd1089d4ea14352304f5d3cda3403da4e2774d78b90864dbe9725488be6d",
+          "adapted": false,
+          "bundledSha256": "a3e0bd1089d4ea14352304f5d3cda3403da4e2774d78b90864dbe9725488be6d"
+        },
+        {
+          "file": "props.js",
+          "sourceSha256": "fa1dd53ab05845b92fda873e215a441776acb6faa6abe444de5757431bd55ee7",
+          "adapted": false,
+          "bundledSha256": "fa1dd53ab05845b92fda873e215a441776acb6faa6abe444de5757431bd55ee7"
+        },
+        {
+          "file": "renderer.js",
+          "sourceSha256": "cd3b2b39fadeaf6ccaebd48abb410f216c01defd1cdd12fa7b32cf1a2708ad02",
+          "adapted": false,
+          "bundledSha256": "cd3b2b39fadeaf6ccaebd48abb410f216c01defd1cdd12fa7b32cf1a2708ad02"
+        },
+        {
+          "file": "scene-data.js",
+          "sourceSha256": "3c9d2c1924b255f6dc13be7ae677f5c4eaf6c6731b661070188b6bbaa9d276dc",
+          "adapted": false,
+          "bundledSha256": "3c9d2c1924b255f6dc13be7ae677f5c4eaf6c6731b661070188b6bbaa9d276dc"
+        },
+        {
+          "file": "styles.css",
+          "sourceSha256": "6bffcd25512a9b3c299cfc2318d0a3e53d643051c1c2c39daea27df83c3c7b49",
+          "adapted": false,
+          "bundledSha256": "6bffcd25512a9b3c299cfc2318d0a3e53d643051c1c2c39daea27df83c3c7b49"
+        }
+      ]
+    }
+  }
+}

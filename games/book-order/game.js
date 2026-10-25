@@ -2,7 +2,7 @@ import '../story-adapter.js';
 import {createLetterUI} from './letter-ui.js';
 import {validOrderProgress} from './letter-state.js';
 import {CONFIG} from './config.js';
-import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
+import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261025-upstream19';
 import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
 import {inside,localPoint,slotAt,shelfPlacement,cartPlacements} from './geometry.js';
 
@@ -148,7 +148,7 @@ function render(now=performance.now()) {
   ctx.setTransform(canvas.width/941,0,0,canvas.height/1672,0,0);
   const l=bundle.layout;ctx.imageSmoothingEnabled=false;ctx.drawImage(bundle.background,0,0,941,1672);
   // Shelf labels belong to the scenery, behind the movable book and gripping paw.
-  for(let i=0;i<order.length;i++)fit(String(i+1),shelfPlacement(l,i).center[0],l.shelf.number_baseline-10,28,60,'#392517');
+  for(let i=0;i<order.length;i++)fit(String(i),shelfPlacement(l,i).center[0],l.shelf.number_baseline-10,28,60,'#392517');
   const heldId=gesture?.dragging?gesture.book:selected?.id;
   state.shelf.forEach((id,i)=>{if(id&&id!==heldId)drawBook(ctx,bundle,id,shelfPlacement(l,i));});
   if(heldId) {
@@ -192,7 +192,7 @@ function syncAccess() {
   const add=(text,fn)=>{const b=document.createElement('button');b.textContent=text;b.onclick=()=>{if(active())fn();};holder.append(b);};
   // Unordered cart controls and numbered shelf controls allow keyboard/screen-reader play without exposing the answer order.
   state.cart.forEach(id=>{if(id)add(`카트: ${bundle.bookFrames.get(id).name_ko}`,()=>tap(placement(id).center,id));});
-  state.shelf.forEach((id,i)=>add(`${i+1}번 자리${id?': '+bundle.bookFrames.get(id).name_ko:': 비어 있음'}`,()=>tap(shelfPlacement(bundle.layout,i).center,id||null)));
+  state.shelf.forEach((id,i)=>add(`${i}번 자리${id?': '+bundle.bookFrames.get(id).name_ko:': 비어 있음'}`,()=>tap(shelfPlacement(bundle.layout,i).center,id||null)));
   if(selected)add('선택 취소',()=>{selected=null;render();syncAccess();});
 }
 document.querySelector('#start').onclick=()=>{started=true;intro.hidden=true;save();render();syncAccess();};
