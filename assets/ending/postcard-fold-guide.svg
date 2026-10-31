@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="168" viewBox="0 0 240 168" role="img" aria-labelledby="fold-title fold-description">
+  <title id="fold-title">엽서의 노란 부분 두 곳 접기</title>
+  <desc id="fold-description">왼쪽은 오른쪽 위와 왼쪽 아래가 노란 엽서이고, 오른쪽은 그 두 모서리를 안쪽으로 접는 모습입니다.</desc>
+  <defs>
+    <marker id="fold-arrow" markerWidth="6" markerHeight="6" refX="4.4" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1 1 L4.5 3 L1 5" fill="none" stroke="#159b90" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect x="3" y="9" width="102" height="150" fill="#f5f3e8"/>
+  <rect x="135" y="9" width="102" height="150" fill="#f5f3e8"/>
+  <g stroke-linejoin="round">
+    <rect x="10" y="16" width="88" height="136" fill="#ffffff" stroke="#a8b6b1" stroke-width="1.1"/>
+    <path d="M38 16 H98 V76 Z" fill="#ffe273"/>
+    <path d="M10 92 V152 H70 Z" fill="#ffe273"/>
+    <path d="M38 16 L98 76 M10 92 L70 152" fill="none" stroke="#c5b76c" stroke-width="0.9" stroke-dasharray="2.6 2.8"/>
+    <rect x="142" y="16" width="88" height="136" fill="#fffdf5" stroke="#c4c6ad" stroke-width="0.9" stroke-dasharray="2.8 2.8"/>
+    <path d="M170 16 H230 V76 Z M142 92 V152 H202 Z" fill="#ffe273" opacity="0.2"/>
+    <path d="M142 16 H170 L230 76 V152 H202 L142 92 Z" fill="#ffffff" stroke="#a8b6b1" stroke-width="1.1"/>
+    <path d="M170 16 V76 H230 Z M142 92 H202 V152 Z" fill="#fffbee" stroke="#c6b981" stroke-width="0.9"/>
+    <path d="M170 16 L230 76 M142 92 L202 152" fill="none" stroke="#c6b981" stroke-width="0.9" stroke-dasharray="2.6 2.8"/>
+  </g>
+  <g fill="none" stroke="#159b90" stroke-width="1.7" stroke-linecap="round" marker-end="url(#fold-arrow)">
+    <path d="M207 43 C234 34 242 67 217 75"/>
+    <path d="M166 130 C139 141 130 111 153 101"/>
+  </g>
+</svg>

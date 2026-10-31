@@ -7,7 +7,7 @@
   <title>고양이가 된 사서</title>
   <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261030-integrated20">
+  <link rel="stylesheet" href="style.css?v=20261031-final21">
 </head>
 <body>
   <main id="appShell" class="app-shell">
@@ -33,6 +33,7 @@
         <div id="puzzleDecoration" class="puzzle-decoration" aria-hidden="true" hidden></div>
         <img id="puzzleIllustration" class="puzzle-illustration" alt="문제에서 참고할 엽서 그림" hidden>
         <p id="instruction" class="instruction" hidden></p>
+        <img id="inlineFoldGuide" class="inline-fold-guide" width="240" height="168" alt="왼쪽: 오른쪽 위와 왼쪽 아래가 노란 엽서, 오른쪽: 노란 두 모서리를 뒤로 접는 모습과 초록 화살표" hidden>
       </section>
       <section id="tutorialPanel" class="tutorial-panel" hidden aria-labelledby="tutorialTitle">
         <h2 id="tutorialTitle"></h2>
@@ -114,7 +115,6 @@
       <div id="loading" class="loading" role="status" hidden>장면을 불러오고 있어요…</div>
       <figure id="foldReferenceCard" class="fold-reference-card" hidden><img id="foldReferenceImage" width="587" height="312" alt="엽서의 노란 부분 두 곳을 접었을 때 머리를 맞댄 사서와 고양이 그림" hidden><figcaption id="foldReferenceStatus" role="status">엽서 그림을 불러오는 중…</figcaption><button id="foldReferenceRetry" type="button" hidden>그림 다시 불러오기</button></figure>
       <img id="endingContactStill" class="ending-contact-still" alt="두 인물의 머리가 맞닿으며 잠시 멈춘 장면" hidden>
-      <section id="endingFoldActions" class="ending-fold-actions" hidden><button id="openFoldGuide" type="button" aria-label="접기 그림 크게 보기"><img id="foldHintImage" alt="엽서의 노란 두 귀퉁이를 종이 뒤쪽으로 접는 그림"><span>접는 방법 보기</span></button><p>노란 두 귀퉁이를 뒤로 접어 봐</p></section>
       <section id="endingCinemaActions" class="ending-cinema-actions" hidden><button id="endingPlay" type="button">마지막 장면 보기</button></section>
       <section id="endingCard" class="ending-card" hidden aria-labelledby="endingTitle">
         <p class="ending-eyebrow">처음의 물음표가, 마지막의 느낌표로</p>
@@ -167,6 +167,6 @@
     <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
-  <script type="module" src="app.js?v=20261030-integrated20"></script>
+  <script type="module" src="app.js?v=20261031-final21"></script>
 </body>
 </html>

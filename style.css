@@ -323,10 +323,8 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .minigame-load-error{display:flex;gap:8px;align-items:center;padding:8px;background:#fff0d9;font:14px/1.4 system-ui,sans-serif;color:#5a3e26}
 
 /* Final postcard and movie. The existing 500 × 900 story stage is retained. */
-.ending-fold-actions,.ending-cinema-actions{position:absolute;z-index:9;left:8%;width:84%;text-align:center}
-.ending-fold-actions{top:60%;height:17%}.ending-cinema-actions{top:86%}
-.ending-fold-actions #foldHintImage{height:22cqw;width:100%;object-fit:contain;display:block}
-.ending-fold-actions #openFoldGuide{width:100%;padding:0;border:0;background:transparent;min-height:0}
+.ending-cinema-actions{position:absolute;z-index:9;left:8%;width:84%;text-align:center}
+.ending-cinema-actions{top:86%}
 .ending-contact-still{position:absolute;z-index:3;left:8%;top:12%;width:84%;height:23%;object-fit:contain;object-position:center;border-radius:3cqw}
 .stage[data-layout="final-fold"] .dialogue{padding:3cqw 4cqw}
 .stage[data-layout="final-fold"] .instruction{position:static;width:auto;font-size:3.8cqw;line-height:1.45;margin-top:1.5cqw}
@@ -335,7 +333,7 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="final-fold"] .answer-form>input,.stage[data-layout="final-fold"] .answer-form>button[type="submit"]{height:11cqw;min-height:44px}
 .stage[data-layout="final-fold"] .answer-form>button[type="submit"]{font-size:4.8cqw;-webkit-text-stroke:0}
 .stage[data-layout="final-fold"] .answer-form>p{grid-column:1/-1;position:static;padding:0;margin:0;background:transparent;font-size:3.3cqw;line-height:1.4}
-.ending-fold-actions button,.ending-cinema-actions button{min-height:48px;width:100%;border:2px solid #217f70;border-radius:3cqw;background:#ecf7ec;color:#1c6558;font-size:5cqw;padding:2.5cqw;font-family:inherit}
+.ending-cinema-actions button{min-height:48px;width:100%;border:2px solid #217f70;border-radius:3cqw;background:#ecf7ec;color:#1c6558;font-size:5cqw;padding:2.5cqw;font-family:inherit}
 .ending-fold-actions p{margin:1.5cqw 0 0;font-size:3.6cqw;color:#46584b}
 .character.ending-actor{filter:drop-shadow(1px 0 #fff) drop-shadow(-1px 0 #fff) drop-shadow(0 1px #fff) drop-shadow(0 -1px #fff)}
 .stage[data-scene^="ending-"] .scene-layer{animation:ending-scene-in .32s ease-out}
@@ -403,15 +401,20 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .ending-cinema-overlay.is-runner #endingClose{pointer-events:auto;min-height:44px;padding:6px 10px;font-size:11px;background:#263b31d9}
 
 /* Static reference → input. Narrow/keyboard viewports scroll rather than losing controls. */
-.stage[data-layout="final-fold"]{width:min(100vw,500px);height:min(var(--fold-available-height,calc(100svh - 60px)),900px);aspect-ratio:auto;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overscroll-behavior:contain;padding:50px 16px 12px;background:#fff7e3}
+.stage[data-layout="final-fold"]{width:min(100vw,500px);height:auto;max-height:var(--fold-available-height,calc(100svh - 60px));aspect-ratio:auto;display:flex;flex-direction:column;gap:8px;overflow-y:auto;overscroll-behavior:contain;padding:10px 16px;background:#fff7e3}
 .stage[data-layout="final-fold"] .location-banner,.stage[data-layout="final-fold"] .character-layer{display:none!important}
 .stage[data-layout="final-fold"] .dialogue{position:relative!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;flex:none;order:1;padding:10px 12px;font-size:5cqw;line-height:1.5;overflow:visible}
 .stage[data-layout="final-fold"] .instruction{font-size:3.8cqw;line-height:1.45;margin-top:6px}
-.fold-reference-card{z-index:4;margin:0;order:2;flex:1;min-height:90px;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#fff;border:1px solid #e5d9ba;border-radius:12px;overflow:hidden}
-.fold-reference-card img{display:block;width:100%;height:100%;min-height:0;object-fit:contain;image-rendering:auto;flex:1}
-.fold-reference-card figcaption{font-size:14px;line-height:1.5;padding:8px 12px;text-align:center}
-.fold-reference-card button{min-height:44px;font:inherit;margin:4px;border:1px solid #9daf94;border-radius:8px;background:#e8f0de;color:#314d3d}
+.fold-reference-card{position:relative;z-index:4;margin:0;order:2;flex:none;width:100%;aspect-ratio:587/330;min-height:90px;background:#fff;border:1px solid #e5d9ba;border-radius:12px;overflow:visible}
+.fold-reference-card img{position:absolute;display:block;width:78%;height:auto;left:21.04%;top:50%;transform:translateY(-50%);object-fit:contain;image-rendering:auto}
+.fold-reference-card figcaption{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;line-height:1.5;padding:8px 12px;text-align:center}
+.fold-reference-card button{position:absolute;bottom:4px;left:12%;width:76%;min-height:44px;font:inherit;margin:4px;border:1px solid #9daf94;border-radius:8px;background:#e8f0de;color:#314d3d}
 .stage[data-layout="final-fold"] .answer-form{position:relative!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;flex:none;order:3;min-height:112px}
-.stage[data-layout="final-fold"] .ending-fold-actions{position:relative;left:auto;top:auto;width:100%;height:auto;flex:none;order:4;margin:0}
-.stage[data-layout="final-fold"] #openFoldGuide{min-height:44px;font:inherit;font-size:15px;color:#3c6857;border:1px solid #8ea88b;border-radius:10px;background:#f4efd9;padding:8px}
-.stage[data-layout="final-fold"] #foldHintImage,.stage[data-layout="final-fold"] .ending-fold-actions p{display:none}
+
+/* Final question only: inline folding guide and a contact-centered, uncropped reference. */
+.app-shell:has(.stage[data-layout="final-fold"]){align-items:flex-start}
+.stage[data-layout="final-fold"] .dialogue{text-align:center;padding:10px 12px;font-size:clamp(16px,4.5cqw,21px);line-height:1.4}
+.stage[data-layout="final-fold"] #dialogueText{margin:0}
+.stage[data-layout="final-fold"] .instruction{text-align:center;white-space:pre-line;font-size:clamp(13px,3.7cqw,18px);line-height:1.5;margin:6px 0 0}
+.inline-fold-guide{display:block;width:58%;max-width:240px;height:auto;margin:8px auto 0;object-fit:contain;image-rendering:auto}
+.stage[data-layout="final-fold"] .answer-form>label{font-size:clamp(14px,3.8cqw,18px);line-height:1.35;white-space:normal}

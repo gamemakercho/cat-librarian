@@ -1,14 +1,14 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261030-integrated20';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261031-final21';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261030-integrated20';
+import {createEndingUI} from './ending-ui.js?v=20261031-final21';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
-import {endingArtIds} from './ending-course.js?v=20261030-integrated20';
+import {endingArtIds} from './ending-course.js?v=20261031-final21';
 import {createIllustrationUI} from './ending-illustrations.js';
-import {createFoldReference} from './fold-reference.js?v=20261030-integrated20';
+import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261030-integrated20';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261031-final21';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';

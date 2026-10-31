@@ -8,8 +8,8 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   $('foldStepPrevious').disabled=step===0;$('foldStepNext').textContent=step===1?'살펴볼게!':'다음 그림';$('foldStepCount').textContent=`${step+1} / 2`;
  }
  function showGuide(){step=0;showStep();$('foldGuideDialog').showModal();}
- function closeGuide(){$('foldGuideDialog').close();(getScene().type==='ending'?$('endingFoldAgain'):$('openFoldGuide')).focus();}
- $('openFoldGuide').addEventListener('click',showGuide);$('endingFoldAgain').addEventListener('click',showGuide);$('foldGuideClose').addEventListener('click',closeGuide);
+ function closeGuide(){$('foldGuideDialog').close();(getScene().type==='ending'?$('endingFoldAgain'):$('answer')).focus();}
+ $('endingFoldAgain').addEventListener('click',showGuide);$('foldGuideClose').addEventListener('click',closeGuide);
  $('foldGuideDialog').addEventListener('cancel',e=>{e.preventDefault();closeGuide();});
  $('foldStepPrevious').addEventListener('click',()=>{step=0;showStep();});$('foldStepNext').addEventListener('click',()=>{if(step===1)closeGuide();else{step=1;showStep();}});
  function stop(){
@@ -45,9 +45,9 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
  });
  function render(scene){
   stop();$('foldGuideDialog').close();const fold=scene.id==='ending-fold-puzzle';
-  $('endingFoldActions').hidden=!fold;$('endingContactStill').hidden=true;
-  if(fold){$('foldHintImage').src='./assets/ending/fold-hint.svg';if(getPoster())$('endingContactStill').src=getPoster();}
-  else{$('endingContactStill').removeAttribute('src');$('foldHintImage').removeAttribute('src');}
+  $('inlineFoldGuide').hidden=!fold;$('endingContactStill').hidden=true;
+  if(fold){$('inlineFoldGuide').src='./assets/ending/postcard-fold-guide.svg';if(getPoster())$('endingContactStill').src=getPoster();}
+  else{$('endingContactStill').removeAttribute('src');$('inlineFoldGuide').removeAttribute('src');}
   $('endingCinemaActions').hidden=scene.type!=='cinematic';$('endingPlay').disabled=scene.cinematicPart==='restore'&&!canRestore();$('endingPlay').textContent=isCompleted()?'이어서 보기':scene.actionLabel||'마지막 장면 보기';
   $('endingCard').hidden=scene.type!=='ending';$('endingCard').classList.remove('is-visible');
   if(scene.type==='ending'){requestAnimationFrame(()=>$('endingCard').classList.add('is-visible'));$('endingReplay').focus({preventScroll:true});}

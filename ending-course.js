@@ -2,7 +2,7 @@
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 export const endingPuzzleId=ENDING_PUZZLE_ID;
 export const endingPuzzle={status:'confirmed',acceptedAnswers:['고양이와 사서가 돌아왔다'],
-  successMode:'immediate',answerLabel:'한글 11글자',placeholder:'완성된 문장',ariaLabel:'엽서를 접어 완성한 문장, 한글 11글자',
+  successMode:'immediate',answerLabel:'한글 11글자, 띄어쓰기 상관 없음, 느낌표 제외',placeholder:'완성된 문장',ariaLabel:'엽서를 접어 완성한 문장, 한글 11글자',
   checkLabel:'정답 확인',hints:[
     '제목과 QR코드가 있는 앞면을 위로 놓아 봐 노란 부분은 오른쪽 위와 왼쪽 아래야',
     '접은 엽서를 뒤집어 봐 처음 문제처럼 한 문장을 읽으면 돼'
@@ -14,7 +14,7 @@ export function createEndingScenes(){
  const art=(id,asset,text,next,speaker='사서')=>({id,type:'dialogue',endingArt:asset,layout:'ending-illustration',background:null,textMode:'static',speaker,text,next,geometry:{dialogue:[25,500,450,225],nextButton:[110,790,280,63]}});
  return [
  {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',background:'general-clean',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'사서 따라잡기',next:'ending-fold-puzzle'},
- {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'엽서! 아직 안 접은 부분 있지?\n마지막으로 한 번만 더 도와줘',instruction:'엽서의 노란 부분 두 곳을 접어, 반대쪽에 완성되는 문장을 입력해 주세요',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
+ {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'엽서를 활용해 마지막 장면을 완성해줘!',instruction:'엽서의 노란 부분 두 곳을 접어,\n완성되는 문장을 입력해주세요.',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
  {id:'ending-not-yet',type:'dialogue',cat:'bewildered',text:'우리 이야기의 마지막 장면이야!',next:'ending-impact'},
  {id:'ending-impact',type:'impact',endingArt:'ending-03-impact',background:null,layout:'ending-illustration',durationMs:600,text:'쿵!',next:'ending-returned'},
  art('ending-returned','ending-04-returned','앗… 돌아왔다!','ending-cat'),

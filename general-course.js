@@ -1,4 +1,4 @@
-import {createEndingScenes} from './ending-course.js?v=20261030-integrated20';
+import {createEndingScenes} from './ending-course.js?v=20261031-final21';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
