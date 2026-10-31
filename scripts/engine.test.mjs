@@ -285,9 +285,9 @@ test('색 암호 SVG는 원본의 동일 크기6칸·세로/가로 좌표·최�
   ['209','60','80','80','#EA524A'],['289','60','80','80','#A165AF'],['438','60','80','80','#4AA470'],['518','60','80','80','#A165AF']]);
  assert.match(svg,/viewBox="0 0 634 219"/);assert.doesNotMatch(svg,/고치기|ㄱ|ㅗ|ㅊ|ㅣ/);
 });
-test('필수 동선은 책 정리→내부 색문제→서가 도착→책 받기→안내문→로비이며 옛 문제는 없다',()=>{
- for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){const r=new StoryRuntime(createChapters({showDeskInterlude,includeNewBooks}),puzzles),seen=[];r.jump('general-room-intro');while(r.currentId!=='lobby-ending-entry'){seen.push(r.currentId);assert(r.advance({review:true}).ok);assert(seen.length<60);}
- assert(seen.indexOf('newbooks-order-game')<seen.indexOf('general-shelf-arrival'));assert(seen.indexOf('general-shelf-arrival')<seen.indexOf('general-book-catch'));assert(seen.indexOf('general-book-catch')<seen.indexOf('general-return-notice'));assert.equal(seen.at(-1),'travel-to-ending-lobby');for(const id of ['general-room-puzzle','newbooks-puzzle','general-faces-clue'])assert(!seen.includes(id));}
+test('필수 동선은 책 정리→내부 색문제→서가 도착→책 받기→안내문→종합자료실 달리기이며 옛 문제는 없다',()=>{
+ for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){const r=new StoryRuntime(createChapters({showDeskInterlude,includeNewBooks}),puzzles),seen=[];r.jump('general-room-intro');while(r.currentId!=='ending-rescue'){seen.push(r.currentId);assert(r.advance({review:true}).ok);assert(seen.length<60);}
+ assert(seen.indexOf('newbooks-order-game')<seen.indexOf('general-shelf-arrival'));assert(seen.indexOf('general-shelf-arrival')<seen.indexOf('general-book-catch'));assert(seen.indexOf('general-book-catch')<seen.indexOf('general-return-notice'));assert.equal(seen.at(-1),'general-lobby-direction');for(const id of ['general-body-missed','travel-to-ending-lobby','lobby-ending-entry','ending-one-left','ending-found','ending-postcard-clue'])assert(!seen.includes(id));for(const id of ['general-room-puzzle','newbooks-puzzle','general-faces-clue'])assert(!seen.includes(id));}
 });
 
 test('옛 임시 숫자·얼굴 문제 저장은 더 이상 입력을 요구하지 않고 같은 동선으로 이전한다',()=>{
@@ -320,7 +320,7 @@ test('정리10권만으로는 통과하지 않고 내부 문제의 팝업 다음
 test('책 정리만 마친 옛 저장은 글자 문제로, 이미 지난 저장은 그대로 이어진다',()=>{
  const result={kind:'book-order',cleared:true,complete:true,shelf:puzzles['book-order-keyword'].correctOrder,cart:Array(10).fill(null)};
  for(const id of ['newbooks-order-game','newbooks-after-order','general-breath']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,runId:'legacy-order-123456',minigameResults:{'book-order-keyword':result},solved:['learning-room-art','book-order-keyword']});assert.equal(r.currentId,'newbooks-order-game');assert(r.minigameProgress['book-order-keyword'].sortComplete);assert(!r.minigameResults['book-order-keyword']);assert(!r.solved.has('book-order-keyword'));assert.equal(r.runId,'legacy-order-123456');assert(r.solved.has('learning-room-art'));}
- for(const id of ['general-shelf-arrival','general-after-catch','travel-to-ending-lobby','ending-thanks']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,minigameResults:{'book-order-keyword':result},solved:['book-order-keyword']});assert.equal(r.currentId,id);assert(r.solved.has('book-order-keyword'));const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,id);}
+ for(const id of ['general-shelf-arrival','general-after-catch','travel-to-ending-lobby','ending-thanks']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,minigameResults:{'book-order-keyword':result},solved:['book-order-keyword']});const expected=id==='travel-to-ending-lobby'?'ending-rescue':id;assert.equal(r.currentId,expected);assert(r.solved.has('book-order-keyword'));const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,expected);}
 });
 
 test('한 플레이의 설정/runId를 복구하고 새 전체 플레이는 새 미니게임 저장공간을 쓴다',()=>{
@@ -338,6 +338,6 @@ test('옛 수리 팝업은 수리 그림으로 이전하고 이미 지난 저장
  for(const currentId of ['travel-to-general','general-room-intro','ending-thanks']){const old=new StoryRuntime(chapters,puzzles,{currentId,solved:[puzzleId,'learning-room-art']});assert.equal(old.currentId,currentId);assert(old.flags.sterilizerRepaired);}
 });
 
-test('정리 게임 앞은 목적 설명이고 받기 뒤에만 반납 안내와 걷기 이동이 나온다',()=>{
- const list=chapters.flatMap(c=>c.scenes),byId=new Map(list.map(s=>[s.id,s]));assert.match(byId.get('general-order-paws').text,/십진분류표/);assert.equal(byId.get('newbooks-order-game').gameStartLabel,'책 정리하기');assert.equal(byId.get('general-shelf-arrival').next,'general-book-drop');assert.equal(byId.get('general-cat-meow').text,'냐아!');assert(!byId.get('general-cat-meow').cat);assert.equal(byId.get('general-book-catch').gameStartLabel,'책 받기');assert.match(byId.get('travel-to-ending-lobby').guideText,/천천히 걸어서/);assert.equal(byId.get('ending-rescue').actionLabel,'사서 따라잡기');
+test('정리 게임 앞은 목적 설명이고 받기 뒤에만 반납 안내가 나오고 종합자료실에서 추격을 준비한다',()=>{
+ const list=chapters.flatMap(c=>c.scenes),byId=new Map(list.map(s=>[s.id,s]));assert.match(byId.get('general-order-paws').text,/십진분류표/);assert.equal(byId.get('newbooks-order-game').gameStartLabel,'책 정리하기');assert.equal(byId.get('general-shelf-arrival').next,'general-book-drop');assert.equal(byId.get('general-cat-meow').text,'냐아!');assert(!byId.get('general-cat-meow').cat);assert.equal(byId.get('general-book-catch').gameStartLabel,'책 받기');assert.equal(byId.get('general-lobby-direction').next,'ending-rescue');assert(!byId.has('travel-to-ending-lobby'));assert.equal(byId.get('ending-rescue').actionLabel,'사서 따라잡기');
 });

@@ -206,3 +206,5 @@ story.js의 cleaning-keyword는 completionMode:'result',minimumRatio:.7,allowedG
 실제 삼성 인터넷/카카오톡·Android/iOS 자판, 현장 이름표와03/04 마크 설치, 새 버전 공개 배포는 미확인입니다. 이번 변경은 cat-librarian 폴더이며 cleaning-game 실행 코드와 미정 키워드는 수정하지 않았습니다. GitHub Desktop에서 cat-librarian의 변경을 Commit/Push하여 반영하세요.
 
 2026-10-25 최신 게임 원본 반영은 `node scripts/sync-games.mjs`(또는 `npm run sync:games`) 후 `node scripts/check-assets.mjs`로 검사한다. 원본 폴더와 명시적 연결 패치는 scripts/game-sources.json 및 scripts/game-adaptations에 있다. 패치 충돌은 먼저 병합하고 새 실행 자산도 목록에 추가한다. 실제 검증/변경 파일/배포 범위는 VERIFICATION-20261025-UPSTREAM19.md가 최신 기준이다. 본편과 독립 달리기를 모두 배포하려면 GitHub Desktop의 cat-librarian과 catch-librarian을 각각 Commit/Push한다.
+
+2026-10-30 통합 수정(integrated20)은 VERIFICATION-20261030-INTEGRATED20.md가 최신 기준이다. 책 정리 후 글자 안내/하단 입력 배치와 변경 대사, 종합자료실 추격 연결, 마지막 정답 전 새 엽서 참고 그림을 포함한다. ZIP에 남은 예전 손/뛰네 대사와1층 로비 이동은 사용자의 직접 수정·확인을 우선했다. 자동 커밋·푸시·배포하지 않았다.

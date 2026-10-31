@@ -1,4 +1,4 @@
-import {createEndingScenes} from './ending-course.js';
+import {createEndingScenes} from './ending-course.js?v=20261030-integrated20';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
@@ -28,16 +28,14 @@ export function createGeneralScenes(){
  talk('general-my-face','아래로 말고!','general-cat-meow','shocked','book-catch-shelf',{...shelf,shelfMotion:true});
  talk('general-cat-meow','냐아!','general-cart',null,'book-catch-shelf',{...shelf,speaker:'사서 몸의 고양이',shelfMotion:true});
  talk('general-cart','내 얼굴로 그렇게 뿌듯해하지 마!','general-book-catch','self-mockery','book-catch-shelf',shelf);
- scenes.push({id:'general-book-catch',type:'minigame',puzzleId:'book-catch-keyword',background:'book-catch-shelf',cat:'shocked',layout:'result-game',text:'북카트가 있어. 네가 움직여줘. 나는 밀게!',gameUrl:'./games/book-catch/',gameTitle:'책 받기',gameStartLabel:'책 받기',next:'general-after-catch',geometry:gameGeometry});
+ scenes.push({id:'general-book-catch',type:'minigame',puzzleId:'book-catch-keyword',background:'book-catch-shelf',cat:'shocked',layout:'result-game',text:'안돼! 귀한 책들이 바닥에 다 떨어진다!!',gameUrl:'./games/book-catch/',gameTitle:'책 받기',gameStartLabel:'책 받기',next:'general-after-catch',geometry:gameGeometry});
  talk('general-after-catch','휴… 이제 좀 조용하네.','general-return-notice','neutral','general-clean');
  talk('general-return-notice','여기 써 있잖아. 다 읽은 책은 북트럭에 놓아 주세요.','general-return-help','neutral','general-clean');
  talk('general-return-help','다른 사람이 책을 쉽게 찾을 수 있게, 제자리 정리는 사서에게 맡겨 줘.','general-return-joke','neutral','general-clean');
  talk('general-return-joke','너한테 하는 말이야. 서가 위에 계신 내 몸!','general-come-down','self-mockery','general-clean');
- talk('general-come-down','아, 이번엔 뛰네.','general-no-chance','shocked','general-clean',{actor:'escaping-librarian',actorMotion:'flee',geometry:{...dialogue,actor:[185,200,170,222]}});
- talk('general-no-chance','도서관에서는 뛰면 안 돼! 부딪히면 위험하잖아!','general-body-missed','worried','general-clean');
- talk('general-body-missed','내 몸으로 시범 보이지 말고!','general-lobby-direction','resigned','general-clean');
- talk('general-lobby-direction','아래층으로 갔어. 로비로 가 보자.','travel-to-ending-lobby','worried','general-clean');
- scenes.push({id:'travel-to-ending-lobby',type:'move',background:'general-clean',cat:'worried',layout:'move',location:'1층 로비',destination:'1층 로비',marker:false,guideText:'천천히 걸어서 1층 로비로 이동하세요.',locationHints:['계단을 내려가 처음 만났던 1층 로비로 이동하세요.'],next:'lobby-ending-entry',geometry:movement});
+ talk('general-come-down','쟤는 또 어딜 가는거야!','general-no-chance','shocked','general-clean',{actor:'escaping-librarian',actorMotion:'flee',geometry:{...dialogue,actor:[185,200,170,222]}});
+ talk('general-no-chance','도서관에서는 뛰면 안 돼! 부딪히면 위험하잖아!','general-lobby-direction','worried','general-clean');
+ talk('general-lobby-direction','저러다 다치겠어. 빨리 따라가자!','ending-rescue','worried','general-clean');
  for(const id of ['general-after-catch','general-return-notice','general-return-help','general-return-joke'])scenes.find(s=>s.id===id).noticeText='다 읽은 책은 북트럭에 놓아 주세요';
  return [...scenes,...createEndingScenes()].map(s=>({sourceNumber:null,location:'2층 종합자료실',fontSize:27,nextLabel:'다음으로',...s}));
 }

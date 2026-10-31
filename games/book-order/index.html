@@ -8,21 +8,21 @@
   <title>책을 올바른 순서로 제자리에!</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="../story-adapter.css"><link rel="stylesheet" href="./letter.css">
+  <link rel="stylesheet" href="../story-adapter.css"><link rel="stylesheet" href="./letter.css?v=20261030-integrated20">
 </head>
 <body>
   <main id="game" aria-label="책을 올바른 순서로 제자리에!">
-    <div id="boardViewport"><canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas><div id="bookLetters" hidden aria-label="책 위 글자"></div></div>
+    <div id="boardViewport"><canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas><div id="bookLetters" hidden aria-label="책 위 글자"></div><div class="sorted-intro" hidden><div class="letter-intro-row"><p id="letterIntro"></p><button id="letterIntroNext" class="intro-next" type="button">다음</button></div></div><div class="sorted-paws" hidden><div class="paw-window" aria-hidden="true"><img id="letterPaws" alt=""></div></div></div>
     <div id="message" role="status" aria-live="polite"></div>
     <div id="loading" class="overlay"><section class="card"><div class="eyebrow">고양이 사서의 도서관</div><h1>서가를 준비하고 있어요</h1><p id="load-text">책과 북카트를 불러오는 중…</p><button id="retry" hidden>다시 불러오기</button></section></div>
     <div id="intro" class="overlay" hidden><section class="card"><div class="eyebrow">고양이 사서의 부탁</div><h1>뒤바뀐 영혼,<br>뒤섞인 책들</h1><p>사서와 고양이의 영혼이 뒤바뀌었어요.<br>고양이가 된 사서를 도와주세요.</p><p id="start-text"></p><button id="start">책 정리 시작</button><small>시간제한 없이, 천천히 살펴보세요.</small></section></div>
     <nav class="tools" aria-label="게임 도움"><button id="help" aria-label="조작 방법 보기">도움말</button><button id="restart" aria-label="책 배열을 초기화하고 다시 시작">다시 시작</button></nav>
     <dialog id="help-dialog"><section class="card"><h2>고양이 앞발로 정리해요</h2><p>책을 끌어 원하는 자리에 놓으세요.<br>책을 누른 뒤 자리를 눌러도 돼요.</p><p>빈자리에 놓으면 그 책만 이동해요. 찬 자리에 놓으면 오른쪽의 책들이 첫 빈칸까지 한 칸씩 밀려요. 오른쪽이 끝까지 차 있으면 왼쪽 빈칸을 이용해요.</p><p>카트로 끌어 빼거나, 책을 선택한 뒤 카트의 빈 공간을 눌러 돌려놓을 수도 있어요. 같은 책이나 배경을 누르면 선택이 취소돼요. 서가 밖에 놓으면 원래 자리로 돌아가요.</p><button id="close-help">계속 정리하기</button></section></dialog>
-    <section id="letterPanel" class="letter-panel" hidden aria-label="엽서 발자국 문제"><div class="letter-intro-row"><p id="letterIntro"></p><button id="letterIntroNext" class="intro-next" type="button">다음</button></div><div class="paw-window" aria-hidden="true"><img id="letterPaws" alt=""></div><p id="letterInstruction" class="letter-instruction"></p><form id="letterForm"><label for="letterAnswer">한글 4글자</label><input id="letterAnswer" type="text" maxlength="80" autocomplete="off" enterkeyhint="done" aria-describedby="letterFeedback"><button id="letterCheck" type="submit">정답 확인</button><p id="letterFeedback" role="status"></p></form><button id="letterHint" type="button">힌트</button><section id="letterHints" class="letter-hints" hidden><p id="letterHintBody"></p><button id="letterMoreHint" type="button">힌트 하나 더</button></section></section>
+    <section id="letterPanel" class="letter-panel" hidden aria-label="엽서 발자국 문제"><p id="letterInstruction" class="letter-instruction"></p><form id="letterForm"><label for="letterAnswer">한글 4글자</label><input id="letterAnswer" type="text" maxlength="80" autocomplete="off" enterkeyhint="done" aria-describedby="letterFeedback"><button id="letterCheck" type="submit">정답 확인</button><p id="letterFeedback" role="status"></p></form><button id="letterHint" type="button">힌트</button><section id="letterHints" class="letter-hints" hidden><p id="letterHintBody"></p><button id="letterMoreHint" type="button">힌트 하나 더</button></section></section>
     <dialog id="letterSuccess" class="letter-success" aria-labelledby="letterSuccessTitle"><h2 id="letterSuccessTitle">정답이야!</h2><img id="letterHappy" alt="기뻐하는 삼색 고양이"><p>잘했어! 이야기를 이어가 보자!</p><button id="letterSuccessNext" type="button">다음으로</button></dialog>
     <div id="a11y" class="sr-only"></div>
   </main>
   <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
-  <script type="module" src="./game.js?v=20261025-upstream19"></script>
+  <script type="module" src="./game.js?v=20261030-integrated20"></script>
 </body>
 </html>

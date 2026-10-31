@@ -1,4 +1,4 @@
-import {LETTER_PUZZLE as C} from './letter-puzzle-config.js';
+import {LETTER_PUZZLE as C} from './letter-puzzle-config.js?v=20261030-integrated20';
 import {restoreLetters,solveLetters,orderSorted,letterProof,validOrderProgress} from './letter-state.js';
 import {shelfPlacement} from './geometry.js';
 export function createLetterUI({storageKey,getGame,getLayout,onFinish,onProgress}){
@@ -8,9 +8,9 @@ export function createLetterUI({storageKey,getGame,getLayout,onFinish,onProgress
  const progress=()=>({kind:'book-order',sortComplete:true,shelf:[...getGame().shelf],cart:[...getGame().cart],letters:{...state}});
  function save(){state.revision++;try{localStorage.setItem(storageKey,JSON.stringify(state))}catch{}onProgress(progress());}
  function size(){document.documentElement.style.setProperty('--letter-height',(visualViewport?.height||innerHeight)+'px');
-  if(!shown)return;const canvas=$('board'),vp=$('boardViewport');document.documentElement.style.setProperty('--letter-crop',(canvas.clientWidth*440/941)+'px');
-  const scale=canvas.clientWidth/941,l=getLayout(),y=(l.sign_label_center[1]+20+l.shelf.baseline-l.shelf.book_height)/2;
-  for(const el of $('bookLetters').children){const i=getGame().shelf.indexOf(el.dataset.bookId),q=shelfPlacement(l,i);el.style.left=(q.center[0]*scale)+'px';el.style.top=((y-440)*scale)+'px';}
+  if(!shown)return;const canvas=$('board'),vp=$('boardViewport');const scale=canvas.clientWidth/941,padding=Math.max(0,(vp.clientHeight-520*scale)/2),offset=padding-440*scale;document.documentElement.style.setProperty('--sorted-canvas-top',offset+'px');
+  const l=getLayout(),y=(l.sign_label_center[1]+20+l.shelf.baseline-l.shelf.book_height)/2;
+  for(const el of $('bookLetters').children){const i=getGame().shelf.indexOf(el.dataset.bookId),q=shelfPlacement(l,i);el.style.left=(q.center[0]*scale)+'px';el.style.top=(y*scale+offset)+'px';}
  }
  function draw(){if(!shown)return;panel.dataset.phase=state.phase;$('letterIntro').textContent=C.intro[state.introIndex];$('letterIntroNext').hidden=state.introIndex>=2;$('letterAnswer').value=state.answer;
   $('letterHintBody').textContent=C.hints.slice(0,state.hintLevel).join('\n');$('letterHints').hidden=!state.hintLevel;
@@ -20,11 +20,11 @@ export function createLetterUI({storageKey,getGame,getLayout,onFinish,onProgress
   else if(dialog.open)dialog.close();size();
  }
  function sync(){
-  if(!orderSorted(getGame())){shown=false;panel.hidden=true;$('bookLetters').hidden=true;document.documentElement.classList.remove('letter-mode');if(dialog.open)dialog.close();return;}
-  if(!shown){shown=true;state=restoreLetters(load());returned=false;document.documentElement.classList.add('letter-mode');panel.hidden=false;
+  if(!orderSorted(getGame())){shown=false;panel.hidden=true;document.querySelector('.sorted-intro').hidden=true;document.querySelector('.sorted-paws').hidden=true;$('bookLetters').hidden=true;document.documentElement.classList.remove('letter-mode');if(dialog.open)dialog.close();return;}
+  if(!shown){shown=true;state=restoreLetters(load());returned=false;document.documentElement.classList.add('letter-mode');panel.hidden=false;document.querySelector('.sorted-intro').hidden=false;document.querySelector('.sorted-paws').hidden=false;
    $('bookLetters').replaceChildren();for(const id of getGame().shelf){const span=document.createElement('span');span.dataset.bookId=id;span.textContent=C.letters[id];span.setAttribute('aria-label',getGame().shelf.indexOf(id)+1+'번 책 위 글자 '+C.letters[id]);$('bookLetters').append(span);}
    $('bookLetters').hidden=false;$('letterPaws').src='paw-strip.png';$('letterInstruction').textContent=C.instruction;nextAt=performance.now()+300;draw();save();
-  }else size();
+  }
  }
  function submit(){if(!shown||composing||performance.now()-compositionEnd<80||['pending-success','complete'].includes(state.phase))return;
   const result=solveLetters(state,$('letterAnswer').value);state=result;save();

@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "originalFilename": "최종 머리 부딪히는 것.png",
+  "originalDimensions": {
+    "width": 737,
+    "height": 1020
+  },
+  "processing": "Only blank outer margins cropped; no redraw, recoloring, rotation, character edits, background removal or added text.",
+  "crop": {
+    "left": 95,
+    "top": 345,
+    "width": 587,
+    "height": 312
+  },
+  "sourcePixelsPreserved": true,
+  "originalCopySha256Matches": true,
+  "finalPuzzleImage": {
+    "preferred": "assets/postcard-fold-complete.webp",
+    "fallback": "assets/postcard-fold-complete.png",
+    "showBeforeAnswer": true,
+    "showAfterRunnerBeforeFinalAnswer": true,
+    "replayEndingImpactBeforeAnswer": false,
+    "alt": "엽서의 노란 부분 두 곳을 접었을 때 머리를 맞댄 사서와 고양이 그림"
+  },
+  "referencesOnly": [
+    "references/postcard-fold-complete-original.png",
+    "references/paw-colors-original.png"
+  ],
+  "files": [
+    {
+      "path": "assets/postcard-fold-complete.webp",
+      "width": 587,
+      "height": 312,
+      "bytes": 96782,
+      "sha256": "1f72201911e3bb607f48ef9ae80cad94bdb3bc529819aec0b2d455ba4023c98b",
+      "runtime": true
+    },
+    {
+      "path": "assets/postcard-fold-complete.png",
+      "width": 587,
+      "height": 312,
+      "bytes": 175206,
+      "sha256": "c4bb30bab5dd4eed713aebab19c177bc41a424eacf19db75f99f40ba41c14159",
+      "runtime": true
+    },
+    {
+      "path": "references/postcard-fold-complete-original.png",
+      "width": 737,
+      "height": 1020,
+      "bytes": 185342,
+      "sha256": "4e880471a153ac0ec5f3f7d1b745845b03f1a5e431cea24d914710168197e132",
+      "runtime": false
+    },
+    {
+      "path": "references/paw-colors-original.png",
+      "width": 40,
+      "height": 182,
+      "bytes": 4669,
+      "sha256": "73ada2c849686f08a881a4aac5d3545c526b4da2209dd3f9c7fc1f5767b249c8",
+      "runtime": false
+    }
+  ]
+}

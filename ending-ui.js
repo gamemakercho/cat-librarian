@@ -23,7 +23,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   active={session:crypto.randomUUID(),runId:getRunId(),origin:url.origin,from:getScene().id,replay,part};
   $('endingCinemaOverlay').classList.toggle('is-runner',part==='approach');
   $('endingCinemaLabel').textContent=part==='approach'?'아직 끝나지 않은 이야기':'다시, 제자리로';
-  $('endingFrame').title=part==='approach'?'츄르를 먹으려다 벌어진 로비의 마지막 사고':'원래 모습으로 돌아오는 마지막 장면';
+  $('endingFrame').title=part==='approach'?'도서관에서 벌어진 사서 따라잡기와 마지막 사고':'원래 모습으로 돌아오는 마지막 장면';
   for(const [key,value]of Object.entries({parentOrigin:location.origin,session:active.session,runId:active.runId,part}))url.searchParams.set(key,value);
   $('endingLoading').hidden=false;$('endingError').hidden=true;$('appShell').inert=true;
   document.body.classList.add('ending-active');document.documentElement.classList.add('ending-active');$('endingCinemaOverlay').hidden=false;
@@ -45,7 +45,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
  });
  function render(scene){
   stop();$('foldGuideDialog').close();const fold=scene.id==='ending-fold-puzzle';
-  $('endingFoldActions').hidden=!fold;$('endingContactStill').hidden=!fold||!getPoster();
+  $('endingFoldActions').hidden=!fold;$('endingContactStill').hidden=true;
   if(fold){$('foldHintImage').src='./assets/ending/fold-hint.svg';if(getPoster())$('endingContactStill').src=getPoster();}
   else{$('endingContactStill').removeAttribute('src');$('foldHintImage').removeAttribute('src');}
   $('endingCinemaActions').hidden=scene.type!=='cinematic';$('endingPlay').disabled=scene.cinematicPart==='restore'&&!canRestore();$('endingPlay').textContent=isCompleted()?'이어서 보기':scene.actionLabel||'마지막 장면 보기';

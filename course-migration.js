@@ -9,8 +9,9 @@ export function migrateCourseSnapshot(value={}){
    s.currentId='newbooks-order-game';s.minigameProgress[gameId]={kind:'book-order',sortComplete:true,shelf:result.shelf,cart:result.cart,letters:restoreLetters(null)};delete s.minigameResults[gameId];s.solved=(s.solved||[]).filter(id=>id!==gameId);
   }else s.legacyOrderPassed=true;
  }
- const aliases={'general-order-sequence':'newbooks-order-game','general-shelf-guide':'general-order-bridge','general-pc-guide':'general-order-bridge','general-pc-paint':'general-order-bridge','general-classification-clue':'general-order-bridge','general-room-puzzle':'newbooks-order-game','newbooks-intro':'general-book-drop','newbooks-disorder':'general-book-drop','general-faces-joke':'general-book-drop','general-faces-clue':'general-book-drop','newbooks-puzzle':'general-book-drop','general-face-easy':'general-book-drop','general-body-wait':'general-book-drop'};
+ const aliases={'general-body-missed':'general-lobby-direction','travel-to-ending-lobby':'ending-rescue','lobby-ending-entry':'ending-rescue','ending-one-left':'ending-rescue','ending-found':'ending-rescue','ending-postcard-clue':'ending-rescue','general-order-sequence':'newbooks-order-game','general-shelf-guide':'general-order-bridge','general-pc-guide':'general-order-bridge','general-pc-paint':'general-order-bridge','general-classification-clue':'general-order-bridge','general-room-puzzle':'newbooks-order-game','newbooks-intro':'general-book-drop','newbooks-disorder':'general-book-drop','general-faces-joke':'general-book-drop','general-faces-clue':'general-book-drop','newbooks-puzzle':'general-book-drop','general-face-easy':'general-book-drop','general-body-wait':'general-book-drop'};
  if(aliases[s.currentId])s.currentId=aliases[s.currentId];
+ if(Array.isArray(s.history)){s.history=s.history.map(id=>aliases[id]||id).filter((id,i,all)=>id!==s.currentId&&id!==all[i-1]);}
  if(['general-room-placeholder-v1','newbooks-placeholder-v1'].includes(s.pendingSuccess?.puzzleId)){s.pendingSuccess=null;s.pendingSuccessId=null;}
  return s;
 }

@@ -1,13 +1,14 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261025-upstream19';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261030-integrated20';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261025-upstream19';
+import {createEndingUI} from './ending-ui.js?v=20261030-integrated20';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
-import {endingArtIds} from './ending-course.js';
+import {endingArtIds} from './ending-course.js?v=20261030-integrated20';
 import {createIllustrationUI} from './ending-illustrations.js';
+import {createFoldReference} from './fold-reference.js?v=20261030-integrated20';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261025-upstream19';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261030-integrated20';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -46,6 +47,7 @@ const elementCache=new Map();
 const clipCache=new Map();
 const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+const foldReference=createFoldReference({getScene:()=>runtime.scene});
 const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
   getPoster:()=>runtime.endingContactPoster,
   canRestore:()=>runtime.solved.has(ENDING_PUZZLE_ID),
@@ -174,7 +176,7 @@ function advance(opts={}){
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();
+  closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;
@@ -292,7 +294,7 @@ async function render(){
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
   renderedScene=s;layoutStoryFlow(stage,s);updateReview(s);endingUI.render(s);
-  illustrationUI.render(s);
+  illustrationUI.render(s);foldReference.render(s);
   for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
   if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
   if(runtime.pendingSuccessId===s.id)showSuccess();

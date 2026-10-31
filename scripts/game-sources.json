@@ -61,7 +61,7 @@
   "ending-chase": {
     "source": "C:/Users/user/Documents/Codex/2026-10-23/codex-prompt-md-x20/outputs/github/catch-librarian",
     "repository": "https://github.com/gamemakercho/catch-librarian",
-    "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+    "commit": "bc12b98d4a140eeb2ab8b14a2444571674818549",
     "files": [
       "after-ending/after-ending.css",
       "after-ending/after-ending.js",

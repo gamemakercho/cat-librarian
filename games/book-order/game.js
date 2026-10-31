@@ -1,8 +1,8 @@
 import '../story-adapter.js';
-import {createLetterUI} from './letter-ui.js';
+import {createLetterUI} from './letter-ui.js?v=20261030-integrated20';
 import {validOrderProgress} from './letter-state.js';
 import {CONFIG} from './config.js';
-import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261025-upstream19';
+import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261030-integrated20';
 import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
 import {inside,localPoint,slotAt,shelfPlacement,cartPlacements} from './geometry.js';
 
@@ -174,7 +174,7 @@ function render(now=performance.now()) {
   message.classList.toggle('complete',state.complete);
   message.textContent=state.complete?CONFIG.text.complete:state.shelf.every(Boolean)?CONFIG.text.incorrect:'';
   letterUI.sync();
-  if(state.complete&&now-completionStart<Math.min(800,l.sparkle.duration_ms)&&!reducedMotion) {
+  if(state.complete&&now-completionStart<l.sparkle.duration_ms&&!reducedMotion) {
     const elapsed=now-completionStart;
     const phase=reducedMotion?0:elapsed/280;
     for(let i=0;i<l.sparkle.particle_count;i++){

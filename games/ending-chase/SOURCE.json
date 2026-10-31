@@ -32,6 +32,6 @@
       "sha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9"
     }
   ],
-  "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+  "commit": "bc12b98d4a140eeb2ab8b14a2444571674818549",
   "localChanges": "2026-10-25 fullscreen/touch-only controls and mixed second burst; original repository and bundled runtime match"
 }

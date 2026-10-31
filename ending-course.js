@@ -1,5 +1,4 @@
-// Final physical postcard puzzle and the story-only rescue. Existing arrival ID
-// is retained so the already deployed one-floor return continues here.
+// The pursuit starts in the general room; old lobby scene IDs migrate explicitly.
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 export const endingPuzzleId=ENDING_PUZZLE_ID;
 export const endingPuzzle={status:'confirmed',acceptedAnswers:['고양이와 사서가 돌아왔다'],
@@ -14,12 +13,8 @@ export const endingArtIds=['ending-03-impact','ending-04-returned','ending-05-th
 export function createEndingScenes(){
  const art=(id,asset,text,next,speaker='사서')=>({id,type:'dialogue',endingArt:asset,layout:'ending-illustration',background:null,textMode:'static',speaker,text,next,geometry:{dialogue:[25,500,450,225],nextButton:[110,790,280,63]}});
  return [
- {id:'lobby-ending-entry',type:'dialogue',cat:'neutral',text:'저기 있다!',next:'ending-one-left'},
- {id:'ending-one-left',type:'dialogue',cat:'bewildered',text:'다리가 네 개나 있는데 왜 못 따라잡지?',next:'ending-found'},
- {id:'ending-found',type:'dialogue',cat:'resigned',text:'아. 전부 짧구나.',next:'ending-postcard-clue'},
- {id:'ending-postcard-clue',type:'dialogue',cat:'worried',text:'책은 피하고, 저 녀석은 놓치지 말자!',next:'ending-rescue'},
- {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'사서 따라잡기',next:'ending-fold-puzzle'},
- {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'잠깐! 고양이로 끝낼 순 없지!\n엽서 속 마지막 한 줄을 찾아줘!',instruction:'한글 11글자 · 느낌표 제외\n띄어쓰기는 해도 되고 안 해도 돼',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
+ {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',background:'general-clean',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'사서 따라잡기',next:'ending-fold-puzzle'},
+ {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'엽서! 아직 안 접은 부분 있지?\n마지막으로 한 번만 더 도와줘',instruction:'엽서의 노란 부분 두 곳을 접어, 반대쪽에 완성되는 문장을 입력해 주세요',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
  {id:'ending-not-yet',type:'dialogue',cat:'bewildered',text:'우리 이야기의 마지막 장면이야!',next:'ending-impact'},
  {id:'ending-impact',type:'impact',endingArt:'ending-03-impact',background:null,layout:'ending-illustration',durationMs:600,text:'쿵!',next:'ending-returned'},
  art('ending-returned','ending-04-returned','앗… 돌아왔다!','ending-cat'),
@@ -30,5 +25,5 @@ export function createEndingScenes(){
  art('ending-promise','ending-05-thanks','다음에 오면 내가 재미있는 책 골라줄게.','ending-loan-joke'),
  art('ending-loan-joke','ending-05-thanks','그때는 앉아서 보자. 오늘 너무 많이 뛰었다.','ending-complete'),
  {id:'ending-complete',type:'ending',endingArt:'ending-05-thanks',background:null,layout:'ending-illustration',text:'고양이와 사서가 돌아왔다!',next:null}
- ].map(s=>({sourceNumber:null,location:s.endingArt?null:'1층 로비',nextLabel:'다음으로',...s,geometry:{...talk,...s.geometry}}));
+ ].map(s=>({sourceNumber:null,location:s.endingArt?null:'2층 종합자료실',nextLabel:'다음으로',...s,geometry:{...talk,...s.geometry}}));
 }

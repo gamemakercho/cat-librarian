@@ -57,13 +57,13 @@
           "file": "config.js",
           "sourceSha256": "afa7b93d56de2f45985438164366ba9a0328d06215c4513d389344acffb08563",
           "adapted": true,
-          "bundledSha256": "e6f1f6304961f74f1e3356adb47fd14283877ae0c35d1f92bf7dd82591890cb8"
+          "bundledSha256": "1941b010cf23334d31e7790450203ca03462be2834ac37e8e4b51151654ef802"
         },
         {
           "file": "game.js",
           "sourceSha256": "e0974951a38cf11ee4bbbef11646cb1a11aa4d61ef3c462a3cd2851138db1a6f",
           "adapted": true,
-          "bundledSha256": "a8883292c7b254219c5719403d35157c0caf752a7fed28aeaa42b4b0e7cb5d8a"
+          "bundledSha256": "88130d51697b4018b577e20356a6fc1cbe235ae9fe117194bc39dfdd15f1acc6"
         },
         {
           "file": "geometry.js",
@@ -75,7 +75,7 @@
           "file": "index.html",
           "sourceSha256": "93287ba6ebfe8680cf2650893ba5b605aee952f0c28efadf5d26837824a72738",
           "adapted": true,
-          "bundledSha256": "a1c908a36bd8ed52aae65a3cb146b17e50ea51baa4867f2c2358256cc404eca3"
+          "bundledSha256": "3c462710b8c20bd7e8bfbeaa0ce8101b7d9d541f153f59c7d1a86d868e6fb352"
         },
         {
           "file": "layout.json",
@@ -231,7 +231,7 @@
     },
     "ending-chase": {
       "repository": "https://github.com/gamemakercho/catch-librarian",
-      "commit": "672a045e9352485f507e285afa7740a9233aa3d3",
+      "commit": "bc12b98d4a140eeb2ab8b14a2444571674818549",
       "files": [
         {
           "file": "after-ending/after-ending.css",
