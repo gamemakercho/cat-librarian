@@ -1,0 +1,158 @@
+{
+  "image": "librarian-pocket-hd.png",
+  "columns": 3,
+  "rows": 2,
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "frames": 6,
+  "pivot": [
+    64,
+    124
+  ],
+  "logicalRenderSize": [
+    64,
+    64
+  ],
+  "logicalPivot": [
+    32,
+    62
+  ],
+  "order": "row-major",
+  "action": "pickupAndPocket",
+  "poses": [
+    {
+      "frame": 0,
+      "bounds": [
+        33,
+        25,
+        100,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    },
+    {
+      "frame": 1,
+      "bounds": [
+        33,
+        29,
+        116,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    },
+    {
+      "frame": 2,
+      "bounds": [
+        33,
+        22,
+        107,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    },
+    {
+      "frame": 3,
+      "bounds": [
+        33,
+        18,
+        112,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    },
+    {
+      "frame": 4,
+      "bounds": [
+        33,
+        16,
+        108,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    },
+    {
+      "frame": 5,
+      "bounds": [
+        33,
+        19,
+        103,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "hairWidth": 58.5
+    }
+  ],
+  "phases": [
+    "sit",
+    "reach",
+    "lift",
+    "alignPocket",
+    "putInside",
+    "withdrawEmpty"
+  ],
+  "packetBakedIn": false,
+  "frameStarts": [
+    7.5,
+    7.7,
+    8,
+    8.35,
+    8.7,
+    9.1
+  ],
+  "endsAt": 9.5,
+  "handPoints": [
+    [
+      56,
+      104
+    ],
+    [
+      48,
+      119
+    ],
+    [
+      50,
+      94
+    ],
+    [
+      63,
+      100
+    ],
+    [
+      62,
+      95
+    ],
+    [
+      51,
+      90
+    ]
+  ],
+  "pocketOpening": [
+    62,
+    99
+  ],
+  "packetCommitAt": 9.1,
+  "notes": "packet is a separate prop, clipped behind near-side pocket edge during frame4, empty hand in frame5"
+}

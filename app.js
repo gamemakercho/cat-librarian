@@ -5,7 +5,7 @@ import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
 import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-ending26';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js?v=20261101-credits-v3';
-import {createCreditsUI} from './credits-ui.js?v=20261101-credits-v3';
+import {createCreditsUI} from './credits-ui.js?v=20261101-credits-v5';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
 import {endingArtIds} from './ending-course.js?v=20261101-ending26';
 import {createIllustrationUI} from './ending-illustrations.js?v=20261101-ending26';

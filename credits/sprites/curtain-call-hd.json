@@ -1,0 +1,329 @@
+{
+  "image": "curtain-call-hd.png",
+  "frameWidth": 192,
+  "frameHeight": 128,
+  "columns": 4,
+  "rows": 3,
+  "frames": 12,
+  "pivot": [
+    96,
+    124
+  ],
+  "logicalRenderSize": [
+    96,
+    64
+  ],
+  "logicalPivot": [
+    48,
+    62
+  ],
+  "pairHumanHeadAnchorX": 128,
+  "order": "row-major",
+  "animations": {
+    "standUp": {
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "loop": false
+    },
+    "bow": {
+      "frames": [
+        4,
+        5,
+        6
+      ],
+      "loop": false
+    },
+    "returnUpright": {
+      "frames": [
+        7,
+        8
+      ],
+      "loop": false
+    },
+    "waveReference": {
+      "frames": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "loop": true
+    }
+  },
+  "poses": [
+    {
+      "frame": 0,
+      "bounds": [
+        65,
+        43,
+        159,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 1,
+      "bounds": [
+        67,
+        31,
+        160,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 2,
+      "bounds": [
+        65,
+        22,
+        158,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 3,
+      "bounds": [
+        66,
+        21,
+        158,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 4,
+      "bounds": [
+        67,
+        36,
+        160,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 5,
+      "bounds": [
+        69,
+        44,
+        157,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 6,
+      "bounds": [
+        65,
+        37,
+        161,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 7,
+      "bounds": [
+        67,
+        31,
+        159,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 8,
+      "bounds": [
+        66,
+        30,
+        166,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 9,
+      "bounds": [
+        65,
+        29,
+        166,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 10,
+      "bounds": [
+        64,
+        27,
+        166,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    },
+    {
+      "frame": 11,
+      "bounds": [
+        66,
+        29,
+        166,
+        124
+      ],
+      "pivot": [
+        96,
+        124
+      ],
+      "hairWidth": 56.0
+    }
+  ],
+  "scalePolicy": "head-width calibration, not total pose height; common ground pivot",
+  "sourceRows": [
+    0,
+    320,
+    595,
+    887
+  ],
+  "sourceColumns": [
+    0,
+    444,
+    887,
+    1330,
+    1774
+  ],
+  "wave": {
+    "body": "curtain-wave-body.png",
+    "hands": "curtain-wave-hands.png",
+    "frameSize": [
+      192,
+      128
+    ],
+    "sourceFrame": 8,
+    "handsOnly": true,
+    "frequencyHz": 0.72,
+    "regions": [
+      {
+        "name": "humanFreeHand",
+        "pivot": [
+          151,
+          81
+        ],
+        "polygon": [
+          [
+            151,
+            77
+          ],
+          [
+            157,
+            68
+          ],
+          [
+            162,
+            69
+          ],
+          [
+            165,
+            72
+          ],
+          [
+            161,
+            78
+          ],
+          [
+            153,
+            84
+          ],
+          [
+            148,
+            82
+          ]
+        ],
+        "maxAngle": 0.16
+      },
+      {
+        "name": "catFreePaw",
+        "pivot": [
+          82,
+          99
+        ],
+        "polygon": [
+          [
+            64,
+            86
+          ],
+          [
+            69,
+            85
+          ],
+          [
+            84,
+            97
+          ],
+          [
+            83,
+            102
+          ],
+          [
+            74,
+            96
+          ],
+          [
+            66,
+            91
+          ]
+        ],
+        "maxAngle": 0.2
+      }
+    ],
+    "note": "Body/head/feet/joined hands are one fixed image. Only isolated outer forearms rotate around these pivots."
+  },
+  "revision": 5,
+  "catProportions": "same compact head/body through sitting, standing, bow; source-only stray fragments removed"
+}

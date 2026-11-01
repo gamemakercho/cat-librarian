@@ -1,18 +1,20 @@
 {
-  "kit": "cat-librarian-pixel-credits-20261101 (2).zip",
-  "revision": "UPDATE-v3-ko.md",
-  "images": 12,
+  "kit": "credits-lobby-cat-and-pocket-update-v5.zip",
+  "revision": "UPDATE-v5-ko.md",
+  "images": 17,
+  "baseKit": "cat-librarian-pixel-credits-20261101 (2).zip",
+  "baseRevision": "UPDATE-v3-ko.md",
   "files": [
     {
       "file": "credits-data.js",
-      "bytes": 1746,
-      "sha256": "e044a2148390e0a31d2d5bc8fd8a7f3b681c4f229d4a879e1649c44ff7da73ab"
+      "bytes": 1898,
+      "sha256": "2c97a01eb95e7e8c5f5c0f39f0552f72c0c42545a9477bd4afe1b009029d1afc"
     },
     {
       "file": "credits-player.js",
-      "bytes": 13417,
-      "sha256": "be806c5673e12fb9d058645ef12c101477c0ffae436da017d8c4c01f69e49259",
-      "bundledSha256": "7f1b29de8efe648590c784c2d3255eb22e7554c03cb756488d2fd70b16f3890e"
+      "bytes": 17711,
+      "sha256": "a491ac32ae737b9b36fdd71d9d14e4e39680d89a8edb852c8c70b4fa50660733",
+      "bundledSha256": "e789f1c8febee2d3be6747df373af799c00946cd682706bd0e6e1c10c1058521"
     },
     {
       "file": "credits.css",
@@ -103,9 +105,49 @@
       "file": "sprites/books-only.json",
       "bytes": 343,
       "sha256": "316c397604fa6423fc7ec8b8fece4066b1037cbf15c869a7042e2821f4330b8a"
+    },
+    {
+      "file": "sprites/cat-lobby-hd.json",
+      "bytes": 7312,
+      "sha256": "c79872dd941222a0f95c4bfa6f4b634e5084f431b3d7dad5fef087465e1d1901"
+    },
+    {
+      "file": "sprites/cat-lobby-hd.png",
+      "bytes": 49291,
+      "sha256": "e2aeaa6bf0023b306b87fbe543a17dc3c1c09021a260734095583a25627970ef"
+    },
+    {
+      "file": "sprites/curtain-call-hd.json",
+      "bytes": 4700,
+      "sha256": "277291cdd2c9965a3046cc4821a913c0806c602e0252a1f4367308c76f2ca8db"
+    },
+    {
+      "file": "sprites/curtain-call-hd.png",
+      "bytes": 94991,
+      "sha256": "aac18da6284e31ae90fa466433dd5137be2c989c39eb5ebd638106e6b073b893"
+    },
+    {
+      "file": "sprites/curtain-wave-body.png",
+      "bytes": 9096,
+      "sha256": "3b76fff9a6aaa5a82951a40d6927c2af1e62a0d60a06a7cefd018221a8ffa914"
+    },
+    {
+      "file": "sprites/curtain-wave-hands.png",
+      "bytes": 1189,
+      "sha256": "168537e6f18b5b010d1dc5e77a7b947c1c3866f9d5cdc295b64e364ea8c180a3"
+    },
+    {
+      "file": "sprites/librarian-pocket-hd.json",
+      "bytes": 2032,
+      "sha256": "5fae5fc09b00e41fd11e1cf02462e6bc3a82efc505ca82accf15350dbcbf827c"
+    },
+    {
+      "file": "sprites/librarian-pocket-hd.png",
+      "bytes": 39392,
+      "sha256": "5bb0277af13acf546e36e81d729011f799562a3e5ea20f9ad47ff977ec4402a9"
     }
   ],
   "adaptations": [
-    "credits-player.js: versioned data import, image-object cache, AbortSignal disposal"
+    "credits-player.js: versioned data import, image-object cache, AbortSignal disposal; v5 animation/timings/assets retained"
   ]
 }

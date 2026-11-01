@@ -1,0 +1,505 @@
+{
+  "image": "cat-lobby-hd.png",
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "columns": 6,
+  "rows": 4,
+  "pivot": [
+    64,
+    124
+  ],
+  "logicalRenderSize": [
+    64,
+    64
+  ],
+  "logicalPivot": [
+    32,
+    62
+  ],
+  "animations": {
+    "run": {
+      "row": 0,
+      "frames": 6,
+      "fps": 8,
+      "loop": true
+    },
+    "rescue": {
+      "row": 1,
+      "frames": 6,
+      "fps": 12,
+      "loop": true
+    },
+    "bump": {
+      "row": 2,
+      "frames": 6,
+      "fps": 8,
+      "loop": false
+    },
+    "happy": {
+      "row": 3,
+      "frames": 6,
+      "fps": 8,
+      "loop": true
+    }
+  },
+  "normalization": "26 source-pixel orange head-cap width; action-level scale, fixed foot pivot; remove neighboring-frame fragments",
+  "targetHeadCapWidth": 26,
+  "poses": [
+    {
+      "frame": 0,
+      "action": "run",
+      "bounds": [
+        32,
+        77,
+        95,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.75,
+      "headCapCenter": [
+        78.24,
+        87.42
+      ]
+    },
+    {
+      "frame": 1,
+      "action": "run",
+      "bounds": [
+        32,
+        80,
+        97,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.75,
+      "headCapCenter": [
+        80.69,
+        90.18
+      ]
+    },
+    {
+      "frame": 2,
+      "action": "run",
+      "bounds": [
+        32,
+        78,
+        97,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.0,
+      "headCapCenter": [
+        80.08,
+        88.42
+      ]
+    },
+    {
+      "frame": 3,
+      "action": "run",
+      "bounds": [
+        32,
+        78,
+        97,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.49,
+      "headCapCenter": [
+        79.83,
+        88.42
+      ]
+    },
+    {
+      "frame": 4,
+      "action": "run",
+      "bounds": [
+        32,
+        78,
+        97,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.25,
+      "headCapCenter": [
+        79.22,
+        88.3
+      ]
+    },
+    {
+      "frame": 5,
+      "action": "run",
+      "bounds": [
+        32,
+        78,
+        97,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.0,
+      "headCapCenter": [
+        79.58,
+        88.3
+      ]
+    },
+    {
+      "frame": 6,
+      "action": "rescue",
+      "bounds": [
+        34,
+        76,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.13,
+      "headCapCenter": [
+        75.36,
+        87.32
+      ]
+    },
+    {
+      "frame": 7,
+      "action": "rescue",
+      "bounds": [
+        34,
+        80,
+        94,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 27.21,
+      "headCapCenter": [
+        78.05,
+        90.24
+      ]
+    },
+    {
+      "frame": 8,
+      "action": "rescue",
+      "bounds": [
+        36,
+        82,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.4,
+      "headCapCenter": [
+        75.61,
+        92.64
+      ]
+    },
+    {
+      "frame": 9,
+      "action": "rescue",
+      "bounds": [
+        35,
+        75,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.6,
+      "headCapCenter": [
+        73.39,
+        85.91
+      ]
+    },
+    {
+      "frame": 10,
+      "action": "rescue",
+      "bounds": [
+        35,
+        81,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.87,
+      "headCapCenter": [
+        77.57,
+        91.37
+      ]
+    },
+    {
+      "frame": 11,
+      "action": "rescue",
+      "bounds": [
+        36,
+        88,
+        92,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.87,
+      "headCapCenter": [
+        75.61,
+        98.37
+      ]
+    },
+    {
+      "frame": 12,
+      "action": "bump",
+      "bounds": [
+        40,
+        74,
+        88,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.87,
+      "headCapCenter": [
+        71.15,
+        84.03
+      ]
+    },
+    {
+      "frame": 13,
+      "action": "bump",
+      "bounds": [
+        34,
+        76,
+        95,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 27.45,
+      "headCapCenter": [
+        78.08,
+        85.9
+      ]
+    },
+    {
+      "frame": 14,
+      "action": "bump",
+      "bounds": [
+        36,
+        76,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.92,
+      "headCapCenter": [
+        77.18,
+        85.77
+      ]
+    },
+    {
+      "frame": 15,
+      "action": "bump",
+      "bounds": [
+        41,
+        71,
+        87,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.34,
+      "headCapCenter": [
+        65.02,
+        83.67
+      ]
+    },
+    {
+      "frame": 16,
+      "action": "bump",
+      "bounds": [
+        39,
+        77,
+        89,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.13,
+      "headCapCenter": [
+        71.6,
+        88.75
+      ]
+    },
+    {
+      "frame": 17,
+      "action": "bump",
+      "bounds": [
+        40,
+        74,
+        87,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.34,
+      "headCapCenter": [
+        69.56,
+        85.88
+      ]
+    },
+    {
+      "frame": 18,
+      "action": "happy",
+      "bounds": [
+        40,
+        75,
+        88,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.13,
+      "headCapCenter": [
+        70.75,
+        85.43
+      ]
+    },
+    {
+      "frame": 19,
+      "action": "happy",
+      "bounds": [
+        39,
+        75,
+        89,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.13,
+      "headCapCenter": [
+        71.6,
+        85.16
+      ]
+    },
+    {
+      "frame": 20,
+      "action": "happy",
+      "bounds": [
+        40,
+        74,
+        88,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.6,
+      "headCapCenter": [
+        72.34,
+        83.63
+      ]
+    },
+    {
+      "frame": 21,
+      "action": "happy",
+      "bounds": [
+        39,
+        75,
+        89,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.6,
+      "headCapCenter": [
+        71.07,
+        86.35
+      ]
+    },
+    {
+      "frame": 22,
+      "action": "happy",
+      "bounds": [
+        40,
+        76,
+        88,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 26.4,
+      "headCapCenter": [
+        70.62,
+        86.03
+      ]
+    },
+    {
+      "frame": 23,
+      "action": "happy",
+      "bounds": [
+        40,
+        75,
+        88,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headCapWidth": 25.87,
+      "headCapCenter": [
+        70.62,
+        85.43
+      ]
+    }
+  ]
+}
