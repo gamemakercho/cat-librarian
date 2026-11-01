@@ -2,10 +2,10 @@
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
-import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261101-room04-24';
-import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261101-room04-24';
+import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261101-ending26';
+import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261101-ending26';
 import {normalizeCourseOptions} from './course-config.js';
-import {endingPuzzle,endingPuzzleId} from './ending-course.js?v=20261031-final21';
+import {endingPuzzle,endingPuzzleId} from './ending-course.js?v=20261101-ending26';
 export const STORY_VERSION = 'opening-source-24-integrated-v20-20261030';
 export const locations = {
   learning:{name:'평생학습실(강의실1)',markerNumber:1},

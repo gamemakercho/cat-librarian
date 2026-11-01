@@ -1,4 +1,4 @@
-import {NOTICE05} from './mark04-05-config.js?v=20261101-room04-24';
+import {NOTICE05} from './mark04-05-config.js?v=20261101-ending26';
 export function createMarkCourseUI({createImage}){
  const $=id=>document.getElementById(id),figure=$('locationGuide'),question=$('notice05Panel');
  function size(){document.documentElement.style.setProperty('--course-available-height',Math.max(160,(visualViewport?.height||innerHeight)-document.querySelector('.player-tools').getBoundingClientRect().height)+'px');}

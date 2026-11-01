@@ -1,3 +1,4 @@
+import {impactProgress,IMPACT_DURATION_MS} from './ending-art-state.js';
 export const ENDING_GAME_ID='library-ending-rescue';
 export const ENDING_READY='cat-librarian:ending-ready';
 export const ENDING_CONTACT='cat-librarian:ending-contact';
@@ -14,7 +15,10 @@ export function migrateEndingSnapshot(value={}){
    snapshot.solved=[...new Set([...(value.solved||[]),ENDING_PUZZLE_ID])];snapshot.pendingSuccess=null;snapshot.pendingSuccessId=null;
    snapshot.currentId='ending-impact';snapshot.flags.endingContactReached=true;
  }
- if(value.currentId==='ending-impact'&&solved&&value.flags?.endingIllustrationStarted){snapshot.currentId='ending-returned';snapshot.flags.endingRescueComplete=true;}
+ if(value.currentId==='ending-impact'&&solved&&value.flags?.endingIllustrationStarted){
+  const progress=impactProgress(value.sceneStates?.['ending-impact']);
+  if(!progress||progress.elapsedMs>=IMPACT_DURATION_MS){snapshot.currentId='ending-returned';snapshot.flags.endingRescueComplete=true;}
+ }
  if(solved){snapshot.flags.endingContactReached=true;if(['ending-rescue','ending-not-yet'].includes(value.currentId))snapshot.currentId='ending-impact';}
  if(value.storyVersion?.includes('ending-v13')&&value.currentId==='ending-fold-puzzle'&&!solved&&!value.pendingSuccess)snapshot.currentId='ending-rescue';
  return snapshot;

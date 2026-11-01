@@ -371,12 +371,22 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 
 /* Full-panel story art keeps its native 3:2 ratio and never duplicates actors. */
 .ending-art-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
-.ending-art{position:absolute;left:3%;top:8%;width:94%;height:auto;aspect-ratio:3/2;object-fit:contain;image-rendering:auto;border-radius:3cqw;animation:art-fade .25s ease-out}
+.ending-art{position:absolute;left:3%;top:8%;width:94%;height:auto;aspect-ratio:3/2;object-fit:contain;image-rendering:auto;border-radius:3cqw}
 .ending-speaker{position:absolute;z-index:7;left:10%;top:52%;font-size:4.5cqw;color:#406a54}
 .stage[data-layout="ending-illustration"]{background:#fff7e3}
 .stage[data-layout="ending-illustration"] .dialogue{padding-top:8cqw;font-size:5.6cqw;line-height:1.6}
 .stage[data-layout="ending-illustration"] .next-button{font-size:5cqw;min-height:44px}
-.stage[data-type="impact"] .ending-art{left:0;top:23%;width:100%;border-radius:0;animation:impact-art .6s ease-out both}
+.ending-art[data-art-role="impact"]{left:0;top:23%;width:100%;border-radius:0;transform-origin:58% 56%}
+.ending-impact-stars{position:absolute;z-index:4;pointer-events:none;left:0;top:23%;width:100%;aspect-ratio:3/2;transform-origin:58% 56%}
+.impact-playing{animation:ending-contact 2000ms linear both paused}
+.impact-settled{transform:scale(1.12)}
+.ending-impact-stars svg{position:absolute;width:3.8%;height:auto;fill:#ffdc58;stroke:#dc9b28;stroke-width:1;opacity:0}
+.ending-impact-stars svg:nth-child(1){left:43%;top:33%;--star-delay:180ms}
+.ending-impact-stars svg:nth-child(2){left:56%;top:26%;--star-delay:250ms}
+.ending-impact-stars svg:nth-child(3){left:69%;top:39%;--star-delay:210ms}
+.ending-impact-stars svg:nth-child(4){left:70%;top:65%;--star-delay:290ms}
+.ending-impact-stars.impact-playing svg{animation:ending-star 1400ms linear var(--star-delay) both paused}
+.loading.over-art{inset:auto 8% 4%;padding:12px;border-radius:12px;background:#fff8e5e6;font-size:4cqw;text-align:center}
 .ending-impact-text{position:absolute;z-index:8;top:12%;left:0;right:0;text-align:center;font-size:16cqw;color:#f5b23f;-webkit-text-stroke:1cqw #493321;paint-order:stroke fill;text-shadow:0 2px #fff}
 .stage[data-layout="ending-illustration"] .ending-card{inset:47% 4% 2%;padding:3%;background:#fff9e8;opacity:1;transition:none;border:1px solid #c6b58f;border-radius:4cqw;justify-content:center}
 .stage[data-layout="ending-illustration"] .ending-card h1{font-size:6.5cqw;line-height:1.25}
@@ -384,11 +394,9 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="ending-illustration"] .ending-card .ending-eyebrow,.stage[data-layout="ending-illustration"] .ending-card .ending-punctuation,.stage[data-layout="ending-illustration"] .ending-card .ending-credit{display:none}
 .stage[data-layout="ending-illustration"] .ending-card button{padding:1cqw;margin:.5cqw 0;font-size:3.8cqw;min-height:44px}
 .retry-scene{position:absolute;z-index:25;top:64%;left:15%;width:70%;min-height:48px;font:inherit;background:#e2f0e4;color:#294c41;border:2px solid #6b947f;border-radius:12px}
-@keyframes art-fade{from{opacity:0}to{opacity:1}}
-@keyframes impact-art{0%{transform:scale(.94);opacity:1}45%{transform:scale(1.04);opacity:1}80%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:.3}}
-@media(prefers-reduced-motion:reduce){.ending-art,.stage[data-type="impact"] .ending-art{animation:art-fade .1s ease-out both}}
-
-.ending-tab-hidden .ending-art{animation-play-state:paused!important}
+@keyframes ending-contact{0%{transform:scale(1)}8%{transform:scale(1.12)}11%{transform:translate(-2px,0) scale(1.12)}14%{transform:translate(2px,1px) scale(1.12)}17%,100%{transform:scale(1.12)}}
+@keyframes ending-star{0%,25%,53%,81%,100%{opacity:0;transform:scale(.7)}12%,40%,68%{opacity:1;transform:scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.impact-playing,.impact-settled{transform:none}.ending-impact-stars.impact-playing svg{opacity:.8}}
 .stage[data-layout="ending-illustration"] .scene-layer{background:#fff7e3}
 
 /* One tuning point for story image → dialogue → next. Backgrounds and games stay put. */

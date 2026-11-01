@@ -1,10 +1,11 @@
-import {migrateCourseSnapshot} from './course-migration.js?v=20261101-marks23';
+import {migrateCourseSnapshot} from './course-migration.js?v=20261101-ending26';
 import {validOrderProgress} from './games/book-order/letter-state.js';
 import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
 import {isMinigameClear} from './minigame-bridge.js';
-import {isEndingResult,isEndingContact,isEndingPoster,migrateEndingSnapshot,ENDING_PUZZLE_ID} from './ending-bridge.js';
+import {isEndingResult,isEndingContact,isEndingPoster,migrateEndingSnapshot,ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
 import {activityForPuzzle,progressSummary,restoreCompletedActivities} from './progress.js';
+import {impactProgress} from './ending-art-state.js';
 
 export const normalizeAnswer=normalizeKoreanAnswer;
 
@@ -111,7 +112,8 @@ export class StoryRuntime {
       hintLevel:Number.isInteger(state.hintLevel)?Math.max(0,Math.min(2,state.hintLevel)):0,
       locationHintLevel:Number.isInteger(state.locationHintLevel)?Math.max(0,Math.min(2,state.locationHintLevel)):0,
       arrived:state.arrived===true,gameEntered:state.gameEntered===true,gameReturned:state.gameReturned===true,
-      feedback:typeof state.feedback==='string'?state.feedback.slice(0,300):''};
+      feedback:typeof state.feedback==='string'?state.feedback.slice(0,300):'',
+      ...(impactProgress(state)?{impactVersion:1,impactElapsedMs:impactProgress(state).elapsedMs}:{})};
   }
   updateSceneState(patch) { this.sceneStates[this.currentId]=this.normalizeSceneState({...this.sceneState,...patch}); }
   clearPending() {

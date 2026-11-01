@@ -9,9 +9,9 @@ for(const [html,scripts] of [['index.html',['app.js','ending-ui.js','fold-refere
  for(const file of scripts)for(const match of read(file).matchAll(/\$\('([^']+)'\)/g))if(!ids.includes(match[1]))throw Error('없는 엔딩 UI '+file+':'+match[1]);
 }
 if(/<iframe[^>]*id="endingFrame"[^>]*\bsrc=/u.test(read('index.html')))throw Error('엔딩을 버튼 전에 내려받고 있음');
-const modules=['ending/player.js','ending/auto-director.js','ending/phased-director.js','ending/churu-finale.js','ending/engine.js','ending/renderer.js','ending/impact-cutin.js','ending/scene-config.js','ending/asset-loader.js','ending-course.js','ending-ui.js','ending-bridge.js'];
+const modules=['ending/player.js','ending/auto-director.js','ending/phased-director.js','ending/churu-finale.js','ending/engine.js','ending/renderer.js','ending/impact-cutin.js','ending/scene-config.js','ending/asset-loader.js','ending-course.js','ending-ui.js','ending-bridge.js','ending-illustrations.js','ending-art-state.js','ending-art-view.js'];
 for(const file of modules)for(const match of read(file).matchAll(/from\s+['"]([^'"]+)['"]/g)){
- if(match[1].startsWith('.')&&!existsSync(resolve(root,dirname(file),match[1])))throw Error('없는 엔딩 모듈 '+match[1]);
+ if(match[1].startsWith('.')&&!existsSync(resolve(root,dirname(file),match[1].split('?')[0])))throw Error('없는 엔딩 모듈 '+match[1]);
 }
 const records=JSON.parse(read('ending/SOURCE.json'));
 const impact=readFileSync(resolve(root,'ending/assets/postcard-impact.webp'));

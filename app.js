@@ -1,14 +1,16 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-room04-24';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-ending26';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-room04-24';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-ending26';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-room04-24';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-ending26';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js?v=20261101-credits-v3';
 import {createCreditsUI} from './credits-ui.js?v=20261101-credits-v3';
-import {ENDING_PUZZLE_ID} from './ending-bridge.js';
-import {endingArtIds} from './ending-course.js?v=20261031-final21';
-import {createIllustrationUI} from './ending-illustrations.js?v=20261101-room04-24';
+import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
+import {endingArtIds} from './ending-course.js?v=20261101-ending26';
+import {createIllustrationUI} from './ending-illustrations.js?v=20261101-ending26';
+import {impactProgress,canReuseEndingIllustration} from './ending-art-state.js';
+import {createEndingArtView} from './ending-art-view.js';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
 import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261101-room04-24';
@@ -49,6 +51,7 @@ const imageCache=new Map();
 const elementCache=new Map();
 const clipCache=new Map();
 const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const endingArtView=createEndingArtView({layer:$('endingArtLayer'),createImage,reducedMotion:prefersReducedMotion});
 
 const foldReference=createFoldReference({getScene:()=>runtime.scene});
 const progressUI=createProgressUI({getProgress:()=>runtime.progress,onRestart:()=>restart()});
@@ -60,9 +63,11 @@ const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.r
   isCompleted:()=>runtime.scene.cinematicPart==='approach'?runtime.flags.endingContactReached===true:runtime.flags.endingRescueComplete===true,
   onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
   onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
-  onReplay:()=>{if(runtime.scene.type==='ending'){runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
+  onReplay:()=>{if(runtime.scene.type==='ending'){runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({impactVersion:1,impactElapsedMs:0});runtime.flags.endingRescueComplete=false;runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
 const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),isPaused:()=>progressUI.isOpen,
- onStart:()=>{runtime.flags.endingIllustrationStarted=true;save();},
+ getProgress:()=>impactProgress(runtime.sceneStates['ending-impact']),
+ onStart:()=>{runtime.flags.endingIllustrationStarted=true;runtime.flags.endingRescueComplete=false;runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({...runtime.sceneStates['ending-impact'],impactVersion:1,impactElapsedMs:impactProgress(runtime.sceneStates['ending-impact'])?.elapsedMs||0});save();},
+ onProgress:({sceneId,elapsedMs})=>{runtime.sceneStates[sceneId]=runtime.normalizeSceneState({...runtime.sceneStates[sceneId],impactVersion:1,impactElapsedMs:elapsedMs});save();},
  onImpactDone:()=>{if(runtime.completeIllustratedImpact().ok){save();advance();}},
  onComplete:()=>{if(runtime.completeStory()){save();window.dispatchEvent(new CustomEvent('escape-room:complete',{detail:{puzzleId:'cat-librarian-ending',completed:true,runId:runtime.runId}}));}}});
 let arrivalReadyAt=0;let nextReadyAt=0;let stopShelfMotion=()=>{};
@@ -74,7 +79,7 @@ function loadImage(key){
   if(!imageCache.has(src)){
     const raster=new Promise((resolve,reject)=>{
       const im=new Image();let fallback=false;
-      im.onload=async()=>{try{if(assets[key].decodeBeforeDisplay&&im.decode)await im.decode();assets[key].loadedSrc=im.src;resolve(im);}catch{im.onerror();}};
+      im.onload=async()=>{try{if((key.startsWith('ending:')||assets[key].decodeBeforeDisplay)&&im.decode)await im.decode();assets[key].loadedSrc=im.src;resolve(im);}catch{im.onerror();}};
       im.onerror=()=>{if(assets[key].fallback&&!fallback){fallback=true;im.src=assets[key].fallback;}else{imageCache.delete(src);reject(Error('이미지를 읽을 수 없어요.'));}};
       im.src=src;
     });
@@ -184,6 +189,20 @@ function advance(opts={}){
 
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
+  // The illustration's identity is independent of the caption's scene ID.
+  // Do not detach, reset src, hide, or restart animations for the same artwork.
+  if(sceneReady&&canReuseEndingIllustration(renderedScene,s)&&endingArtView.matches(s.endingArt)){
+    creditsUI.close();const previous=renderedScene,stage=$('stage');
+    stage.dataset.type=s.type;stage.dataset.scene=s.id;
+    stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
+    stage.style.setProperty('--line-height',s.lineHeight||1.8);
+    applyRect($('dialogue'),s.geometry.dialogue);applyRect($('nextButton'),s.geometry.nextButton);
+    $('dialogue').hidden=s.type==='ending';$('nextButton').hidden=!s.next;
+    $('nextButton').textContent=s.nextLabel||'다음으로';$('backButton').disabled=!runtime.history.length;
+    nextReadyAt=performance.now()+300;typeText(s);renderedScene=s;updateReview(s);
+    if(previous.type!==s.type)endingUI.render(s);
+    illustrationUI.render(s);preloadNextEndingArt(s);return;
+  }
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
   creditsUI.close();closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
@@ -197,7 +216,8 @@ async function render(){
   stage.style.setProperty('--dialogue-size',`${(s.fontSize||25)/5}cqw`);
   stage.style.setProperty('--line-height',s.lineHeight||1.8);
   for(const name of ['dialogue','nextButton','locationBanner','answerForm','movementControls','tutorialPanel','iconPuzzle','minigameControls','machineStatus','cipherPanel'])applyRect($(name),s.geometry[name]);
-  $('retryScene').hidden=true;$('storyArtLayer').replaceChildren();$('endingArtLayer').replaceChildren();$('endingImpactText').hidden=true;
+  $('retryScene').hidden=true;$('storyArtLayer').replaceChildren();
+  $('loading').classList.toggle('over-art',Boolean(s.endingArt&&endingArtView.hasCurrent()));
   $('loading').textContent='장면을 불러오고 있어요…';$('loading').hidden=preserveText;
   try{await Promise.all(sceneAssetKeys(s).map(loadImage));}catch(e){
     if(serial!==renderSerial)return;
@@ -207,7 +227,7 @@ async function render(){
   }
   if(serial!==renderSerial)return;
   $('loading').hidden=true;sceneReady=true;nextReadyAt=performance.now()+300;
-  if(s.endingArt){const im=createImage(`ending:${s.endingArt}`,'ending-art',s.type==='impact'?'사서와 고양이의 이마가 부딪히는 순간':s.endingArt==='ending-04-returned'?'바닥에 앉아 돌아온 걸 깨달은 사서와 놀라 물러나는 고양이':'작은 고양이를 안고 웃는 사서');$('endingArtLayer').append(im);}
+  endingArtView.show(s);
   if(s.storyArt)$('storyArtLayer').append(createImage(`story:${s.storyArt}`,'story-scene-art','UV 램프 교체를 마친 책소독기와 감은 눈의 고양이, 바닥 상자의 빼낸 램프'));
   const bg=$('sceneLayer');bg.replaceChildren();
   bg.style.backgroundImage=s.background?`url("${imageURL(`bg:${s.background}`)}")`:'none';
@@ -305,6 +325,7 @@ async function render(){
   renderedScene=s;layoutStoryFlow(stage,s);updateReview(s);endingUI.render(s);
   markCourseUI.render(s);
   illustrationUI.render(s);foldReference.render(s);
+  preloadNextEndingArt(s);
   for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
   if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
   if(runtime.pendingSuccessId===s.id)showSuccess();
@@ -314,6 +335,13 @@ async function render(){
     const next=runtime.index.get(s.next);
     if(!next?.endingArt&&!next?.storyArt&&next?.type!=='move'&&puzzles[next?.puzzleId]?.answerMode!=='icons')sceneAssetKeys(next).forEach(k=>loadImage(k).catch(()=>{}));
   }
+}
+
+function preloadNextEndingArt(scene){
+  if(!scene.endingArt)return;
+  const seen=new Set();let next=runtime.index.get(scene.next);
+  while(next&&next.endingArt===scene.endingArt&&!seen.has(next.id)){seen.add(next.id);next=runtime.index.get(next.next);}
+  if(next?.endingArt)loadImage('ending:'+next.endingArt).catch(()=>{});
 }
 
 function renderIconPuzzle(){
@@ -578,7 +606,7 @@ $('englishKeypadDialog').addEventListener('keydown',e=>{
   else if(e.key==='Backspace'){e.preventDefault();$('answer').value=$('answer').value.slice(0,-1);updateKeypad();}
   else if(e.key==='Enter'){e.preventDefault();submitAnswer();}
 });
-function restart(){const options=normalizeCourseOptions(courseSettings);runtime=new StoryRuntime(createChapters(options),puzzles,{},uiText.successPopup,Math.random,options);save();if(review)fillSceneSelect();render();}
+function restart(){illustrationUI.stop();const options=normalizeCourseOptions(courseSettings);runtime=new StoryRuntime(createChapters(options),puzzles,{},uiText.successPopup,Math.random,options);save();if(review)fillSceneSelect();render();}
 $('restartButton').addEventListener('click',restart);
 if(review){
   $('reviewPanel').hidden=false;

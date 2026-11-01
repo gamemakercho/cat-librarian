@@ -4,7 +4,7 @@ async function readConfig(name){
   const url=new URL(`./config/${name}.json`,import.meta.url);
   if(typeof window==='undefined')return JSON.parse(await (await import('node:fs/promises')).readFile(url,'utf8'));
   try{
-   url.searchParams.set('v','20261101-room04-24');
+   url.searchParams.set('v','20261101-ending26');
    const response=await fetch(url);if(!response.ok)throw Error(`진행 설정을 읽지 못했어요: ${name}`);
    return await response.json();
   }catch(error){
@@ -23,7 +23,7 @@ export const MARK_SCENE_GROUPS=Object.freeze({
  book_ordering_game:['newbooks-order-game'],general04_book_letters:['newbooks-order-game'],success_popup04:['newbooks-order-game'],
  after_letters04:['newbooks-after-order','general-crash','general-no-rest','general-shelf-direction'],travel05:['general-shelf-arrival'],
  shelf05:['general-book-drop','general-cattower','general-stare','general-my-face','general-cat-meow','general-cart'],
- book_catching_game:['general-book-catch'],after_catch05:['general-after-catch','general-return-notice','general-return-help','general-return-joke','general-expression-intro','general-expression-help'],
+ book_catching_game:['general-book-catch'],after_catch05:['general-after-catch','general-return-notice','general-return-help','general-expression-intro','general-expression-help'],
  notice05_expression_puzzle:['general-return-puzzle'],success_popup05:['general-return-puzzle'],
  after_notice05:['general-notice-solved','general-stay-still','general-flee-meow','general-come-down','general-no-chance','general-body-missed','general-lobby-direction'],
  travel_lobby:['travel-to-ending-lobby'],before_runner:['lobby-ending-entry','ending-one-left','ending-found'],runner_game:['ending-rescue'],

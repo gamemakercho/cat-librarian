@@ -1,6 +1,6 @@
-import {createEndingScenes} from './ending-course.js?v=20261031-final21';
+import {createEndingScenes} from './ending-course.js?v=20261101-ending26';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
-import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261101-room04-24';
+import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261101-ending26';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
 const gameGeometry={cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,175]};
@@ -33,7 +33,7 @@ export function createGeneralScenes(){
  talk('general-cat-meow','냐아!','general-cart',null,'book-catch-shelf',{...shelf,speaker:'사서 몸의 고양이',shelfMotion:true});
  talk('general-cart','내 얼굴로 그렇게 뿌듯해하지 마!','general-book-catch','self-mockery','book-catch-shelf',shelf);
  scenes.push({id:'general-book-catch',type:'minigame',puzzleId:'book-catch-keyword',background:'book-catch-shelf',cat:'shocked',layout:'result-game',text:markLines('shelf05').afterSound[1],gameUrl:'./games/book-catch/',gameTitle:'책 받기',gameStartLabel:'책 받기',next:'general-after-catch',geometry:gameGeometry});
- const catchLines=markLines('after_catch05').lines,catchIds=['general-after-catch','general-return-notice','general-return-help','general-return-joke','general-expression-intro','general-expression-help'];
+ const catchLines=markLines('after_catch05').lines,catchIds=['general-after-catch','general-return-notice','general-return-help','general-expression-intro','general-expression-help'];
  catchIds.forEach((id,i)=>talk(id,catchLines[i],catchIds[i+1]||'general-return-puzzle',i===3?'self-mockery':'neutral','general-clean',{noticeText:'다 읽은 책은 북트럭에 놓아 주세요'}));
  scenes.push({id:'general-return-puzzle',type:'puzzle',puzzleId:'return-notice-booksodong',background:null,layout:'notice05-expression',fontSize:25,text:NOTICE05.title,next:'general-notice-solved',geometry:{dialogue:[0,0,500,100],answerForm:[29,625,442,155]}});
  const solved=markLines('after_notice05');

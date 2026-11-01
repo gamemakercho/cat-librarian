@@ -1,5 +1,6 @@
 // The pursuit starts in the general room; old lobby scene IDs migrate explicitly.
-import {ENDING_PUZZLE_ID} from './ending-bridge.js';
+import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
+import {IMPACT_DURATION_MS} from './ending-art-state.js';
 export const endingPuzzleId=ENDING_PUZZLE_ID;
 export const endingPuzzle={status:'confirmed',acceptedAnswers:['고양이와 사서가 돌아왔다'],
   successMode:'immediate',answerLabel:'한글 11글자, 띄어쓰기 상관 없음, 느낌표 제외',placeholder:'완성된 문장',ariaLabel:'엽서를 접어 완성한 문장, 한글 11글자',
@@ -16,7 +17,7 @@ export function createEndingScenes(){
  {id:'ending-rescue',type:'cinematic',cinematicPart:'approach',background:'general-clean',cat:'shocked',layout:'ending-cinema',text:'책 더미를 피해 사서를 따라가자!',actionLabel:'사서 따라잡기',next:'ending-fold-puzzle'},
  {id:'ending-fold-puzzle',type:'puzzle',puzzleId:endingPuzzleId,background:null,layout:'final-fold',fontSize:24,text:'엽서를 활용해 마지막 장면을 완성해줘!',instruction:'엽서의 노란 부분 두 곳을 접어,\n완성되는 문장을 입력해주세요.',next:'ending-impact',geometry:{locationBanner:[31,40,438,62],dialogue:[32,325,436,210],answerForm:[29,700,442,185]}},
  {id:'ending-not-yet',type:'dialogue',cat:'bewildered',text:'우리 이야기의 마지막 장면이야!',next:'ending-impact'},
- {id:'ending-impact',type:'impact',endingArt:'ending-03-impact',background:null,layout:'ending-illustration',durationMs:600,text:'쿵!',next:'ending-returned'},
+ {id:'ending-impact',type:'impact',endingArt:'ending-03-impact',background:null,layout:'ending-illustration',durationMs:IMPACT_DURATION_MS,text:'쿵!',next:'ending-returned'},
  art('ending-returned','ending-04-returned','앗… 돌아왔다!','ending-cat'),
  art('ending-cat','ending-04-returned','야옹~!','ending-returned-joke','고양이'),
  art('ending-returned-joke','ending-04-returned','머리를 부딪혀서 돌아왔나 봐! :O','ending-returned-relief'),
