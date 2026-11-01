@@ -1,17 +1,6 @@
 import {ENDING_READY,ENDING_CONTACT,ENDING_COMPLETE,ENDING_ERROR,isEndingMessage} from './ending-bridge.js';
 export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,onRestart,isCompleted}){
- const $=id=>document.getElementById(id);let active=null,timer=null,step=0,finished=false;
- const instructions=[['노란 부분을 찾아요','오른쪽 위와 왼쪽 아래예요'],['뒤쪽으로 접어요','노란 부분을 뒤로 접고, 엽서를 뒤집어 봐요']];
- function showStep(){
-  $('foldStepTitle').textContent=`${step+1}. ${instructions[step][0]}`;$('foldStepBody').textContent=instructions[step][1];
-  $('foldStepImage').src=`./assets/ending/fold-step-${step+1}.svg`;$('foldStepImage').alt=instructions[step].join(' ');
-  $('foldStepPrevious').disabled=step===0;$('foldStepNext').textContent=step===1?'살펴볼게!':'다음 그림';$('foldStepCount').textContent=`${step+1} / 2`;
- }
- function showGuide(){step=0;showStep();$('foldGuideDialog').showModal();}
- function closeGuide(){$('foldGuideDialog').close();(getScene().type==='ending'?$('endingFoldAgain'):$('answer')).focus();}
- $('endingFoldAgain').addEventListener('click',showGuide);$('foldGuideClose').addEventListener('click',closeGuide);
- $('foldGuideDialog').addEventListener('cancel',e=>{e.preventDefault();closeGuide();});
- $('foldStepPrevious').addEventListener('click',()=>{step=0;showStep();});$('foldStepNext').addEventListener('click',()=>{if(step===1)closeGuide();else{step=1;showStep();}});
+ const $=id=>document.getElementById(id);let active=null,timer=null,finished=false;
  function stop(){
   clearTimeout(timer);timer=null;active=null;finished=false;$('endingCinemaOverlay').hidden=true;$('endingFrame').removeAttribute('src');
   document.body.classList.remove('ending-active');document.documentElement.classList.remove('ending-active');$('appShell').inert=false;
@@ -44,7 +33,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   if(replay){$('endingReplay').focus();return;}if(contact)onContact(event.data.result);else onComplete(event.data.result);
  });
  function render(scene){
-  stop();$('foldGuideDialog').close();const fold=scene.id==='ending-fold-puzzle';
+  stop();const fold=scene.id==='ending-fold-puzzle';
   $('inlineFoldGuide').hidden=!fold;$('endingContactStill').hidden=true;
   if(fold){$('inlineFoldGuide').src='./assets/ending/postcard-fold-guide.svg';if(getPoster())$('endingContactStill').src=getPoster();}
   else{$('endingContactStill').removeAttribute('src');$('inlineFoldGuide').removeAttribute('src');}

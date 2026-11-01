@@ -4,7 +4,8 @@ import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.j
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
 import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-room04-24';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261031-final21';
+import {createEndingUI} from './ending-ui.js?v=20261101-credits-v3';
+import {createCreditsUI} from './credits-ui.js?v=20261101-credits-v3';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 import {endingArtIds} from './ending-course.js?v=20261031-final21';
 import {createIllustrationUI} from './ending-illustrations.js?v=20261101-room04-24';
@@ -52,6 +53,7 @@ const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matche
 const foldReference=createFoldReference({getScene:()=>runtime.scene});
 const progressUI=createProgressUI({getProgress:()=>runtime.progress,onRestart:()=>restart()});
 const markCourseUI=createMarkCourseUI({createImage});
+const creditsUI=createCreditsUI({canOpen:()=>runtime.scene.type==='ending'&&(review||runtime.flags.endingCompleted===true)});
 const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
   getPoster:()=>runtime.endingContactPoster,
   canRestore:()=>runtime.solved.has(ENDING_PUZZLE_ID),
@@ -183,7 +185,7 @@ function advance(opts={}){
 async function render(){
   const serial=++renderSerial;const s=runtime.scene;
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();
+  creditsUI.close();closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;

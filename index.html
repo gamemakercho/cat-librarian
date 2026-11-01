@@ -7,7 +7,7 @@
   <title>고양이가 된 사서</title>
   <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261101-room04-24">
+  <link rel="stylesheet" href="style.css?v=20261101-credits-v3">
 </head>
 <body>
   <main id="appShell" class="app-shell">
@@ -128,7 +128,7 @@
         <p class="ending-thanks">오늘 도서관을 지켜 줘서 고마워요</p>
         <p class="ending-credit">고양이가 된 사서 · 해미도서관</p>
         <button id="endingReplay" type="button">마지막 장면 다시 보기</button>
-        <button id="endingFoldAgain" type="button">엽서 접기 다시 보기</button>
+        <button id="endingCredits" type="button" aria-haspopup="dialog" aria-controls="creditsDialog">크레딧</button>
         <button id="endingRestart" type="button">이야기 처음부터</button>
       </section>
     </section>
@@ -160,11 +160,7 @@
     <div id="minigameLoadError" class="minigame-load-error" role="alert" hidden><span>게임을 불러오지 못했어 연결을 확인하고 다시 시도해 줘</span><button id="retryMinigame" type="button">다시 불러오기</button></div>
     <iframe id="minigameFrame" title="우당탕! 물감 청소 게임"></iframe>
   </section>
-  <dialog id="foldGuideDialog" class="fold-guide-dialog" aria-labelledby="foldStepTitle">
-    <header><h2 id="foldStepTitle">엽서 접는 방법</h2><button id="foldGuideClose" type="button" aria-label="접기 안내 닫기">닫기</button></header>
-    <p id="foldStepBody"></p><img id="foldStepImage" alt="엽서 접기 단계 안내" draggable="false">
-    <footer><button id="foldStepPrevious" type="button">이전 그림</button><span id="foldStepCount" role="status">1 / 2</span><button id="foldStepNext" type="button">다음 그림</button></footer>
-  </dialog>
+  <dialog id="creditsDialog" class="credits-dialog" aria-label="고양이가 된 사서 크레딧"><div id="creditsHost"></div></dialog>
   <section id="endingCinemaOverlay" class="ending-cinema-overlay" role="dialog" aria-modal="true" aria-label="마지막 이야기 연출" hidden>
     <header><span id="endingCinemaLabel">아직 끝나지 않은 이야기</span><button id="endingClose" type="button">이야기로 돌아가기</button></header>
     <iframe id="endingFrame" title="사서와 고양이가 원래 몸으로 돌아오는 마지막 장면"></iframe>
@@ -172,6 +168,6 @@
     <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
-  <script type="module" src="app.js?v=20261101-room04-24"></script>
+  <script type="module" src="app.js?v=20261101-credits-v3"></script>
 </body>
 </html>

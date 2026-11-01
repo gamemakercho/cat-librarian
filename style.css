@@ -487,3 +487,13 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="room04-arrival"] .movement-controls{left:16px!important;top:auto!important;bottom:10px;width:calc(100% - 32px)!important;height:110px!important}
 .stage[data-layout="room04-arrival"] .movement-controls h2{font-size:23px;margin:0 0 8px}
 .stage[data-layout="room04-arrival"] .arrival-button{font-size:19px;min-height:48px;padding:8px}
+
+.credits-dialog{inset:0;margin:0;padding:0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;overflow:auto;overscroll-behavior:contain;background:#fff6df;color:#3d3025;font:inherit}
+.credits-dialog::backdrop{background:#382a20b3}
+.credits-dialog[open]{display:block}
+.credits-status{max-width:460px;margin:30px auto;padding:24px;text-align:center;font-size:20px}
+.credits-status button{display:block;margin:14px auto;min-height:48px;padding:10px 18px;border:2px solid #987951;border-radius:12px;background:#ffe1a9;color:#413121;font:inherit}
+.credits-dialog .credits-canvas{image-rendering:pixelated}
+.credits-dialog button{-webkit-tap-highlight-color:transparent}
+html.credits-open,html.credits-open body{overflow:hidden;overscroll-behavior:none}
+@media(max-height:700px){.credits-dialog .library-credits{padding:10px 12px 14px}.credits-dialog .credits-title{font-size:22px;margin:6px 0 8px}.credits-dialog .credits-lesson{min-height:136px;margin-top:10px;padding:12px 14px}.credits-dialog .credits-caption{font-size:16px;line-height:1.55}}

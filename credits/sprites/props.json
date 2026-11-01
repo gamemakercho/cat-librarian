@@ -1,0 +1,25 @@
+{
+  "image": "props.png",
+  "frameWidth": 32,
+  "frameHeight": 32,
+  "columns": 4,
+  "rows": 4,
+  "frames": {
+    "paintTeal": 0,
+    "paintOrange": 1,
+    "shoeLeft": 2,
+    "shoeRight": 3,
+    "bookRed": 4,
+    "bookTeal": 5,
+    "bookOpen": 6,
+    "treat": 7,
+    "cart": 8,
+    "star": 9,
+    "sweat": 10,
+    "screwdriver": 11,
+    "potOrange": 12,
+    "potTeal": 13,
+    "mopHead": 14,
+    "toolbox": 15
+  }
+}

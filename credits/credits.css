@@ -1,0 +1,14 @@
+.library-credits{box-sizing:border-box;max-width:520px;width:100%;margin:0 auto;padding:18px 15px 24px;background:#fff6df;color:#3d3025;font-family:inherit;line-height:1.55}
+.library-credits *{box-sizing:border-box}.library-credits [hidden]{display:none!important}
+.credits-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.credits-eyebrow{font-size:13px;color:#78654e;font-weight:700}
+.library-credits button{min-height:44px;border:1.5px solid #987951;border-radius:11px;padding:8px 14px;color:#413121;background:#ffe1a9;font:inherit;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.library-credits button:focus-visible{outline:3px solid #328a83;outline-offset:3px}.library-credits button:disabled{opacity:.45;cursor:default}
+.credits-close{background:#fff9ec!important}.credits-title{margin:10px 0 13px;font-size:24px;letter-spacing:-.04em;line-height:1.35}
+.credits-frame{overflow:hidden;border:3px solid #705334;border-radius:10px;background:#dcb784;box-shadow:0 3px 0 #d0b189}
+.credits-canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;aspect-ratio:5/3}
+.credits-lesson{min-height:146px;padding:15px 17px;margin-top:16px;background:#fffdf3;border:1.5px solid #cdb58d;border-radius:14px}
+.credits-lesson-label{margin:0 0 7px;color:#448c7a;font-size:12px;font-weight:800;letter-spacing:.01em}
+.credits-caption{margin:0;font-size:17px;font-weight:700;line-height:1.65;word-break:keep-all;overflow-wrap:break-word;letter-spacing:-.025em}
+.credits-controls,.credits-end-controls{display:flex;gap:9px;margin-top:14px}.credits-controls button,.credits-end-controls button{flex:1}
+.credits-end-controls{flex-wrap:wrap}.credits-end-controls button{min-width:150px}
+@media(max-width:359px){.library-credits{padding:13px 10px 20px}.credits-title{font-size:22px}.credits-caption{font-size:16px}.credits-lesson{padding:13px 14px;min-height:150px}}

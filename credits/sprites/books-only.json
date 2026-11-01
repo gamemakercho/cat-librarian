@@ -1,0 +1,20 @@
+{
+  "frameSize": [
+    32,
+    32
+  ],
+  "pivot": [
+    16,
+    16
+  ],
+  "images": {
+    "bookRed": "book-red-only.png",
+    "bookTeal": "book-teal-only.png"
+  },
+  "content": "book only with transparent background; no shelf, base, floor, or furniture",
+  "fixedShelfLipY": 144,
+  "slotClip": {
+    "y": 128,
+    "bottomExclusive": 144
+  }
+}

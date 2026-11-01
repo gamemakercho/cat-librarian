@@ -1,0 +1,111 @@
+{
+  "kit": "cat-librarian-pixel-credits-20261101 (2).zip",
+  "revision": "UPDATE-v3-ko.md",
+  "images": 12,
+  "files": [
+    {
+      "file": "credits-data.js",
+      "bytes": 1746,
+      "sha256": "e044a2148390e0a31d2d5bc8fd8a7f3b681c4f229d4a879e1649c44ff7da73ab"
+    },
+    {
+      "file": "credits-player.js",
+      "bytes": 13417,
+      "sha256": "be806c5673e12fb9d058645ef12c101477c0ffae436da017d8c4c01f69e49259",
+      "bundledSha256": "7f1b29de8efe648590c784c2d3255eb22e7554c03cb756488d2fd70b16f3890e"
+    },
+    {
+      "file": "credits.css",
+      "bytes": 1940,
+      "sha256": "b6e5e4e3549c9b7c557b43fd1b7a8f9df3259140097d87f819d2f740c47281b0"
+    },
+    {
+      "file": "backgrounds/bg01.png",
+      "bytes": 40591,
+      "sha256": "a7b71007650d44a6dca4acc1278246d3fd31bfee11c38fb12c566a41bfe3dcb6"
+    },
+    {
+      "file": "backgrounds/bg02.png",
+      "bytes": 34656,
+      "sha256": "571ecb1d37caf6a067e0c99f6711f9a75ac4e57926dbdd35adab4b0a7c1972d8"
+    },
+    {
+      "file": "backgrounds/bg03.png",
+      "bytes": 42241,
+      "sha256": "e6f2593545cb049e892a4b36be5cac8c2a96c5e1de03bb61c665a146bc92d536"
+    },
+    {
+      "file": "backgrounds/bg04.png",
+      "bytes": 37097,
+      "sha256": "4a82a6e50ed3632df560ce09d35fca815573df40126dc8f9f8b250337eac7fba"
+    },
+    {
+      "file": "backgrounds/bg05.png",
+      "bytes": 40915,
+      "sha256": "b3721e6f1ea533af118ba6b9b26bb12713dac29901e6c04851dd337960cf6bdd"
+    },
+    {
+      "file": "backgrounds/bg06.png",
+      "bytes": 39062,
+      "sha256": "15bef69d9726146a6720e58f921863d6f86557fe3fc447abaf6b9605e7194e2c"
+    },
+    {
+      "file": "sprites/librarian-hd.png",
+      "bytes": 259692,
+      "sha256": "36a397d7646a1386edb3777643075231cfbb18f076b67348795536b42bafc8b6"
+    },
+    {
+      "file": "sprites/cat-hd.png",
+      "bytes": 114954,
+      "sha256": "0c6da5eaad7cfdca8f313c1b724008ef3d68d44f09b64e8ea1edff5d4cb0ceab"
+    },
+    {
+      "file": "sprites/props.png",
+      "bytes": 11123,
+      "sha256": "952886eba5a535b07fdb7f9cc84c0876fe67932860005e1d9933b3fdacc081e6"
+    },
+    {
+      "file": "sprites/librarian-run-hd.png",
+      "bytes": 52361,
+      "sha256": "2cda9aea632c65016a17d57993bb83496f290a116139d2c95f58b3bc15e5b2de"
+    },
+    {
+      "file": "sprites/book-red-only.png",
+      "bytes": 791,
+      "sha256": "49f64c0a136ba8801d3f82d2d18f8d6efd6fe05c1402de0e0546829a37305205"
+    },
+    {
+      "file": "sprites/book-teal-only.png",
+      "bytes": 902,
+      "sha256": "2402fdbb6b0f6aa5b3479c767eb619ac7ed9135390e14ac87e8151056449de9c"
+    },
+    {
+      "file": "sprites/librarian-run-hd.json",
+      "bytes": 2164,
+      "sha256": "eda46e81e6d9d472432846dc83b177cb30c0b8c540a692c7b1e0aa6ae5be3e32"
+    },
+    {
+      "file": "sprites/librarian-hd.json",
+      "bytes": 6422,
+      "sha256": "7f81dbfdd9036522157d6bb12ab6337afef931d5e175ecbcd7fb70781943207b"
+    },
+    {
+      "file": "sprites/cat-hd.json",
+      "bytes": 8476,
+      "sha256": "e9921dd8396517582565de504c786596b297444a2ae6532e4be45b17aba86563"
+    },
+    {
+      "file": "sprites/props.json",
+      "bytes": 416,
+      "sha256": "760446a3cc9d2748ab12e6bb3e59921eae65a9fa6f845777656c972e3bf58f26"
+    },
+    {
+      "file": "sprites/books-only.json",
+      "bytes": 343,
+      "sha256": "316c397604fa6423fc7ec8b8fece4066b1037cbf15c869a7042e2821f4330b8a"
+    }
+  ],
+  "adaptations": [
+    "credits-player.js: versioned data import, image-object cache, AbortSignal disposal"
+  ]
+}

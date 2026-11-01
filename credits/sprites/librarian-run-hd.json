@@ -1,0 +1,155 @@
+{
+  "image": "librarian-run-hd.png",
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "columns": 4,
+  "rows": 2,
+  "frames": 8,
+  "fps": 12,
+  "loop": true,
+  "pivot": [
+    64,
+    124
+  ],
+  "logicalRenderSize": [
+    64,
+    64
+  ],
+  "logicalPivot": [
+    32,
+    62
+  ],
+  "animation": "run",
+  "order": "row-major",
+  "passingFrames": [
+    2,
+    6
+  ],
+  "flightFrames": [
+    3,
+    7
+  ],
+  "scalePolicy": "one scale, fixed head anchor, small phase bounce; preserve foot lift",
+  "poses": [
+    {
+      "frame": 0,
+      "phase": "right-contact",
+      "bounds": [
+        23,
+        26,
+        92,
+        123
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 26
+    },
+    {
+      "frame": 1,
+      "phase": "right-down",
+      "bounds": [
+        29,
+        28,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 28
+    },
+    {
+      "frame": 2,
+      "phase": "right-passing",
+      "bounds": [
+        30,
+        26,
+        92,
+        123
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 26
+    },
+    {
+      "frame": 3,
+      "phase": "right-push-flight",
+      "bounds": [
+        27,
+        24,
+        93,
+        119
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 24
+    },
+    {
+      "frame": 4,
+      "phase": "left-contact",
+      "bounds": [
+        24,
+        26,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 26
+    },
+    {
+      "frame": 5,
+      "phase": "left-down",
+      "bounds": [
+        25,
+        28,
+        92,
+        126
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 28
+    },
+    {
+      "frame": 6,
+      "phase": "left-passing",
+      "bounds": [
+        29,
+        26,
+        93,
+        124
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 26
+    },
+    {
+      "frame": 7,
+      "phase": "left-push-flight",
+      "bounds": [
+        27,
+        24,
+        93,
+        117
+      ],
+      "pivot": [
+        64,
+        124
+      ],
+      "headTop": 24
+    }
+  ]
+}
