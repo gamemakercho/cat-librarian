@@ -183,7 +183,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
     locationHints:locationHints(4),onArrival:{mark04Arrived:true},
     next:'general-room-intro',geometry:followMovementGeometry },
   { id:'general-room-intro',sourceNumber:null,role:'G01',type:'dialogue',background:'room04',
-    cat:'neutral',location:'2층 종합자료실',layout:'room04-intro',
+    cat:'neutral',location:'2층 종합자료실',layout:'room04-intro',fontSize:27,
     text:'여기는 여러 분야의 책을\n찾아 읽고 빌리는 곳이야',next:null,geometry:followDialogueGeometry }
 ]}];
 

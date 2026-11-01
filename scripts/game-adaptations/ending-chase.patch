@@ -2,7 +2,7 @@ diff --git a/ending-chase/app.js b/ending-chase/app.js
 --- a/ending-chase/app.js
 +++ b/ending-chase/app.js
 @@ -4,6 +4,20 @@ import { Chase, isCorrectAnswer } from './engine.js?v=20261025-fullscreen7';
- import { Renderer } from './renderer.js?v=20261025-fullscreen7';
+ import { Renderer } from './renderer.js?v=20261101-landscape27';
  const $ = id => document.getElementById(id);
  const game = new Chase();
 +const storyQuery=new URLSearchParams(location.search);

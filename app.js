@@ -1,4 +1,4 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-ending26';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-landscape27';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-ending26';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';

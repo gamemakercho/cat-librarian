@@ -128,21 +128,23 @@ input:focus{outline:2px solid #b7cbb9;outline-offset:1px}
 main.after-story-active{width:min(760px,calc(100% - 24px));margin:12px auto}
 @media(max-width:650px){main.after-story-active{width:calc(100% - 16px);margin:8px auto}}
 
-/* One viewport, including embedded play. The lane stays proportional; the wall fills the extra height. */
+/* Original 960:500 play lane, uniformly fitted and centered in a black viewport. */
+.run-active{--run-hud-height:calc(58px + env(safe-area-inset-top));--run-controls-height:calc(44px + env(safe-area-inset-bottom))}
 .run-active,.run-active body{height:100%;overflow:hidden;overscroll-behavior:none}
-.run-active body{position:fixed;inset:0;background:#523521}
-.run-active main{width:100%;height:var(--run-height,100svh);margin:0;padding:0;max-width:none}
-.run-active #run-screen,.run-active .game-frame{width:100%;height:100%;min-height:0}
+.run-active body{position:fixed;inset:0;background:#000}
+.run-active main{display:grid;place-items:center;width:100%;height:var(--run-height,100svh);margin:0;padding:0;max-width:none}
+.run-active #run-screen{width:min(100%,calc((var(--run-height,100svh) - var(--run-hud-height) - var(--run-controls-height)) * 1.92));height:auto;min-height:0}
+.run-active .game-frame{width:100%;height:auto;min-height:0}
 .run-active .game-frame{display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none}
-.run-active .game-hud{flex:none;padding-top:env(safe-area-inset-top);height:calc(58px + env(safe-area-inset-top))}
-.run-active .stage{flex:1;min-height:0}
-.run-active canvas{width:100%;height:100%;touch-action:none}
-.run-active .controls{flex:none;min-height:44px;justify-content:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));gap:12px}
+.run-active .game-hud{flex:none;padding-top:env(safe-area-inset-top);height:var(--run-hud-height)}
+.run-active .stage{flex:none;min-height:0;width:100%;aspect-ratio:960/500}
+.run-active canvas{width:100%;height:100%;aspect-ratio:960/500;touch-action:none}
+.run-active .controls{flex:none;height:var(--run-controls-height);min-height:0;justify-content:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));gap:12px}
 .run-active .jump-help{display:block;font-size:12px;font-weight:700;text-align:center}
 .run-active .jump-dots{font-size:11px;letter-spacing:2px}
 .run-active .overlay-card{max-height:100%;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
 .run-active .overlay h3{font-size:clamp(20px,4.2vw,28px)}
 .run-active .overlay p{font-size:clamp(12px,2.7vw,14px);line-height:1.6}
 .run-active .overlay .primary{min-height:44px}
-.run-active .game-message{bottom:90px;font-size:13px}
-@media(max-height:430px){.run-active .game-hud{height:44px}.run-active .controls{min-height:36px;padding:5px}.run-active .overlay-card{padding:8px 16px}.run-active .overlay h3{font-size:18px}.run-active .overlay p{font-size:11px;margin-bottom:8px}}
+.run-active .game-message{bottom:12%;font-size:13px}
+@media(max-height:430px){.run-active{--run-hud-height:calc(44px + env(safe-area-inset-top));--run-controls-height:calc(36px + env(safe-area-inset-bottom))}.run-active .controls{padding:5px 5px calc(5px + env(safe-area-inset-bottom))}.run-active .overlay-card{padding:8px 16px}.run-active .overlay h3{font-size:18px}.run-active .overlay p{font-size:11px;margin-bottom:8px}}

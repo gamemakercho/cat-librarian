@@ -1,7 +1,7 @@
 import {SPRITE_LAYOUT,SCENE_IMAGE_FILES} from './scene-data.js?v=20261025-fullscreen7';
 import { CONFIG } from './config.js?v=20261025-fullscreen7';
 import { Chase, isCorrectAnswer } from './engine.js?v=20261025-fullscreen7';
-import { Renderer } from './renderer.js?v=20261025-fullscreen7';
+import { Renderer } from './renderer.js?v=20261101-landscape27';
 const $ = id => document.getElementById(id);
 const game = new Chase();
 const storyQuery=new URLSearchParams(location.search);

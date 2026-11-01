@@ -253,9 +253,9 @@
         },
         {
           "file": "app.js",
-          "sourceSha256": "f4037044970e5b312f1dc5bc8d9c4883337a89eaef6b461ab37e718dcf02ad2a",
+          "sourceSha256": "fc0776b30078b06743bf5258a2134ea32673b5a26f3af912bd9b141374fe45a8",
           "adapted": true,
-          "bundledSha256": "e7147e29ae08c7b4952fabc3892e88b6df6ee066e9eb54f520dd0fa0b2842ed2"
+          "bundledSha256": "4d85f815e7b9873cd3bba0f57ba5296628100a194cb1e573cc6a304066cc2770"
         },
         {
           "file": "assets/background/background-layout.json",
@@ -409,9 +409,9 @@
         },
         {
           "file": "index.html",
-          "sourceSha256": "f51ad1ca990a8fa64502aec8cbfe97bbfd22b682a3cca04ebf5de57743fe7e1b",
+          "sourceSha256": "b4406df4b265b7b9af9c26798ada2bcefd18f14e858e8151acb04771e595e416",
           "adapted": false,
-          "bundledSha256": "f51ad1ca990a8fa64502aec8cbfe97bbfd22b682a3cca04ebf5de57743fe7e1b"
+          "bundledSha256": "b4406df4b265b7b9af9c26798ada2bcefd18f14e858e8151acb04771e595e416"
         },
         {
           "file": "librarian-motion.js",
@@ -427,9 +427,9 @@
         },
         {
           "file": "renderer.js",
-          "sourceSha256": "cd3b2b39fadeaf6ccaebd48abb410f216c01defd1cdd12fa7b32cf1a2708ad02",
+          "sourceSha256": "75df30e57e1bbff38060ff1841c536b44cddc95b4fcab7a918ec72ca379748e6",
           "adapted": false,
-          "bundledSha256": "cd3b2b39fadeaf6ccaebd48abb410f216c01defd1cdd12fa7b32cf1a2708ad02"
+          "bundledSha256": "75df30e57e1bbff38060ff1841c536b44cddc95b4fcab7a918ec72ca379748e6"
         },
         {
           "file": "scene-data.js",
@@ -439,9 +439,9 @@
         },
         {
           "file": "styles.css",
-          "sourceSha256": "6bffcd25512a9b3c299cfc2318d0a3e53d643051c1c2c39daea27df83c3c7b49",
+          "sourceSha256": "dfe37b396eae507164d7c11dbb283aacb97417f305be084d93b62c2a759f360f",
           "adapted": false,
-          "bundledSha256": "6bffcd25512a9b3c299cfc2318d0a3e53d643051c1c2c39daea27df83c3c7b49"
+          "bundledSha256": "dfe37b396eae507164d7c11dbb283aacb97417f305be084d93b62c2a759f360f"
         }
       ]
     }
