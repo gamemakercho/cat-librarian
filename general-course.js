@@ -1,6 +1,6 @@
 import {createEndingScenes} from './ending-course.js?v=20261031-final21';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
-import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS} from './mark04-05-config.js?v=20261101-marks23';
+import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261101-room04-24';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
 const gameGeometry={cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,175]};
@@ -13,11 +13,11 @@ export const generalPuzzles={
 export function createGeneralScenes(){
  const scenes=[];
  const talk=(id,text,next,cat='neutral',background='general-mess',extra={})=>scenes.push({id,type:'dialogue',text,next,cat,background,geometry:dialogue,...extra});
- const intro=markLines('intro04').lines,guide04={layout:'mark04-guide',guideBackground:'room04',guideOverlay:'room04-arrow',geometry:dialogue};
- talk('general-order-bridge',intro[1],'general-order-plan','neutral','room04',guide04);
- talk('general-order-plan',intro[2],'general-order-paws','worried','room04');
- talk('general-order-paws',intro[3],'newbooks-order-game','neutral','room04');
- scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'general-mess',cat:'self-mockery',layout:'result-game',text:intro[4],gameUrl:'./games/book-order/',gameTitle:'책 정리와 엽서 발자국',gameStartLabel:'책 정리하기',next:'newbooks-after-order',geometry:gameGeometry});
+ const intro=markLines('intro04').lines,room04={layout:'room04-intro',geometry:dialogue};
+ talk('general-order-bridge',intro[1],ROOM04_INTRO_IDS[0],'neutral','room04',room04);
+ ROOM04_INTRO.dialogues.slice(0,3).forEach((line,i)=>talk(ROOM04_INTRO_IDS[i],line.text,ROOM04_INTRO_IDS[i+1],'neutral','room04',{...room04,nextLabel:line.button}));
+ const instruction=ROOM04_INTRO.dialogues[3];
+ scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'room04',cat:'neutral',layout:'room04-intro',text:instruction.text,waitForTextBeforeGame:true,gameUrl:'./games/book-order/',gameTitle:'책 정리와 엽서 발자국',gameStartLabel:instruction.button,next:'newbooks-after-order',geometry:{...dialogue,minigameControls:gameGeometry.minigameControls}});
  const after=markLines('after_letters04');
  talk('newbooks-after-order',after.lines[0],'general-crash','happy','general-clean');
  talk('general-crash','쿠당탕!','general-no-rest','shocked','general-clean',{effect:'bump'});

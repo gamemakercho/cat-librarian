@@ -6,25 +6,15 @@
     "04": {
       "title": "2층 종합자료실",
       "marker": "assets/mark04-05/markers/mark04.png",
-      "background": "assets/mark04-05/backgrounds/room04.webp",
-      "backgroundOriginal": "assets/mark04-05/backgrounds/room04.png",
-      "overlay": "assets/mark04-05/overlays/room04-arrow.svg",
+      "background": "./assets/mark04-05/backgrounds/room04-kdc-neutral.webp",
+      "backgroundOriginal": "./assets/mark04-05/backgrounds/room04-kdc-neutral.png",
       "sourceSize": [
         941,
         1672
       ],
-      "targetRect": [
-        196,
-        150,
-        182,
-        204
-      ],
-      "arrowTip": [
-        367,
-        246
-      ],
-      "instruction": "검색 컴퓨터보다 조금 왼쪽 위에 있는 한국십진분류표를 찾아봐. 04번 고양이 마크가 붙어 있어.",
-      "detailedHint": "검색 컴퓨터보다 조금 왼쪽 위의 한국십진분류표 액자를 찾아봐. 그곳에 04번 고양이 마크가 있어."
+      "instruction": "왼쪽 기둥에 있는 한국십진분류표를 찾아봐. 04번 고양이 마크가 붙어 있어.",
+      "detailedHint": "왼쪽 기둥의 한국십진분류표를 찾아봐. 분홍 화살표가 가리키는 곳에 04번 고양이 마크가 있어.",
+      "arrowBakedIntoImage": true
     },
     "05": {
       "title": "서가 사이",

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "logicalIdsOnly": true,
+  "speaker": "고양이 몸의 사서",
+  "sameBackgroundForAll": "room04-kdc-neutral.webp",
+  "arrowBakedIntoImage": true,
+  "disableOld04ArrowOverlay": true,
+  "addProgressActivities": false,
+  "dialogues": [
+    {
+      "id": "room04_order_request",
+      "text": "현장의 분류표를 보고 열 권의 책을 정리해 줘. 그래야 다른 사람도 책을 쉽게 찾을 수 있거든.",
+      "button": "다음으로"
+    },
+    {
+      "id": "room04_subject_groups",
+      "text": "도서관에서는 비슷한 주제의 책을 한곳에 모아 둬. 문학책은 문학책끼리, 역사책은 역사책끼리 모으는 거야.",
+      "button": "다음으로"
+    },
+    {
+      "id": "room04_kdc_explanation",
+      "text": "이렇게 책을 나누는 약속을 ‘한국십진분류법’이라고 해. 여기 분류표에는 큰 주제 열 가지와 번호가 나와 있어.",
+      "button": "다음으로"
+    },
+    {
+      "id": "room04_game_instruction",
+      "text": "이번에는 그 번호가 작은 주제부터 차례대로 꽂아 보자. 책띠 색깔을 현장 분류표와 비교하면 주제를 찾는 데 도움이 될 거야.",
+      "button": "책 정리하기",
+      "action": "start_existing_book_ordering_game_only_on_explicit_press"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ async function readConfig(name){
   const url=new URL(`./config/${name}.json`,import.meta.url);
   if(typeof window==='undefined')return JSON.parse(await (await import('node:fs/promises')).readFile(url,'utf8'));
   try{
+   url.searchParams.set('v','20261101-room04-24');
    const response=await fetch(url);if(!response.ok)throw Error(`진행 설정을 읽지 못했어요: ${name}`);
    return await response.json();
   }catch(error){
@@ -11,13 +12,14 @@ async function readConfig(name){
    throw error;
   }
 }
-export const [MARK_LOCATIONS,MARK_STORY,MARK_FLOW]=await Promise.all(['location','story','flow'].map(readConfig));
+export const [MARK_LOCATIONS,MARK_STORY,MARK_FLOW,ROOM04_INTRO]=await Promise.all(['location','story','flow','intro04-dialogue'].map(readConfig));
+export const ROOM04_INTRO_IDS=Object.freeze(['general-order-plan','general-order-paws','room04-kdc-explanation','newbooks-order-game']);
 export const markLocation=number=>MARK_LOCATIONS.locations[String(number).padStart(2,'0')];
 export const markLines=id=>MARK_STORY.scenes.find(s=>s.id===id);
 export const locationHints=number=>{const c=markLocation(number);return [c.detailedHint.trim()||c.fallbackHint||c.instruction];};
 // Logical kit IDs map to existing durable scene IDs, not numeric positions.
 export const MARK_SCENE_GROUPS=Object.freeze({
- travel04:['travel-to-general'],intro04:['general-room-intro','general-order-bridge','general-order-plan','general-order-paws'],
+ travel04:['travel-to-general'],intro04:['general-room-intro','general-order-bridge','general-order-plan','general-order-paws','room04-kdc-explanation'],
  book_ordering_game:['newbooks-order-game'],general04_book_letters:['newbooks-order-game'],success_popup04:['newbooks-order-game'],
  after_letters04:['newbooks-after-order','general-crash','general-no-rest','general-shelf-direction'],travel05:['general-shelf-arrival'],
  shelf05:['general-book-drop','general-cattower','general-stare','general-my-face','general-cat-meow','general-cart'],

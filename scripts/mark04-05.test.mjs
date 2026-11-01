@@ -17,8 +17,8 @@ test('latest script lines appear once in their proper groups and human cat only 
  assert.equal(byId.get('general-flee-meow').speaker,'사서 몸의 고양이');assert.equal(byId.get('general-flee-meow').text,'냐아!');
  for(const s of scenes.filter(s=>s.speaker==='사서 몸의 고양이'))assert.equal(s.text,'냐아!');
 });
-test('04 original wrapper uses its overlay only at guide scenes; 05 hint remains editable and empty',()=>{
- assert.equal(byId.get('travel-to-general').background,'room04');assert.equal(byId.get('travel-to-general').guideOverlay,'room04-arrow');
+test('04 uses the new baked-arrow background without an overlay; 05 hint stays editable and empty',()=>{
+ assert.equal(byId.get('travel-to-general').background,'room04');assert.equal(byId.get('travel-to-general').guideOverlay,undefined);
  assert(!byId.get('newbooks-order-game').guideOverlay);assert.equal(markLocation(5).detailedHint,'');
  assert.deepEqual(locationHints(5),[markLocation(5).fallbackHint]);assert.equal(byId.get('general-shelf-arrival').destination,'서가 사이');
  const r=new StoryRuntime(chapters,puzzles);r.jump('travel-to-general');assert.equal(r.advance().reason,'arrival-required');r.advance({arrived:true});assert(r.flags.mark04Arrived);assert.equal(r.progress.completed,0);

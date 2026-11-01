@@ -467,3 +467,23 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="notice05-expression"] .answer-form>input{min-height:48px;height:48px;font-size:18px;padding:8px}
 .stage[data-layout="notice05-expression"] #checkButton{min-height:48px;height:48px;font-size:18px;line-height:1.3;-webkit-text-stroke:0;border-width:2px}
 .stage[data-layout="notice05-expression"] #answerFeedback{position:static;grid-column:1/-1;margin:0;padding:5px;font-size:14px;line-height:1.4}
+
+/* 04 only: one intact background, with a safe area around its left-column sign. */
+.stage[data-layout^="room04-"]{height:min(var(--story-native-height,900px),var(--course-available-height,calc(100svh - 60px)));aspect-ratio:auto;background:#fff8e6}
+.stage[data-layout^="room04-"] .scene-layer{background-size:contain;background-position:center;background-repeat:no-repeat;background-color:#fff8e6}
+.stage[data-layout^="room04-"] .scene-layer>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.stage[data-layout^="room04-"] .location-banner{left:16px!important;top:12px!important;width:calc(100% - 32px)!important;height:40px!important;font-size:25px}
+.stage[data-layout="room04-intro"] .character.cat{left:auto!important;right:24px;top:auto!important;bottom:280px;width:96px!important;height:110px!important;transform:none!important}
+.stage[data-layout="room04-intro"] .dialogue{left:16px!important;top:auto!important;bottom:72px;width:calc(100% - 32px)!important;height:200px!important;padding:12px 14px;overflow:auto;overscroll-behavior:contain}
+.stage[data-layout="room04-intro"] .dialogue p{font-size:19px!important;line-height:1.5!important;word-break:keep-all;overflow-wrap:anywhere}
+.stage[data-layout="room04-intro"] #nextButton,.stage[data-layout="room04-intro"] .minigame-controls{left:19%!important;top:auto!important;bottom:10px;width:62%!important;height:auto!important;min-height:48px;margin:0}
+.stage[data-layout="room04-intro"] #nextButton,.stage[data-layout="room04-intro"] #startMinigame:not(.retry-small){min-height:48px;padding:8px;border:3px solid #418caf;border-radius:14px;background:#ffce96;color:#418caf;font-size:22px;line-height:1.25;-webkit-text-stroke:0;box-shadow:none;text-shadow:1px 1px white}
+.stage[data-layout="room04-intro"] .minigame-controls{display:grid;gap:6px}
+.stage[data-layout="room04-intro"]:has(#continueMinigame:not([hidden])) .dialogue{bottom:132px}
+.stage[data-layout="room04-intro"]:has(#continueMinigame:not([hidden])) .character.cat{bottom:340px}
+.stage[data-layout="room04-arrival"] .location-marker{left:auto!important;right:22px;top:auto!important;bottom:265px;width:90px!important;height:94px!important}
+.stage[data-layout="room04-arrival"] .dialogue{left:16px!important;top:auto!important;bottom:130px;width:calc(100% - 32px)!important;height:125px!important;padding:10px 14px;overflow:auto}
+.stage[data-layout="room04-arrival"] .dialogue p{font-size:19px!important;line-height:1.5!important;word-break:keep-all}
+.stage[data-layout="room04-arrival"] .movement-controls{left:16px!important;top:auto!important;bottom:10px;width:calc(100% - 32px)!important;height:110px!important}
+.stage[data-layout="room04-arrival"] .movement-controls h2{font-size:23px;margin:0 0 8px}
+.stage[data-layout="room04-arrival"] .arrival-button{font-size:19px;min-height:48px;padding:8px}

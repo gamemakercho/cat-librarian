@@ -2,8 +2,8 @@
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
-import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261101-marks23';
-import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261101-marks23';
+import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261101-room04-24';
+import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261101-room04-24';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js?v=20261031-final21';
 export const STORY_VERSION = 'opening-source-24-integrated-v20-20261030';
@@ -177,13 +177,13 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   {id:'after-repair-general',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'neutral',text:markLines('after_repair_to_04').lines[0],next:'after-repair-classification',geometry:followDialogueGeometry},
   {id:'after-repair-classification',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'neutral',text:markLines('after_repair_to_04').lines[1],next:'travel-to-general',geometry:followDialogueGeometry},
   { id:'travel-to-general',sourceNumber:null,role:'S07',type:'move',background:'room04',
-    cat:null,location:'2층 종합자료실',layout:'mark04-guide',guideBackground:'room04',guideOverlay:'room04-arrow',fontSize:23,marker:true,markerAsset:'marker04',markerNumber:locations.general.markerNumber,
+    cat:null,location:'2층 종합자료실',layout:'room04-arrival',fontSize:23,marker:true,markerAsset:'marker04',markerNumber:locations.general.markerNumber,
     destination:'2층 종합자료실',
     guideText:markLocation(4).instruction,
     locationHints:locationHints(4),onArrival:{mark04Arrived:true},
     next:'general-room-intro',geometry:followMovementGeometry },
   { id:'general-room-intro',sourceNumber:null,role:'G01',type:'dialogue',background:'room04',
-    cat:null,location:'2층 종합자료실',layout:'mark04-guide',guideBackground:'room04',guideOverlay:'room04-arrow',
+    cat:'neutral',location:'2층 종합자료실',layout:'room04-intro',
     text:'여기는 여러 분야의 책을\n찾아 읽고 빌리는 곳이야',next:null,geometry:followDialogueGeometry }
 ]}];
 

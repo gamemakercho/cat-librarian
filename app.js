@@ -1,23 +1,23 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-marks23';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-room04-24';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-marks23';
-import {createProgressUI} from './progress-ui.js?v=20261101-marks23';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-marks23';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-room04-24';
+import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-room04-24';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js?v=20261031-final21';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 import {endingArtIds} from './ending-course.js?v=20261031-final21';
-import {createIllustrationUI} from './ending-illustrations.js?v=20261101-marks23';
+import {createIllustrationUI} from './ending-illustrations.js?v=20261101-room04-24';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261101-marks23';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261101-room04-24';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261101-room04-24').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -275,7 +275,7 @@ async function render(){
   if(savedGameClear){const [x,y,w,h]=s.geometry.minigameControls;applyRect($('minigameControls'),[x,y,w,Math.max(h,160)]);}
   $('startMinigame').textContent=savedGameClear?'다시하기':runtime.minigameProgress[s.puzzleId]?'발자국 문제 이어하기':s.gameStartLabel||'게임 시작';
   $('startMinigame').classList.toggle('retry-small',savedGameClear);
-  $('minigameNote').hidden=keywordGame||savedGameClear;
+  $('minigameNote').hidden=keywordGame||savedGameClear||s.waitForTextBeforeGame===true;
   $('minigameNote').textContent=puzzle?.completionMode==='result'?(puzzle.clearInstruction||'B등급 이상으로 청소하면 이야기를 이어갈 수 있어'):
     puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
@@ -445,6 +445,7 @@ $('checkIcons').addEventListener('click',()=>{
 });
 async function openMinigame(){
   if(openingMinigame||activeMinigame||!sceneReady||runtime.scene.type!=='minigame'||runtime.pendingSuccessId)return;
+  if(runtime.scene.waitForTextBeforeGame&&!textComplete){finishText();return;}
   openingMinigame=true;const from=runtime.currentId;
   const keyboardWasOpen=document.activeElement===$('answer')||performance.now()-answerBlurAt<500;
   $('answer').blur();

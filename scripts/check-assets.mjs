@@ -21,6 +21,7 @@ for(const s of chapters.flatMap(c=>c.scenes)){
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);
   if(statSync(file).size!==manifest[key].bytes)throw Error('자산 크기 불일치 '+key);
   if(manifest[key].fallback)statSync(resolve(root,manifest[key].fallback));
+  if(manifest[key].fallbackSha256&&createHash('sha256').update(readFileSync(resolve(root,manifest[key].fallback))).digest('hex')!==manifest[key].fallbackSha256)throw Error('대체 그림 원본 변경 '+key);
   if(manifest[key].sha256&&createHash('sha256').update(readFileSync(file)).digest('hex')!==manifest[key].sha256)throw Error('제공 그림 원본 변경 '+key);
   if(manifest[key].render?.clip)statSync(resolve(root,manifest[key].render.clip));
 }
