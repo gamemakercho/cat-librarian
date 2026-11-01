@@ -24,9 +24,9 @@ test('마지막11글자 정답만 즉시 충돌 장면으로 연결되고 앞부
  }
 });
 
-test('삭제된 로비 저장은 진행을 잃지 않고 종합자료실 달리기 안내로 복원된다',()=>{
+test('복원된 로비 장면은 기존 저장 위치와 풀이를 유지한다',()=>{
  const r=new StoryRuntime(chapters,puzzles,{currentId:'lobby-ending-entry',solved:['postcard-heading'],history:['newbooks-after-order']});
- assert.equal(r.currentId,'ending-rescue');assert.equal(r.scene.type,'cinematic');assert(r.scene.next);assert(r.solved.has('postcard-heading'));assert.equal(r.back(),true);
+ assert.equal(r.currentId,'lobby-ending-entry');assert.equal(r.scene.type,'dialogue');assert(r.scene.next);assert(r.solved.has('postcard-heading'));assert.equal(r.back(),true);
  assert.equal(r.currentId,'newbooks-after-order');
 });
 test('접근은 실제 결과가 필요하고 삽화 충돌은 정답 이후 타이머 완료로만 이동한다',()=>{
@@ -51,8 +51,8 @@ test('iframe 결과는 출처·창·세션·플레이ID·게임ID·완료 결과
 test('네 가지 PC/신간 분기 모두 같은 접기 문제와 엔딩으로 연결된다',()=>{
  for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){
   const r=new StoryRuntime(createChapters({showDeskInterlude,includeNewBooks}),puzzles),seen=[];r.jump('general-room-intro');
-  while(r.scene.next){seen.push(r.currentId);r.advance({review:true});assert(seen.length<50);}
-  assert.equal(r.currentId,'ending-complete');assert.equal(seen.filter(id=>id==='ending-rescue').length,1);assert.equal(seen.filter(id=>id==='lobby-ending-entry').length,0);assert.equal(seen.filter(id=>id==='ending-fold-puzzle').length,1);
+  while(r.scene.next){seen.push(r.currentId);r.advance({review:true});assert(seen.length<80);}
+  assert.equal(r.currentId,'ending-complete');assert.equal(seen.filter(id=>id==='ending-rescue').length,1);assert.equal(seen.filter(id=>id==='lobby-ending-entry').length,1);assert.equal(seen.filter(id=>id==='ending-fold-puzzle').length,1);
  }
 });
 test('자동 감독은 조작 없이 원본 엔진의 구출→접촉→복구를 한 번 완료한다',()=>{

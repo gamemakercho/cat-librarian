@@ -78,12 +78,24 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #155
 .effect-layer{z-index:10}
 .effect-layer.collision{animation:flash .24s ease-out}
 .comic-panel.bump{animation:impact .25s ease-out}
-.help-dialog{width:min(88%,430px);max-width:430px;border:2px solid #705638;border-radius:20px;background:#fff8e6;color:#33291c;padding:24px;font-size:16px;line-height:1.6}
-.help-dialog::backdrop{background:#352a1ab3}
-.help-dialog h2{font-size:21px;margin:0 0 12px}
-.help-actions{display:flex;gap:10px}
-.help-actions button{flex:1;border:1px solid #8c754f;border-radius:12px;padding:12px;background:#ffce96;color:#3e372a}
-.preview-note{font-size:13px;color:#746149}
+.progress-dialog{width:min(calc(100vw - 32px),410px);max-height:calc(100dvh - 32px);margin:auto;padding:26px 22px;border:2px solid #705638;border-radius:22px;background:#fff8e6;color:#473323;text-align:center;overflow-y:auto;overscroll-behavior:contain;box-shadow:0 14px 50px #352a1a44}
+.progress-dialog::backdrop{background:#352a1ab3}
+.progress-dialog h2{font-size:29px;line-height:1.4;font-weight:400;margin:0 0 18px;word-break:keep-all}
+.progress-percent{font-size:56px;line-height:1.1;margin:8px 0 16px;font-variant-numeric:tabular-nums}
+.progress-gauge{height:25px;width:100%;border:2px solid #705638;border-radius:999px;overflow:hidden;background:#e8dfc9}
+.progress-fill{height:100%;width:0;background:#3f9a8e;border-radius:999px}
+.progress-actions{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+.progress-actions button{min-height:52px;border:2px solid #705638;border-radius:13px;padding:12px 10px;background:#fff1d4;color:#473323;font-size:20px;line-height:1.35;word-break:keep-all}
+.progress-actions #resumeButton{background:#3f8e82;color:#fffaf0;border-color:#31675d}
+.progress-dialog button,#menuButton{-webkit-tap-highlight-color:transparent}
+.restart-confirm-dialog h2{font-size:25px}
+.restart-confirm-dialog p{font-size:19px;line-height:1.5;margin:0;word-break:keep-all}
+.restart-confirm-dialog #confirmRestartButton{background:#f5d9ae}
+html.progress-open,html.progress-open body{overflow:hidden;overscroll-behavior:none}
+@media(max-height:500px){.progress-dialog{padding:16px 18px}.progress-dialog h2{margin-bottom:10px;font-size:24px}.progress-percent{font-size:44px;margin:6px 0 10px}.progress-actions{margin-top:18px;gap:10px}.progress-actions button{min-height:46px;font-size:18px;padding:9px}}
+.stage[data-layout="return-notice-puzzle"] .dialogue{display:flex;align-items:center;justify-content:center;padding:4cqw}
+.stage[data-layout="return-notice-puzzle"] .answer-form{height:auto!important;grid-template-columns:minmax(0,1fr) 30%;gap:2.5cqw;padding:3cqw}
+.stage[data-layout="return-notice-puzzle"] .answer-form>label{grid-column:1/-1;text-align:left;font-size:5cqw;-webkit-text-stroke:0}
 .review-panel{align-self:center;width:320px;max-height:95svh;overflow:auto;padding:26px;background:#fffaf1;border:1px solid #d9ccb5;border-radius:18px;font-size:14px;line-height:1.6}
 .review-panel h2{margin:0 0 12px;font-size:23px;letter-spacing:-.06em}
 .eyebrow{font-size:12px;letter-spacing:.05em;font-weight:750;color:#497f78;margin:0 0 8px}
@@ -382,6 +394,8 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 /* One tuning point for story image → dialogue → next. Backgrounds and games stay put. */
 :root{--story-flow-shift:32px;--story-flow-gap:14px;--story-flow-bottom:12px}
 .stage[data-story-flow="true"]{height:min(var(--story-native-height,900px),calc(100svh - 60px - env(safe-area-inset-bottom,0px)));aspect-ratio:auto}
+.stage[data-layout="return-notice-puzzle"]{height:min(var(--story-native-height,900px),calc(100svh - 60px - env(safe-area-inset-bottom,0px)));aspect-ratio:auto}
+.stage[data-layout="return-notice-puzzle"] #checkButton{font-size:4.5cqw;-webkit-text-stroke:0}
 .stage[data-story-flow="true"] .dialogue{overflow:auto;overscroll-behavior:contain}
 .stage[data-story-flow="true"] .next-button{min-height:44px}
 .story-art-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
@@ -418,3 +432,38 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="final-fold"] .instruction{text-align:center;white-space:pre-line;font-size:clamp(13px,3.7cqw,18px);line-height:1.5;margin:6px 0 0}
 .inline-fold-guide{display:block;width:58%;max-width:240px;height:auto;margin:8px auto 0;object-fit:contain;image-rendering:auto}
 .stage[data-layout="final-fold"] .answer-form>label{font-size:clamp(14px,3.8cqw,18px);line-height:1.35;white-space:normal}
+
+/* Background and SVG share the original, un-cropped 941×1672 coordinate space. */
+.stage[data-layout="mark04-guide"]{height:auto;max-height:var(--course-available-height,calc(100svh - 60px));min-height:0;aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 16px;overflow-y:auto;overscroll-behavior:contain;background:#fff8e6}
+.stage[data-layout="mark04-guide"] .scene-layer,.stage[data-layout="mark04-guide"] .character-layer{display:none}
+.stage[data-layout="mark04-guide"] .location-banner{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:40px;font-size:25px;flex:none;order:1}
+.location-guide{position:relative;flex:none;aspect-ratio:941/1672;height:clamp(225px,43svh,360px);margin:0;order:2}
+.location-guide-background,.location-guide-arrow{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.location-guide .location-marker{left:auto!important;top:auto!important;right:-24px;bottom:8px;width:80px!important;height:84px!important;pointer-events:none}
+.stage[data-layout="mark04-guide"] .dialogue{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:76px;flex:none;order:3;padding:12px 14px;overflow:visible}
+.stage[data-layout="mark04-guide"] .dialogue p{font-size:19px!important;line-height:1.5!important;word-break:keep-all;overflow-wrap:anywhere}
+.stage[data-layout="mark04-guide"] .movement-controls{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;flex:none;order:4;margin:0}
+.stage[data-layout="mark04-guide"] .movement-controls h2{font-size:23px;margin:0 0 8px}
+.stage[data-layout="mark04-guide"] .arrival-button{font-size:19px;min-height:48px;padding:8px}
+.stage[data-layout="mark04-guide"] #nextButton{position:relative!important;inset:auto!important;width:62%!important;height:auto!important;min-height:48px;flex:none;order:4;font-size:25px}
+
+.stage[data-layout="notice05-expression"]{height:auto;max-height:var(--course-available-height,calc(100svh - 60px));min-height:0;aspect-ratio:auto;display:flex;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;overscroll-behavior:contain;background:#fff8e6}
+.stage[data-layout="notice05-expression"] .scene-layer,.stage[data-layout="notice05-expression"] .character-layer{display:none}
+.notice05-panel{position:relative;flex:none;order:1;color:#473323}
+.notice05-panel h2{font-size:26px;line-height:1.3;font-weight:400;margin:0 0 8px;text-align:center}
+.notice05-card{border:1px solid #c6b08c;border-radius:16px;padding:5px 10px 10px;background:#fff}
+.notice05-steps{list-style:none;margin:0;padding:0}
+.notice05-step{display:grid;grid-template-columns:minmax(160px,52%) minmax(0,1fr);gap:7px;align-items:center;border-bottom:1px solid #e8dfd0;padding:3px 0}
+.notice05-step:last-child{border-bottom:0}
+.notice05-pair{display:flex;align-items:center;justify-content:center;min-width:0}
+.notice05-cat{display:block;width:70px;height:80px;object-fit:contain;flex:none;background:white}
+.notice05-black-arrow{color:#211c17;font:400 26px/1 system-ui;flex:none}
+.notice05-step p{margin:0;color:#377f78;font-size:19px;line-height:1.4;word-break:keep-all}
+.notice05-question{display:flex;align-items:center;justify-content:center;gap:8px;font-size:19px;line-height:1.4;margin:7px 0 0;text-align:center;word-break:keep-all}
+.notice05-pink-arrow{width:25px;height:35px;object-fit:contain;flex:none}
+.notice05-support{font-size:16px;line-height:1.5;margin:8px 2px 0;word-break:keep-all}
+.stage[data-layout="notice05-expression"] .answer-form{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;flex:none;order:2;grid-template-columns:minmax(0,1fr) 31%;gap:8px;padding:12px;border-radius:16px}
+.stage[data-layout="notice05-expression"] .answer-form>label{grid-column:1/-1;font-size:17px;line-height:1.4;text-align:left;-webkit-text-stroke:0}
+.stage[data-layout="notice05-expression"] .answer-form>input{min-height:48px;height:48px;font-size:18px;padding:8px}
+.stage[data-layout="notice05-expression"] #checkButton{min-height:48px;height:48px;font-size:18px;line-height:1.3;-webkit-text-stroke:0;border-width:2px}
+.stage[data-layout="notice05-expression"] #answerFeedback{position:static;grid-column:1/-1;margin:0;padding:5px;font-size:14px;line-height:1.4}

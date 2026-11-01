@@ -1,5 +1,5 @@
 import '../story-adapter.js';
-import {createLetterUI} from './letter-ui.js?v=20261030-integrated20';
+import {createLetterUI} from './letter-ui.js?v=20261101-marks23';
 import {validOrderProgress} from './letter-state.js';
 import {CONFIG} from './config.js';
 import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261030-integrated20';

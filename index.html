@@ -7,7 +7,7 @@
   <title>고양이가 된 사서</title>
   <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261031-final21">
+  <link rel="stylesheet" href="style.css?v=20261101-marks23">
 </head>
 <body>
   <main id="appShell" class="app-shell">
@@ -19,6 +19,8 @@
       <div id="effectLayer" class="effect-layer" aria-hidden="true"></div>
 
       <div id="locationBanner" class="location-banner" hidden></div>
+      <figure id="locationGuide" class="location-guide" hidden aria-label="04번 분류표 위치 안내"></figure>
+      <section id="notice05Panel" class="notice05-panel" hidden aria-label="05번 엽서 표정 문제"></section>
       <p id="machineStatus" class="machine-status" role="status" hidden></p>
       <section id="cipherPanel" class="cipher-panel" hidden aria-label="책소독기 색깔 신호">
         <img id="sterilizerCipher" class="sterilizer-cipher" alt="" draggable="false">
@@ -69,13 +71,16 @@
         <button id="restartButton" class="next-button" type="button">처음부터 다시 보기</button>
         <a href="?review=1" class="secondary-button">제작자 화면 확인</a>
       </section>
-      <dialog id="helpDialog" class="help-dialog">
-        <h2>잠깐, 안내할게요!</h2>
-        <p>화면을 읽고 ‘다음’을 눌러 주세요. 글이 나오는 중에 누르면 남은 글이 한 번에 보여요.</p>
-        <p>20번의 책으로 톡톡 치기는 이야기 속 대사입니다.</p>
-        <p>문제는 실제 엽서와 도서관의 표지를 보고 풀어요. 이동할 때는 스마트폰을 잠시 내려놓아요.</p>
-        <p id="helpPreviewNote" class="preview-note" hidden>21번은 엽서 문제, 23번은 도착 확인입니다. 평생학습실 소개와 24번 물감 사건 뒤에는 실제 안내문과 엽서를 맞대는 문제가 이어집니다.</p>
-        <div class="help-actions"><button id="resumeButton" type="button">계속 보기</button><button id="helpRestartButton" type="button">처음부터</button></div>
+      <dialog id="progressDialog" class="progress-dialog" aria-labelledby="progressTitle">
+        <h2 id="progressTitle">진행률</h2>
+        <p id="progressPercent" class="progress-percent">0%</p>
+        <div id="progressGauge" class="progress-gauge" role="progressbar" aria-label="완료한 활동 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progressFill" class="progress-fill"></div></div>
+        <div class="progress-actions"><button id="resumeButton" type="button" autofocus>게임 계속하기</button><button id="helpRestartButton" type="button">게임 처음부터 다시하기</button></div>
+      </dialog>
+      <dialog id="restartConfirmDialog" class="progress-dialog restart-confirm-dialog" aria-labelledby="restartConfirmTitle" aria-describedby="restartConfirmBody">
+        <h2 id="restartConfirmTitle">처음부터 다시 시작할까요?</h2>
+        <p id="restartConfirmBody">지금까지의 진행 내용이 초기화돼요.</p>
+        <div class="progress-actions"><button id="cancelRestartButton" type="button" autofocus>취소</button><button id="confirmRestartButton" type="button">처음부터 다시하기</button></div>
       </dialog>
       <dialog id="locationHintDialog" class="location-hint-dialog" aria-labelledby="locationHintTitle">
         <h2 id="locationHintTitle">아직 못 찾았구나?</h2>
@@ -112,7 +117,7 @@
       </dialog>
       <div id="storyArtLayer" class="story-art-layer"></div><div id="endingArtLayer" class="ending-art-layer"></div><strong id="endingImpactText" class="ending-impact-text" hidden>쿵!</strong><span id="endingSpeaker" class="ending-speaker" hidden></span>
       <button id="retryScene" type="button" class="retry-scene" hidden>다시 불러오기</button>
-      <div id="loading" class="loading" role="status" hidden>장면을 불러오고 있어요…</div>
+      <div id="loading" class="loading" role="status">장면을 불러오고 있어요…</div>
       <figure id="foldReferenceCard" class="fold-reference-card" hidden><img id="foldReferenceImage" width="587" height="312" alt="엽서의 노란 부분 두 곳을 접었을 때 머리를 맞댄 사서와 고양이 그림" hidden><figcaption id="foldReferenceStatus" role="status">엽서 그림을 불러오는 중…</figcaption><button id="foldReferenceRetry" type="button" hidden>그림 다시 불러오기</button></figure>
       <img id="endingContactStill" class="ending-contact-still" alt="두 인물의 머리가 맞닿으며 잠시 멈춘 장면" hidden>
       <section id="endingCinemaActions" class="ending-cinema-actions" hidden><button id="endingPlay" type="button">마지막 장면 보기</button></section>
@@ -130,7 +135,7 @@
           <nav class="player-tools" aria-label="진행 도구">
         <button id="backButton" type="button" class="small-control" aria-label="이전 장면">이전 화면</button>
         <button id="hintButton" class="hint-button" type="button" hidden>힌트 보기</button>
-        <button id="menuButton" type="button" class="small-control" aria-label="도움말과 다시 시작">메뉴</button>
+        <button id="menuButton" type="button" class="small-control" aria-haspopup="dialog" aria-controls="progressDialog">진행률</button>
       </nav>
     </div>
     <aside id="reviewPanel" class="review-panel" hidden aria-label="제작자 화면 확인">
@@ -167,6 +172,6 @@
     <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
-  <script type="module" src="app.js?v=20261031-final21"></script>
+  <script type="module" src="app.js?v=20261101-marks23"></script>
 </body>
 </html>

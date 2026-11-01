@@ -1,5 +1,5 @@
 // Native scene coordinates remain unchanged. Only the main story flow is fitted here.
-export const usesStoryFlow=scene=>['dialogue','comic'].includes(scene.type)&&!scene.endingArt;
+export const usesStoryFlow=scene=>['dialogue','comic'].includes(scene.type)&&!scene.endingArt&&scene.layout!=='mark04-guide';
 export function layoutStoryFlow(stage,scene){
  if(!usesStoryFlow(scene))return;
  const width=stage.clientWidth;stage.style.setProperty('--story-native-height',width*1.8+'px');

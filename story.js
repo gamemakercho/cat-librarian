@@ -2,7 +2,8 @@
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
-import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261031-final21';
+import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261101-marks23';
+import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261101-marks23';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js?v=20261031-final21';
 export const STORY_VERSION = 'opening-source-24-integrated-v20-20261030';
@@ -172,15 +173,17 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   {id:'sterilizer-repaired',sourceNumber:null,role:'S06',type:'dialogue',background:null,storyArt:'sanitizer-repaired',layout:'story-illustration',textMode:'static',fontSize:27,
     text:sceneCopy.sanitizer.result.dialogue[0],nextLabel:'다음으로',next:'sterilizer-repaired-relief',geometry:{storyArt:[32,120,436,436],dialogue:[32,570,436,180],nextButton:[138,790,224,63]}},
   {id:'sterilizer-repaired-relief',sourceNumber:null,type:'dialogue',background:null,storyArt:'sanitizer-repaired',layout:'story-illustration',textMode:'static',fontSize:27,
-    text:sceneCopy.sanitizer.result.dialogue[1],nextLabel:'다음으로',next:'travel-to-general',geometry:{storyArt:[32,120,436,436],dialogue:[32,570,436,180],nextButton:[138,790,224,63]}},
-  { id:'travel-to-general',sourceNumber:null,role:'S07',type:'move',background:'sterilizer-clean',
-    cat:'neutral',location:'2층 종합자료실',layout:'move',fontSize:23,marker:true,markerNumber:locations.general.markerNumber,
+    text:sceneCopy.sanitizer.result.dialogue[1],nextLabel:'다음으로',next:'after-repair-general',geometry:{storyArt:[32,120,436,436],dialogue:[32,570,436,180],nextButton:[138,790,224,63]}},
+  {id:'after-repair-general',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'neutral',text:markLines('after_repair_to_04').lines[0],next:'after-repair-classification',geometry:followDialogueGeometry},
+  {id:'after-repair-classification',sourceNumber:null,type:'dialogue',background:'sterilizer-clean',cat:'neutral',text:markLines('after_repair_to_04').lines[1],next:'travel-to-general',geometry:followDialogueGeometry},
+  { id:'travel-to-general',sourceNumber:null,role:'S07',type:'move',background:'room04',
+    cat:null,location:'2층 종합자료실',layout:'mark04-guide',guideBackground:'room04',guideOverlay:'room04-arrow',fontSize:23,marker:true,markerAsset:'marker04',markerNumber:locations.general.markerNumber,
     destination:'2층 종합자료실',
-    guideText:'이번엔 {destination}이야\n또 사고 치기 전에 따라가자!\n\n계단을 올라 {destination}로 이동하세요\n고양이 마크 {markerNumber}를 찾아줘!',
-    locationHints:['계단을 마저 올라가면 2층이에요 종합자료실의 {markerNumber}번 마크를 찾아보세요'],
+    guideText:markLocation(4).instruction,
+    locationHints:locationHints(4),onArrival:{mark04Arrived:true},
     next:'general-room-intro',geometry:followMovementGeometry },
-  { id:'general-room-intro',sourceNumber:null,role:'G01',type:'dialogue',background:'general-clean',
-    cat:'neutral',location:'2층 종합자료실',layout:'arrival',
+  { id:'general-room-intro',sourceNumber:null,role:'G01',type:'dialogue',background:'room04',
+    cat:null,location:'2층 종합자료실',layout:'mark04-guide',guideBackground:'room04',guideOverlay:'room04-arrow',
     text:'여기는 여러 분야의 책을\n찾아 읽고 빌리는 곳이야',next:null,geometry:followDialogueGeometry }
 ]}];
 
@@ -256,7 +259,7 @@ const overrides = {
 export function createChapters(value) {
  const options=normalizeCourseOptions(value),chapters=structuredClone(openingChapters);
  const intro=chapters[0].scenes.find(s=>s.id==='general-room-intro');
- intro.text='여기는 여러 분야의 책을 찾아 읽고 빌리는 종합자료실이야.';intro.next='general-order-bridge';intro.nextLabel='다음으로';
+ intro.text=markLines('intro04').lines[0];intro.next='general-order-bridge';intro.nextLabel='다음으로';
  chapters[0].scenes.push(...createGeneralScenes(options));
  for (const scene of chapters.flatMap(c=>c.scenes)) {
   scene.geometry={...baseGeometry,...(scene.type==='move'?movementGeometry:{}),...overrides[scene.sourceNumber],...scene.geometry};

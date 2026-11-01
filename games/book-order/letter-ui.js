@@ -1,4 +1,4 @@
-import {LETTER_PUZZLE as C} from './letter-puzzle-config.js?v=20261030-integrated20';
+import {LETTER_PUZZLE as C} from './letter-puzzle-config.js?v=20261101-marks23';
 import {restoreLetters,solveLetters,orderSorted,letterProof,validOrderProgress} from './letter-state.js';
 import {shelfPlacement} from './geometry.js';
 export function createLetterUI({storageKey,getGame,getLayout,onFinish,onProgress}){

@@ -13,9 +13,14 @@ test('reference requests only WebP on success, falls back to PNG after failure, 
 test('packaged reference images retain the provided bytes and dimensions metadata',()=>{
  const m=JSON.parse(readFileSync(new URL('../assets/ending/postcard-fold-complete.json',import.meta.url),'utf8'));for(const f of m.files.filter(f=>f.runtime)){const name=f.path.split('/').at(-1),bytes=readFileSync(new URL('../assets/ending/'+name,import.meta.url));assert.equal(bytes.length,f.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),f.sha256);assert.equal(f.width,587);assert.equal(f.height,312);}
 });
-test('deleted transition saves keep run, solved, mini-game proof and history while resuming at the new boundary',()=>{
- for(const id of ['travel-to-ending-lobby','lobby-ending-entry','ending-one-left','ending-found','ending-postcard-clue']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,runId:'saved-current-game',solved:['postcard-heading','learning-room-art'],history:['general-after-catch','travel-to-ending-lobby',id],sceneStates:{'ending-fold-puzzle':{answer:'고양이와'}}});assert.equal(r.currentId,'ending-rescue');assert.equal(r.runId,'saved-current-game');assert(r.solved.has('learning-room-art'));assert(!r.history.includes('travel-to-ending-lobby'));assert(!r.flags.endingCompleted);const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,'ending-rescue');assert(restored.back());assert.equal(restored.currentId,'general-after-catch');}
+test('restored lobby and surviving ending saves retain position, run and solved records',()=>{
+ for(const id of ['travel-to-ending-lobby','lobby-ending-entry','ending-one-left','ending-found','ending-postcard-clue']){
+  const r=new StoryRuntime(chapters,puzzles,{currentId:id,runId:'saved-current-game',solved:['postcard-heading','learning-room-art'],history:['general-after-catch'],sceneStates:{'ending-fold-puzzle':{answer:'고양이와'}}});
+  const expected=id==='ending-postcard-clue'?'ending-rescue':id;
+  assert.equal(r.currentId,expected);assert.equal(r.runId,'saved-current-game');assert(r.solved.has('learning-room-art'));assert(!r.flags.endingCompleted);
+  const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,expected);assert(restored.back());assert.equal(restored.currentId,'general-after-catch');
+ }
  const done=new StoryRuntime(chapters,puzzles,{currentId:'ending-thanks',flags:{endingContactReached:true},runId:'saved-done-game'});assert.equal(done.currentId,'ending-thanks');
 });
 
-test('active route still contains six puzzles including the internal letter puzzle and four minigames',()=>{const scenes=chapters.flatMap(c=>c.scenes);assert.equal(scenes.filter(s=>s.type==='puzzle').length+1,6);assert.equal(scenes.filter(s=>s.type==='minigame'||s.cinematicPart==='approach').length,4);});
+test('active route contains seven puzzles including the internal letter puzzle and four minigames',()=>{const scenes=chapters.flatMap(c=>c.scenes);assert.equal(scenes.filter(s=>s.type==='puzzle').length+1,7);assert.equal(scenes.filter(s=>s.type==='minigame'||s.cinematicPart==='approach').length,4);});

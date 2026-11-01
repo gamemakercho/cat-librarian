@@ -1,0 +1,142 @@
+{
+  "version": 2,
+  "idsAreLogicalNotRepoIds": true,
+  "locationNumbersAreNotProblemNumbers": true,
+  "totalPuzzles": 7,
+  "totalMinigames": 4,
+  "preserveExistingProgressUI": true,
+  "nodes": [
+    {
+      "id": "travel04",
+      "kind": "movement",
+      "requires": [
+        "existing_sanitizer_completed"
+      ],
+      "onArrival": "intro04",
+      "setsOnArrival": "mark04_arrived"
+    },
+    {
+      "id": "intro04",
+      "kind": "story",
+      "next": "book_ordering_game"
+    },
+    {
+      "id": "book_ordering_game",
+      "kind": "existing_minigame",
+      "activity": "minigame02",
+      "requires": [
+        "mark04_arrived"
+      ],
+      "onVerifiedSuccess": "general04_book_letters",
+      "setsOnSuccess": "books_sorted"
+    },
+    {
+      "id": "general04_book_letters",
+      "kind": "existing_embedded_problem",
+      "activity": "puzzle05",
+      "requires": [
+        "books_sorted"
+      ],
+      "onCorrect": "success_popup04",
+      "setsOnCorrect": "book_letters_solved",
+      "stayInSameBookGameUntilCorrect": true
+    },
+    {
+      "id": "success_popup04",
+      "kind": "existing_success_popup",
+      "onNext": "after_letters04"
+    },
+    {
+      "id": "after_letters04",
+      "kind": "story",
+      "next": "travel05"
+    },
+    {
+      "id": "travel05",
+      "kind": "movement",
+      "requires": [
+        "book_letters_solved"
+      ],
+      "onArrival": "shelf05",
+      "setsOnArrival": "mark05_arrived"
+    },
+    {
+      "id": "shelf05",
+      "kind": "story",
+      "next": "book_catching_game"
+    },
+    {
+      "id": "book_catching_game",
+      "kind": "existing_minigame",
+      "activity": "minigame03",
+      "requires": [
+        "mark05_arrived"
+      ],
+      "onVerifiedSuccess": "after_catch05",
+      "setsOnSuccess": "book_catching_completed"
+    },
+    {
+      "id": "after_catch05",
+      "kind": "story",
+      "next": "notice05_expression_puzzle"
+    },
+    {
+      "id": "notice05_expression_puzzle",
+      "kind": "new_problem",
+      "activity": "puzzle06",
+      "requires": [
+        "mark05_arrived",
+        "book_catching_completed"
+      ],
+      "onCorrect": "success_popup05",
+      "setsOnCorrect": "notice05_solved"
+    },
+    {
+      "id": "success_popup05",
+      "kind": "success_popup",
+      "onNext": "after_notice05"
+    },
+    {
+      "id": "after_notice05",
+      "kind": "story",
+      "next": "travel_lobby"
+    },
+    {
+      "id": "travel_lobby",
+      "kind": "existing_movement",
+      "onArrival": "before_runner",
+      "setsOnArrival": "lobby_arrived"
+    },
+    {
+      "id": "before_runner",
+      "kind": "story",
+      "next": "runner_game"
+    },
+    {
+      "id": "runner_game",
+      "kind": "existing_minigame",
+      "activity": "minigame04",
+      "requires": [
+        "lobby_arrived"
+      ],
+      "onVerifiedSuccess": "existing_runner_aftermath"
+    },
+    {
+      "id": "existing_runner_aftermath",
+      "kind": "existing_story",
+      "next": "existing_final_fold_puzzle",
+      "preserveCurrentStoryAndAnimations": true
+    },
+    {
+      "id": "existing_final_fold_puzzle",
+      "kind": "existing_problem",
+      "activity": "puzzle07",
+      "answer": "고양이와 사서가 돌아왔다",
+      "onCorrect": "existing_ending"
+    },
+    {
+      "id": "existing_ending",
+      "kind": "existing_ending"
+    }
+  ]
+}

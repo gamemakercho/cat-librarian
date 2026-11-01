@@ -1,14 +1,16 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261031-final21';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-marks23';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-marks23';
+import {createProgressUI} from './progress-ui.js?v=20261101-marks23';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-marks23';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js?v=20261031-final21';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js';
 import {endingArtIds} from './ending-course.js?v=20261031-final21';
-import {createIllustrationUI} from './ending-illustrations.js';
+import {createIllustrationUI} from './ending-illustrations.js?v=20261101-marks23';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261031-final21';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261101-marks23';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
@@ -48,6 +50,8 @@ const clipCache=new Map();
 const prefersReducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const foldReference=createFoldReference({getScene:()=>runtime.scene});
+const progressUI=createProgressUI({getProgress:()=>runtime.progress,onRestart:()=>restart()});
+const markCourseUI=createMarkCourseUI({createImage});
 const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
   getPoster:()=>runtime.endingContactPoster,
   canRestore:()=>runtime.solved.has(ENDING_PUZZLE_ID),
@@ -55,13 +59,13 @@ const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.r
   onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
   onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
   onReplay:()=>{if(runtime.scene.type==='ending'){runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
-const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),
+const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),isPaused:()=>progressUI.isOpen,
  onStart:()=>{runtime.flags.endingIllustrationStarted=true;save();},
  onImpactDone:()=>{if(runtime.completeIllustratedImpact().ok){save();advance();}},
  onComplete:()=>{if(runtime.completeStory()){save();window.dispatchEvent(new CustomEvent('escape-room:complete',{detail:{puzzleId:'cat-librarian-ending',completed:true,runId:runtime.runId}}));}}});
 let arrivalReadyAt=0;let nextReadyAt=0;let stopShelfMotion=()=>{};
 
-function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...runtime.snapshot(),storyVersion:STORY_VERSION}));}catch{}progressUI.refresh();}
 function imageURL(key){if(!assets[key])throw Error(`자산 없음: ${key}`);return assets[key].src;}
 function loadImage(key){
   const src=imageURL(key);
@@ -123,7 +127,9 @@ function sceneAssetKeys(s){
   if(s.illustration)keys.push(`prop:${s.illustration}`);
   if(s.decoration)keys.push(`prop:${s.decoration}`);
   if(s.cipher)keys.push(`prop:${s.cipher}`);
-  if(s.marker)keys.push('prop:marker');
+  if(s.marker)keys.push('prop:'+(s.markerAsset||'marker'));
+  if(s.guideOverlay)keys.push('prop:'+s.guideOverlay);
+  if(s.layout==='notice05-expression')keys.push('expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow');
   if(puzzles[s.puzzleId]?.answerMode==='icons'){
     const state=runtime.puzzleStates[s.puzzleId];
     for(const id of state?.boardIds||[])keys.push(puzzles[s.puzzleId].icons[id].assetKey);
@@ -135,9 +141,9 @@ function sceneMessage(s,text=s.guideText??s.text??''){
 }
 function createMarker(s){
   const marker=document.createElement('div');marker.className='location-marker';
-  const im=createImage('prop:marker','marker-art');marker.append(im);
+  const im=createImage('prop:'+(s.markerAsset||'marker'),'marker-art');marker.append(im);
   const number=formatMarkerNumber(s.markerNumber);
-  if(number){const label=document.createElement('span');label.className='marker-number';label.textContent=number;marker.append(label);}
+  if(number&&!s.markerAsset){const label=document.createElement('span');label.className='marker-number';label.textContent=number;marker.append(label);}
   marker.setAttribute('role','img');marker.setAttribute('aria-label',number?`${number}번 책 읽는 고양이 마크`:'책 읽는 고양이 마크');
   return marker;
 }
@@ -164,6 +170,7 @@ function typeText(s){
   if(prefersReducedMotion||s.textMode==='static'||s.type==='puzzle'||s.type==='move'||s.type==='continuation'){textComplete=true;emphasize(activeText,s);return;}
   textComplete=false;let index=0;$('dialogueText').textContent='';
   textTimer=setInterval(()=>{
+    if(progressUI.isOpen)return;
     index+=1;emphasize(segments.slice(0,index).join(''),s);
     if(index>=segments.length)finishText();
   },24);
@@ -277,7 +284,7 @@ async function render(){
   $('notYetButton').textContent=s.lostLabel||uiText.lostLabel;
   $('continuationControls').hidden=s.type!=='continuation';
   $('backButton').disabled=!runtime.history.length;
-  composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent='';
+  composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent=s.layout==='notice05-expression'?runtime.sceneState.feedback||'':'';
   $('hintButton').hidden=s.type!=='puzzle'||!puzzle?.hints?.length;
   $('hintButton').textContent=puzzle?.hintLabel||'힌트 보기';
   const p=puzzles[s.puzzleId],english=p?.answerMode==='english-four';
@@ -294,6 +301,7 @@ async function render(){
   if(english)$('answer').removeAttribute('maxlength');else $('answer').maxLength=80;
   if(!preserveText)typeText(s);
   renderedScene=s;layoutStoryFlow(stage,s);updateReview(s);endingUI.render(s);
+  markCourseUI.render(s);
   illustrationUI.render(s);foldReference.render(s);
   for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
   if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
@@ -504,12 +512,13 @@ function submitAnswer(){
   const result=runtime.submit($('answer').value);
   if(result.ok){save();$('answerFeedback').textContent='';if(result.immediate){$('answer').blur();render();}else showSuccess();return;}
   const message={empty:'글자를 입력해 주세요.',incorrect:puzzles[runtime.scene.puzzleId]?.incorrectMessage||'조금 달라요. 엽서나 현장 표지를 다시 살펴볼까요?',
-    'game-clear-required':'게임을 클리어하고 나온 키워드를 입력해 줘',
+    'game-clear-required':'책 받기 게임을 성공한 뒤 이야기를 이어가 줘',
     'not-configured':'이 시안은 실제 정답을 설정하기 전이에요. 제작자 보기에서 다음 장면을 확인해 주세요.'}[result.reason]||'다시 확인해 주세요.';
   $('answerFeedback').textContent=message;$('keypadFeedback').textContent=message;
+  if(runtime.scene.layout==='notice05-expression'){runtime.updateSceneState({feedback:message});save();}
 }
 $('answerForm').addEventListener('submit',e=>{e.preventDefault();submitAnswer();});
-$('answer').addEventListener('input',()=>{runtime.updateSceneState({answer:$('answer').value});save();});
+$('answer').addEventListener('input',()=>{runtime.updateSceneState({answer:$('answer').value,feedback:''});if(runtime.scene.layout==='notice05-expression')$('answerFeedback').textContent='';save();});
 $('answer').addEventListener('blur',()=>{answerBlurAt=performance.now();});
 $('answer').addEventListener('compositionstart',()=>{composing=true;});
 $('answer').addEventListener('compositionend',()=>{composing=false;compositionEndedAt=performance.now();});
@@ -566,12 +575,8 @@ $('englishKeypadDialog').addEventListener('keydown',e=>{
   else if(e.key==='Backspace'){e.preventDefault();$('answer').value=$('answer').value.slice(0,-1);updateKeypad();}
   else if(e.key==='Enter'){e.preventDefault();submitAnswer();}
 });
-$('menuButton').addEventListener('click',()=>{$('helpDialog').showModal();});
-$('resumeButton').addEventListener('click',()=>{$('helpDialog').close();});
 function restart(){const options=normalizeCourseOptions(courseSettings);runtime=new StoryRuntime(createChapters(options),puzzles,{},uiText.successPopup,Math.random,options);save();if(review)fillSceneSelect();render();}
 $('restartButton').addEventListener('click',restart);
-$('helpRestartButton').addEventListener('click',()=>{$('helpDialog').close();restart();});
-$('helpPreviewNote').hidden=!review;
 if(review){
   $('reviewPanel').hidden=false;
   fillSceneSelect();
@@ -605,4 +610,5 @@ window.visualViewport?.addEventListener('resize',()=>{
 const storyResize=new ResizeObserver(()=>{if(sceneReady&&renderedScene?.id===runtime.currentId)layoutStoryFlow($('stage'),runtime.scene);});
 storyResize.observe($('stage'));
 document.fonts.ready.then(()=>{if(sceneReady)layoutStoryFlow($('stage'),runtime.scene);});
+save();
 await render();

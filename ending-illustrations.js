@@ -1,5 +1,5 @@
 // The timer counts visible, decoded-image time only; stop invalidates every queued frame.
-export function createIllustrationUI({getScene,canStart,onStart,onImpactDone,onComplete}){
+export function createIllustrationUI({getScene,canStart,onStart,onImpactDone,onComplete,isPaused=()=>false}){
  let frame=null,generation=0,last=null,elapsed=0;
  const $=id=>document.getElementById(id);
  function stop(){generation++;cancelAnimationFrame(frame);frame=null;last=null;elapsed=0;}
@@ -13,7 +13,7 @@ export function createIllustrationUI({getScene,canStart,onStart,onImpactDone,onC
    onStart();const token=generation;
    function tick(now){
      if(token!==generation||getScene().id!==scene.id)return;
-     if(!document.hidden){if(last!==null)elapsed+=Math.min(now-last,100);last=now;}
+     if(!document.hidden&&!isPaused()){if(last!==null)elapsed+=Math.min(now-last,100);last=now;}
      else last=null;
      if(elapsed>=scene.durationMs){frame=null;onImpactDone();return;}
      frame=requestAnimationFrame(tick);
