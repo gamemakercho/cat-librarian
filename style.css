@@ -505,7 +505,7 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 
 /* The two 05 photos are independent, uncropped images; short screens scroll. */
 .stage[data-layout="mark05-location"]{height:auto;max-height:var(--course-available-height,calc(100svh - 60px));aspect-ratio:auto;overflow-y:auto;overscroll-behavior:contain;padding:14px;background:#fff8e6}
-.stage[data-layout="mark05-location"] #dialogue,.stage[data-layout="mark05-location"] #movementControls,.stage[data-layout="mark05-location"] #characterLayer,.stage[data-layout="mark05-location"] #sceneLayer{display:none}
+.stage[data-layout="mark05-location"] #dialogue,.stage[data-layout="mark05-location"] #nextButton,.stage[data-layout="mark05-location"] #movementControls,.stage[data-layout="mark05-location"] #characterLayer,.stage[data-layout="mark05-location"] #sceneLayer{display:none}
 .mark05-location{position:relative;z-index:6;color:var(--ink)}
 .mark05-location button,.mark05-hint-viewer button,#locationImageDialog button{-webkit-tap-highlight-color:transparent}
 .game-column:has(.stage[data-layout="mark05-location"]) .player-tools{flex-wrap:wrap}
@@ -537,3 +537,7 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .credits-dialog button{-webkit-tap-highlight-color:transparent}
 html.credits-open,html.credits-open body{overflow:hidden;overscroll-behavior:none}
 @media(max-height:700px){.credits-dialog .library-credits{padding:10px 12px 14px}.credits-dialog .credits-title{font-size:22px;margin:6px 0 8px}.credits-dialog .credits-lesson{min-height:136px;margin-top:10px;padding:12px 14px}.credits-dialog .credits-caption{font-size:16px;line-height:1.55}}
+
+.notice05-marker{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;color:#355449;font-size:24px;line-height:1.3}
+.notice05-marker-image{width:66px;height:66px;object-fit:contain;flex:none}
+.notice05-panel>.notice05-support{border:1px solid #c6b08c;border-radius:12px;background:#fff8df;padding:10px 12px;margin:0 0 12px;font-size:17px}

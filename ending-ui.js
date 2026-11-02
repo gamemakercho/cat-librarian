@@ -10,6 +10,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
  function play(replay=false){
   const part=replay?'full':getScene().cinematicPart||'approach';if(part!=='approach'&&!canRestore())return;
   stop();const url=new URL(part==='approach'?'./games/ending-chase/':'./ending/',location.href);
+  if(part==='approach')url.searchParams.set('v','20261102-retry-assist');
   active={session:crypto.randomUUID(),runId:getRunId(),origin:url.origin,from:getScene().id,replay,part};
   $('endingCinemaOverlay').classList.toggle('is-runner',part==='approach');
   $('endingCinemaLabel').textContent=part==='approach'?'아직 끝나지 않은 이야기':'다시, 제자리로';

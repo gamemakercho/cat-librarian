@@ -1,6 +1,6 @@
 import {createEndingScenes} from './ending-course.js?v=20261102-ending-invite';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
-import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261102-mark05-location';
+import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261102-play-controls';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
 const gameGeometry={cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,175]};
@@ -37,7 +37,7 @@ export function createGeneralScenes(){
  // Existing after-catch checkpoints remain usable without rewinding old players.
  talk('general-after-catch',markLines('after_catch05').legacyText,'general-return-notice','neutral','general-clean',{noticeText:'다 읽은 책은 북트럭에 놓아 주세요'});
  const catchLines=markLines('after_catch05').lines,catchIds=['general-return-notice','general-return-help','general-expression-intro','general-expression-help'];
- catchIds.forEach((id,i)=>talk(id,catchLines[i],catchIds[i+1]||'general-return-puzzle',i===2?'self-mockery':'neutral','general-clean',{noticeText:'다 읽은 책은 북트럭에 놓아 주세요'}));
+ catchIds.forEach((id,i)=>talk(id,catchLines[i],catchIds[i+1]||'general-return-puzzle',i===2?'self-mockery':'neutral','general-clean',{noticeText:'다 읽은 책은 북트럭에 놓아 주세요',...(id==='general-expression-help'?{layout:'mark05-location',background:null,cat:null,location:null,noticeText:null,textMode:'static',locationGuideMode:'puzzle-intro',locationGuide:[loc05.puzzleIntro],locationHints:locationHints(5)}:{})}));
  scenes.push({id:'general-return-puzzle',type:'puzzle',puzzleId:'return-notice-booksodong',background:null,layout:'notice05-expression',fontSize:25,text:NOTICE05.title,next:'general-notice-solved',geometry:{dialogue:[0,0,500,100],answerForm:[29,625,442,155]}});
  const solved=markLines('after_notice05');
  talk('general-notice-solved',solved.lines[0],'general-stay-still','happy','general-clean');

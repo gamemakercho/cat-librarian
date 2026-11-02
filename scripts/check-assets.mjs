@@ -16,7 +16,7 @@ for(const s of chapters.flatMap(c=>c.scenes)){
   if(s.actor)used.add('actor:'+s.actor);
   if(s.staff)used.add('actor:staff');if(s.sleeping)used.add('actor:sleeping');if(s.marker)used.add('prop:'+(s.markerAsset||'marker'));
   if(s.guideOverlay)used.add('prop:'+s.guideOverlay);
-  if(s.layout==='notice05-expression')for(const key of ['expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow'])used.add(key);
+  if(s.layout==='notice05-expression')for(const key of ['prop:marker05','expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow'])used.add(key);
   for(const step of s.locationGuide||[])used.add(step.image);
 }
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);

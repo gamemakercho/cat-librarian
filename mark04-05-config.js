@@ -4,7 +4,7 @@ async function readConfig(name){
   const url=new URL(`./config/${name}.json`,import.meta.url);
   if(typeof window==='undefined')return JSON.parse(await (await import('node:fs/promises')).readFile(url,'utf8'));
   try{
-   url.searchParams.set('v','20261102-mark05-location');
+   url.searchParams.set('v','20261102-play-controls');
    const response=await fetch(url);if(!response.ok)throw Error(`진행 설정을 읽지 못했어요: ${name}`);
    return await response.json();
   }catch(error){
@@ -31,7 +31,7 @@ export const MARK_SCENE_GROUPS=Object.freeze({
 });
 export const NOTICE05=Object.freeze({
  title:'엽서를 활용해서,',question:'화살표가 가리키는 3글자는?',
- support:'엽서의 왼쪽 위·오른쪽 아래 고양이 얼굴을 현장 안내문 위에 대 보세요.',
+ support:'현장의 안내문에 고양이 엽서를 대어 표정을 바꿔 봐. 엽서의 화살표가 가리키는 글자를 순서대로 읽어 줘.',
  steps:Object.freeze([
   {from:'angry',to:'cry',text:'화난 고양이는 울게 만들고'},
   {from:'smile',to:'cry',text:'웃는 고양이도 울게 만들고'},

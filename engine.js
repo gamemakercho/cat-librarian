@@ -1,4 +1,4 @@
-import {migrateCourseSnapshot} from './course-migration.js?v=20261102-mark05-location';
+import {migrateCourseSnapshot} from './course-migration.js?v=20261102-play-controls';
 import {validOrderProgress} from './games/book-order/letter-state.js';
 import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
@@ -171,7 +171,7 @@ export class StoryRuntime {
     if(this.pendingSuccessId===s.id&&!review)return {ok:false,reason:'success-confirmation-required'};
     if (s.type === 'puzzle' && !this.solved.has(s.puzzleId) && !review) return {ok:false,reason:'answer-required'};
     if (s.type === 'move' && !arrived && !review) return {ok:false,reason:'arrival-required'};
-    if(s.locationGuide&&this.sceneState.locationGuideStep!==1&&!review)return {ok:false,reason:'guide-step-required'};
+    if(s.type==='move'&&s.locationGuide&&this.sceneState.locationGuideStep!==1&&!review)return {ok:false,reason:'guide-step-required'};
     if(s.type==='impact'&&!review&&(!this.solved.has(ENDING_PUZZLE_ID)||!this.flags.endingRescueComplete))return {ok:false,reason:'ending-required'};
     if(s.type==='cinematic'&&!review){
       if(s.cinematicPart==='approach'&&!this.flags.endingContactReached)return {ok:false,reason:'ending-required'};

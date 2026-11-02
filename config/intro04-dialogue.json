@@ -2,7 +2,7 @@
   "version": 1,
   "logicalIdsOnly": true,
   "speaker": "고양이 몸의 사서",
-  "sameBackgroundForAll": "room04-kdc-neutral.webp",
+  "sameBackgroundForAll": "room04-kdc-neutral-optimized.webp",
   "arrowBakedIntoImage": true,
   "disableOld04ArrowOverlay": true,
   "addProgressActivities": false,

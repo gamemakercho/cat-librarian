@@ -1,19 +1,21 @@
-import {NOTICE05} from './mark04-05-config.js?v=20261102-mark05-location';
+import {NOTICE05} from './mark04-05-config.js?v=20261102-play-controls';
 export function createMarkCourseUI({createImage}){
  const $=id=>document.getElementById(id),figure=$('locationGuide'),question=$('notice05Panel');
+ let lastSceneId=null;
  function size(){document.documentElement.style.setProperty('--course-available-height',Math.max(160,(visualViewport?.height||innerHeight)-document.querySelector('.player-tools').getBoundingClientRect().height)+'px');}
  addEventListener('resize',size);visualViewport?.addEventListener('resize',size);
  function render(scene){
   const guide=scene.layout==='mark04-guide',notice=scene.layout==='notice05-expression';
   figure.hidden=!guide;figure.replaceChildren();question.hidden=!notice;question.replaceChildren();
   if(guide){
-   figure.append(createImage('bg:'+scene.guideBackground,'location-guide-background','자료검색 컴퓨터와 자동대출반납기, 왼쪽 위의 기존 액자'));
-   figure.append(createImage('prop:'+scene.guideOverlay,'location-guide-arrow','왼쪽 검색 컴퓨터보다 조금 왼쪽 위의 액자를 가리키는 화살표'));
+   figure.append(createImage('bg:'+scene.guideBackground,'location-guide-background','대출 컴퓨터 위쪽의 한국십진분류표와 자료검색 컴퓨터, 자동대출반납기'));
+   figure.append(createImage('prop:'+scene.guideOverlay,'location-guide-arrow','대출 컴퓨터 위쪽의 한국십진분류표를 가리키는 화살표'));
    const marker=document.querySelector('#effectLayer .location-marker');if(marker)figure.append(marker);
   }
   if(notice){
    $('locationBanner').hidden=true;$('dialogue').hidden=true;
-   const title=document.createElement('h2');title.textContent=NOTICE05.title;question.append(title);
+   const mark=document.createElement('div');mark.className='notice05-marker';const label=document.createElement('strong');label.textContent='고양이 마크 05';mark.append(createImage('prop:marker05','notice05-marker-image','고양이 마크 05'),label);
+   const title=document.createElement('h2');title.textContent=NOTICE05.title;const support=document.createElement('p');support.className='notice05-support';support.textContent=NOTICE05.support;question.append(mark,support,title);
    const card=document.createElement('div');card.className='notice05-card';
    const steps=document.createElement('ol');steps.className='notice05-steps';
    const labels={angry:'화난 고양이',cry:'우는 고양이',smile:'웃는 고양이'};
@@ -26,9 +28,9 @@ export function createMarkCourseUI({createImage}){
    });
    const ask=document.createElement('p');ask.className='notice05-question';
    ask.append(createImage('prop:postcard-pink-arrow','notice05-pink-arrow','엽서의 분홍 아래 화살표'),document.createTextNode(NOTICE05.question));
-   card.append(steps,ask);const support=document.createElement('p');support.className='notice05-support';support.textContent=NOTICE05.support;
-   question.append(card,support);
+   card.append(steps,ask);question.append(card);
   }
+  if(notice&&lastSceneId!==scene.id)$('stage').scrollTo({top:0,behavior:'instant'});lastSceneId=scene.id;
   size();
  }
  return {render,size};

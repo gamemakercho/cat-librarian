@@ -51,7 +51,7 @@ test('old pending notice popup continues into new script; completed ending saves
  const done=new StoryRuntime(chapters,puzzles,{currentId:'ending-complete',solved:['postcard-returned-v1'],flags:{endingCompleted:true,endingContactReached:true}});
  assert.equal(done.currentId,'ending-complete');assert(done.flags.endingCompleted);
 });
-test('provided background and cats preserve their exact kit bytes; fallback remains separate',()=>{
+test('optimized background and original cats match recorded hashes; fallback remains separate',()=>{
  const manifest=JSON.parse(readFileSync(new URL('../assets.json',import.meta.url),'utf8'));
  for(const key of ['bg:room04','prop:marker04','prop:marker05','prop:room04-arrow','prop:postcard-pink-arrow','expression:angry','expression:smile','expression:cry']){
   const a=manifest[key],data=readFileSync(new URL('../'+a.src,import.meta.url));assert.equal(createHash('sha256').update(data).digest('hex'),a.sha256);assert.equal(data.length,a.bytes);

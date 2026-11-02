@@ -1,4 +1,4 @@
-import { CREDITS_DATA as DATA } from './credits-data.js?v=20261101-credits-v5';
+import { CREDITS_DATA as DATA } from './credits-data.js?v=20261102-play-controls';
 
 export const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const mix=(a,b,p)=>a+(b-a)*clamp(p,0,1);

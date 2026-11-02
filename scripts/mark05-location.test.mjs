@@ -18,3 +18,10 @@ test('two runtime WebPs retain provided dimensions, bytes and hashes without PNG
  for(const [id,size,hash]of expected){const a=manifest['hint:'+id],bytes=readFileSync(new URL('../'+a.src,import.meta.url));assert.equal(bytes.length,size);assert.equal(createHash('sha256').update(bytes).digest('hex'),hash);assert.deepEqual([a.width,a.height],[1086,1448]);assert.equal(a.fallback,undefined);}
  assert.equal(expected.reduce((n,x)=>n+x[1],0),475310);
 });
+
+test('existing final introduction checkpoint reuses the notice image and adds no activity before the unchanged answer',()=>{
+ const old={currentId:'general-expression-help',runId:'existing-intro',solved:['book-catch-keyword'],minigameResults:{'book-catch-keyword':clear}};
+ const r=new StoryRuntime(chapters,puzzles,old),count=r.progress.completed;
+ assert.equal(r.currentId,old.currentId);assert.equal(r.runId,old.runId);assert.equal(r.scene.locationGuideMode,'puzzle-intro');assert.equal(r.scene.locationGuide.length,1);assert.equal(r.scene.locationGuide[0].image,'hint:mark05-notice');assert.equal(r.scene.locationGuide[0].button,'문제 풀기');assert.equal(r.scene.location,null);assert.equal(r.scene.noticeText,null);
+ assert(r.advance().ok);assert.equal(r.currentId,'general-return-puzzle');assert.equal(r.progress.completed,count);r.updateSceneState({answer:'책소'});const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.sceneState.answer,'책소');assert(!restored.submit('책소').ok);assert.equal(restored.progress.completed,count);assert(restored.submit('책소동').ok);assert.equal(restored.progress.completed,count+1);assert.equal(ACTIVITIES.length,11);
+});

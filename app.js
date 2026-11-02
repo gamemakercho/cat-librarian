@@ -1,12 +1,12 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-mark05-location';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-play-controls';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-mark05-location';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-play-controls';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-mark05-location';
-import {createMark05LocationUI} from './mark05-location.js?v=20261102-mark05-location';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-play-controls';
+import {createMark05LocationUI} from './mark05-location.js?v=20261102-play-controls';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261102-ending-invite';
-import {createCreditsUI} from './credits-ui.js?v=20261102-ending-invite';
+import {createEndingUI} from './ending-ui.js?v=20261102-retry-assist';
+import {createCreditsUI} from './credits-ui.js?v=20261102-play-controls';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
 import {endingArtIds} from './ending-course.js?v=20261102-ending-invite';
 import {createIllustrationUI} from './ending-illustrations.js?v=20261101-ending26';
@@ -14,14 +14,14 @@ import {impactProgress,canReuseEndingIllustration} from './ending-art-state.js';
 import {createEndingArtView} from './ending-art-view.js';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261101-room04-24';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261102-play-controls';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json?v=20261102-mark05-location').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261102-play-controls').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -141,7 +141,7 @@ function sceneAssetKeys(s){
   if(s.cipher)keys.push(`prop:${s.cipher}`);
   if(s.marker)keys.push('prop:'+(s.markerAsset||'marker'));
   if(s.guideOverlay)keys.push('prop:'+s.guideOverlay);
-  if(s.layout==='notice05-expression')keys.push('expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow');
+  if(s.layout==='notice05-expression')keys.push('prop:marker05','expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow');
   if(puzzles[s.puzzleId]?.answerMode==='icons'){
     const state=runtime.puzzleStates[s.puzzleId];
     for(const id of state?.boardIds||[])keys.push(puzzles[s.puzzleId].icons[id].assetKey);

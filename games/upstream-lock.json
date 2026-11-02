@@ -253,9 +253,9 @@
         },
         {
           "file": "app.js",
-          "sourceSha256": "fc0776b30078b06743bf5258a2134ea32673b5a26f3af912bd9b141374fe45a8",
+          "sourceSha256": "cc7a9c6b62c14414e7c90806740457a819e268f81cd5ef498e06df6a76214822",
           "adapted": true,
-          "bundledSha256": "4d85f815e7b9873cd3bba0f57ba5296628100a194cb1e573cc6a304066cc2770"
+          "bundledSha256": "b3c4944492080ca73d9067e292021dcb17208d081c344038fe3c6d04a82eee93"
         },
         {
           "file": "assets/background/background-layout.json",
@@ -409,9 +409,9 @@
         },
         {
           "file": "index.html",
-          "sourceSha256": "b4406df4b265b7b9af9c26798ada2bcefd18f14e858e8151acb04771e595e416",
+          "sourceSha256": "e5970ca29eb76220bcadf72eae9e1c22c86a72467ff33df3c073465b4cd54c45",
           "adapted": false,
-          "bundledSha256": "b4406df4b265b7b9af9c26798ada2bcefd18f14e858e8151acb04771e595e416"
+          "bundledSha256": "e5970ca29eb76220bcadf72eae9e1c22c86a72467ff33df3c073465b4cd54c45"
         },
         {
           "file": "librarian-motion.js",
@@ -439,9 +439,9 @@
         },
         {
           "file": "styles.css",
-          "sourceSha256": "dfe37b396eae507164d7c11dbb283aacb97417f305be084d93b62c2a759f360f",
+          "sourceSha256": "c6aeef7df890193190cd74f17021f6a597273c25a51315859439dcf2fa0390ec",
           "adapted": false,
-          "bundledSha256": "dfe37b396eae507164d7c11dbb283aacb97417f305be084d93b62c2a759f360f"
+          "bundledSha256": "c6aeef7df890193190cd74f17021f6a597273c25a51315859439dcf2fa0390ec"
         }
       ]
     }

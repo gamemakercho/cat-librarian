@@ -6,14 +6,14 @@
     "04": {
       "title": "2층 종합자료실",
       "marker": "assets/mark04-05/markers/mark04.png",
-      "background": "./assets/mark04-05/backgrounds/room04-kdc-neutral.webp",
+      "background": "./assets/mark04-05/backgrounds/room04-kdc-neutral-optimized.webp",
       "backgroundOriginal": "./assets/mark04-05/backgrounds/room04-kdc-neutral.png",
       "sourceSize": [
         941,
         1672
       ],
-      "instruction": "왼쪽 기둥에 있는 한국십진분류표를 찾아봐. 04번 고양이 마크가 붙어 있어.",
-      "detailedHint": "왼쪽 기둥의 한국십진분류표를 찾아봐. 분홍 화살표가 가리키는 곳에 04번 고양이 마크가 있어.",
+      "instruction": "자료실의 대출 컴퓨터 위쪽에 있는 한국십진분류표를 찾아봐.",
+      "detailedHint": "자료실의 대출 컴퓨터 위쪽에 있는 한국십진분류표를 찾아봐. 분홍 화살표가 가리키는 곳에 고양이 마크 04가 있어.",
       "arrowBakedIntoImage": true
     },
     "05": {
@@ -39,7 +39,15 @@
           "button": "도착했지!",
           "alt": "노란 벤치 옆 칸막이에 붙은 고양이 마크 05 안내문을 원과 화살표로 표시한 그림."
         }
-      ]
+      ],
+      "puzzleIntro": {
+        "title": "안내문과 엽서를 함께 살펴보자!",
+        "text": "이 안내문과 네가 가진 고양이 엽서를 함께 써 보자! 실제 안내문의 고양이에 엽서를 겹쳐 대고, 다음 화면의 지시대로 표정을 바꿔 줘.",
+        "image": "hint:mark05-notice",
+        "caption": "현장의 안내문과 가지고 있는 고양이 엽서를 함께 사용해 줘.",
+        "button": "문제 풀기",
+        "alt": "노란 벤치 옆 칸막이에 붙은 고양이 마크 05 안내문을 원과 화살표로 표시한 그림."
+      }
     }
   }
 }

@@ -20,7 +20,7 @@ test('04 dialogue/arrival do not add activities; each saved step/history and exi
 });
 test('04 neutral image and its PNG fallback preserve exact manifest hashes and native dimensions',()=>{
  const manifest=JSON.parse(readFileSync(new URL('../assets.json',import.meta.url),'utf8')),a=manifest['bg:room04'];
- assert.match(a.src,/room04-kdc-neutral.webp$/);assert.match(a.fallback,/room04-kdc-neutral.png$/);assert(a.arrowBakedIntoImage);
+ assert.match(a.src,/room04-kdc-neutral-optimized.webp$/);assert.match(a.fallback,/room04-kdc-neutral.png$/);assert(a.arrowBakedIntoImage);
  for(const [src,hash]of [[a.src,a.sha256],[a.fallback,a.fallbackSha256]])assert.equal(createHash('sha256').update(readFileSync(new URL('../'+src,import.meta.url))).digest('hex'),hash);
  const png=readFileSync(new URL('../'+a.fallback,import.meta.url));assert.equal(png.readUInt32BE(16),941);assert.equal(png.readUInt32BE(20),1672);
  for(const s of scenes.filter(s=>s.background==='room04'))assert.equal(s.guideOverlay,undefined);

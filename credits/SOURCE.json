@@ -8,14 +8,16 @@
     {
       "file": "credits-data.js",
       "bytes": 1898,
-      "sha256": "2c97a01eb95e7e8c5f5c0f39f0552f72c0c42545a9477bd4afe1b009029d1afc"
+      "sha256": "2c97a01eb95e7e8c5f5c0f39f0552f72c0c42545a9477bd4afe1b009029d1afc",
+      "bundledBytes": 1910,
+      "bundledSha256": "58681f16177b028f121bc5c779ab5e69d20b1d3dd6c635ca733279953356653d"
     },
     {
       "file": "credits-player.js",
       "bytes": 17711,
       "sha256": "a491ac32ae737b9b36fdd71d9d14e4e39680d89a8edb852c8c70b4fa50660733",
-      "bundledSha256": "1fc7c8667079b90d3f6507d8e8876c7759d33fc6402891ab3e774f20d8cd6d5d",
-      "bundledBytes": 18179
+      "bundledSha256": "42c19558f4c579af0cb0d19fc15f0fad2a87413054d3add703b4e7301b5f050d",
+      "bundledBytes": 18182
     },
     {
       "file": "credits.css",
@@ -25,34 +27,58 @@
       "bundledBytes": 1958
     },
     {
-      "file": "backgrounds/bg01.png",
+      "file": "backgrounds/bg01.webp",
       "bytes": 40591,
-      "sha256": "a7b71007650d44a6dca4acc1278246d3fd31bfee11c38fb12c566a41bfe3dcb6"
+      "sha256": "a7b71007650d44a6dca4acc1278246d3fd31bfee11c38fb12c566a41bfe3dcb6",
+      "sourceFile": "backgrounds/bg01.png",
+      "bundledBytes": 35920,
+      "bundledSha256": "e6c77d0e73e852fce4b766e614c5f2def3d6594ba684841b3fb77ed6e6c96bff",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
-      "file": "backgrounds/bg02.png",
+      "file": "backgrounds/bg02.webp",
       "bytes": 34656,
-      "sha256": "571ecb1d37caf6a067e0c99f6711f9a75ac4e57926dbdd35adab4b0a7c1972d8"
+      "sha256": "571ecb1d37caf6a067e0c99f6711f9a75ac4e57926dbdd35adab4b0a7c1972d8",
+      "sourceFile": "backgrounds/bg02.png",
+      "bundledBytes": 30004,
+      "bundledSha256": "9bcc274442b3ec49905ba1d8a27fb8862cb782bda411137c691d8f7a4966e91b",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
-      "file": "backgrounds/bg03.png",
+      "file": "backgrounds/bg03.webp",
       "bytes": 42241,
-      "sha256": "e6f2593545cb049e892a4b36be5cac8c2a96c5e1de03bb61c665a146bc92d536"
+      "sha256": "e6f2593545cb049e892a4b36be5cac8c2a96c5e1de03bb61c665a146bc92d536",
+      "sourceFile": "backgrounds/bg03.png",
+      "bundledBytes": 36858,
+      "bundledSha256": "2f3061d58c09e507d82882297db50ce66b0ef54839f39492c86fc55283255a5e",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
-      "file": "backgrounds/bg04.png",
+      "file": "backgrounds/bg04.webp",
       "bytes": 37097,
-      "sha256": "4a82a6e50ed3632df560ce09d35fca815573df40126dc8f9f8b250337eac7fba"
+      "sha256": "4a82a6e50ed3632df560ce09d35fca815573df40126dc8f9f8b250337eac7fba",
+      "sourceFile": "backgrounds/bg04.png",
+      "bundledBytes": 32376,
+      "bundledSha256": "f99feef37745b19bca4bcdbea9ace70762c7f8a5cb775acae28abecbea745b0d",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
-      "file": "backgrounds/bg05.png",
+      "file": "backgrounds/bg05.webp",
       "bytes": 40915,
-      "sha256": "b3721e6f1ea533af118ba6b9b26bb12713dac29901e6c04851dd337960cf6bdd"
+      "sha256": "b3721e6f1ea533af118ba6b9b26bb12713dac29901e6c04851dd337960cf6bdd",
+      "sourceFile": "backgrounds/bg05.png",
+      "bundledBytes": 36482,
+      "bundledSha256": "7ff689eb3ae8f8781242ee6cb50d3bb5daa75442d15f883c27ee164307c521bd",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
-      "file": "backgrounds/bg06.png",
+      "file": "backgrounds/bg06.webp",
       "bytes": 39062,
-      "sha256": "15bef69d9726146a6720e58f921863d6f86557fe3fc447abaf6b9605e7194e2c"
+      "sha256": "15bef69d9726146a6720e58f921863d6f86557fe3fc447abaf6b9605e7194e2c",
+      "sourceFile": "backgrounds/bg06.png",
+      "bundledBytes": 34060,
+      "bundledSha256": "f8c0a08ae8bcfd3d32fc89a7b9dd5e6a7f38561d7378ea56f4033122e40b62ae",
+      "conversion": "lossless WebP; same dimensions and identical decoded RGBA"
     },
     {
       "file": "sprites/librarian-hd.png",
@@ -153,5 +179,6 @@
   "adaptations": [
     "credits-player.js: versioned data import, image-object cache, AbortSignal disposal; v5 animation/timings/assets retained",
     "2026-11-02 user copy change: remove only final credits heading; preserve its layout slot and v5 animations/closing lines"
-  ]
+  ],
+  "optimization": "2026-11-02: six static backgrounds converted to pixel-identical lossless WebP; sprites, frames, colors and scene times unchanged"
 }

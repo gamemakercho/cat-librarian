@@ -5,8 +5,8 @@ import {chapters,puzzles} from '../story.js';
 import {impactProgress,IMPACT_DURATION_MS,canReuseEndingIllustration} from '../ending-art-state.js';
 const scenes=chapters.flatMap(c=>c.scenes),byId=new Map(scenes.map(s=>[s.id,s]));
 
-test('book-catching leads through five natural lines to the unchanged expression puzzle',()=>{
- const expected=['휴… 겨우 다 받았다.','다 읽은 책은 북카트에 놓아줘. 제자리 정리는 사서에게 맡겨 주면 돼.','책이 엉뚱한 곳에 꽂히면 다음 사람이 찾기 어렵거든. 서가 위에서 던지는 건 더 곤란하고.','그런데 안내문 속 고양이들 표정 좀 봐. 화내고, 웃고, 울고… 오늘 내 표정이 다 있네.','엽서에도 고양이 얼굴이 있지? 안내문 위에 대서 표정을 바꿔 보자.'];
+test('legacy after-catch checkpoints retain return dialogue and the updated postcard introduction',()=>{
+ const expected=['휴… 겨우 다 받았다.','다 읽은 책은 북카트에 놓아줘. 제자리 정리는 사서에게 맡겨 주면 돼.','책이 엉뚱한 곳에 꽂히면 다음 사람이 찾기 어렵거든. 서가 위에서 던지는 건 더 곤란하고.','그런데 안내문 속 고양이들 표정 좀 봐. 화내고, 웃고, 울고… 오늘 내 표정이 다 있네.','이 안내문과 네가 가진 고양이 엽서를 함께 써 보자! 실제 안내문의 고양이에 엽서를 겹쳐 대고, 다음 화면의 지시대로 표정을 바꿔 줘.'];
  let s=byId.get('general-after-catch');for(const text of expected){assert.equal(s.text,text);assert(!s.text.includes('책소동'));s=byId.get(s.next);}
  assert.equal(s.id,'general-return-puzzle');assert.deepEqual(puzzles[s.puzzleId].acceptedAnswers,['책소동']);
  for(const scene of scenes.filter(s=>s.type==='dialogue'))assert(!/(?:\d+|몇)\s*번(?:째)?\s*(?:문제|미니게임|안내문|고양이 마크)/u.test(scene.text),scene.id);

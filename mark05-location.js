@@ -34,7 +34,7 @@ export function createMark05LocationUI({getScene,getState,onStep,onArrive,loadIm
   $('mark05Avatar').replaceChildren(createImage('cat:neutral','mark05-avatar','고양이 몸의 사서'));
   showStep(getState().locationGuideStep||0);
  }
- $('mark05Primary').onclick=()=>{if(busy||!current())return;if((getState().locationGuideStep||0)===0)showStep(1);else{busy=true;$('mark05Primary').disabled=true;onArrive();}};
+ $('mark05Primary').onclick=()=>{if(busy||!current())return;if(getScene().locationGuideMode!=='puzzle-intro'&&(getState().locationGuideStep||0)===0)showStep(1);else{busy=true;$('mark05Primary').disabled=true;onArrive();}};
  $('locationZoomClose').onclick=closeZoom;zoom.addEventListener('cancel',e=>{e.preventDefault();closeZoom();});
  $('locationZoomToggle').onclick=()=>{const enlarged=$('locationZoomViewport').classList.toggle('is-zoomed');$('locationZoomToggle').textContent=enlarged?'전체 그림 보기':'원본 크기로 보기';$('locationZoomViewport').scrollTo(0,0);};
  async function showHints(){
@@ -52,5 +52,5 @@ export function createMark05LocationUI({getScene,getState,onStep,onArrive,loadIm
   }
   prev.onclick=()=>display(Math.max(0,index-1));next.onclick=()=>display(Math.min(steps.length-1,index+1));display(index);
  }
- return {render,stop,showHints,previous(){if(!current()||(getState().locationGuideStep||0)===0)return false;showStep(0);return true;}};
+ return {render,stop,showHints,previous(){if(!current()||getScene().locationGuideMode==='puzzle-intro'||(getState().locationGuideStep||0)===0)return false;showStep(0);return true;}};
 }
