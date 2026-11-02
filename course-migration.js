@@ -1,7 +1,14 @@
 import {orderSorted,restoreLetters} from './games/book-order/letter-state.js';
+import {isMinigameClear} from './minigame-bridge.js';
 const gameId='book-order-keyword';
 export function migrateCourseSnapshot(value={}){
  const s={...value,minigameResults:{...value.minigameResults},minigameProgress:{...value.minigameProgress}};
+ // Before this guide moved after the catch, its checkpoint led to the shelf story.
+ const hasNewGuideState=Number.isInteger(value.sceneStates?.['general-shelf-arrival']?.locationGuideStep);
+ if(!hasNewGuideState){
+  if(s.currentId==='general-shelf-arrival'&&!isMinigameClear(s.minigameResults['book-catch-keyword'],{resultKind:'book-catch',target:20}))s.currentId='general-book-drop';
+  if(Array.isArray(s.history))s.history=s.history.filter(id=>id!=='general-shelf-arrival');
+ }
  const old=!value.courseRevision||value.courseRevision<18;
  const result=s.minigameResults[gameId],sorted=result?.kind==='book-order'&&result.cleared===true&&orderSorted(result),complete=result?.letterPuzzle?.completed===true;
  if(old&&sorted&&!complete){
@@ -11,6 +18,7 @@ export function migrateCourseSnapshot(value={}){
  }
  const aliases={'general-breath':'newbooks-after-order','ending-postcard-clue':'ending-rescue','general-order-sequence':'newbooks-order-game','general-shelf-guide':'general-order-bridge','general-pc-guide':'general-order-bridge','general-pc-paint':'general-order-bridge','general-classification-clue':'general-order-bridge','general-room-puzzle':'newbooks-order-game','newbooks-intro':'general-book-drop','newbooks-disorder':'general-book-drop','general-faces-joke':'general-book-drop','general-faces-clue':'general-book-drop','newbooks-puzzle':'general-book-drop','general-face-easy':'general-book-drop','general-body-wait':'general-book-drop'};
  aliases['general-return-joke']='general-return-help';
+ aliases['ending-loan-joke']='ending-complete';
  if(aliases[s.currentId])s.currentId=aliases[s.currentId];
  if(Array.isArray(s.history)){s.history=s.history.map(id=>aliases[id]||id).filter((id,i,all)=>id!==s.currentId&&id!==all[i-1]);}
  if(['general-room-placeholder-v1','newbooks-placeholder-v1'].includes(s.pendingSuccess?.puzzleId)){s.pendingSuccess=null;s.pendingSuccessId=null;}

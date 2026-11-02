@@ -1,7 +1,7 @@
 import {readFileSync,existsSync,readdirSync} from 'node:fs';import {resolve} from 'node:path';import {createHash} from 'node:crypto';
 import {CREDITS_DATA as D} from '../credits/credits-data.js';
 const root=resolve(import.meta.dirname,'..'),records=JSON.parse(readFileSync(resolve(root,'credits/SOURCE.json'),'utf8'));
-for(const r of records.files){const file=resolve(root,'credits',r.file);if(!existsSync(file))throw Error('없는 크레딧 파일 '+r.file);const bytes=readFileSync(file),hash=createHash('sha256').update(bytes).digest('hex');if(r.file==='credits-player.js'){if(hash!==r.bundledSha256)throw Error('기록 이후 크레딧 재생기 변경');continue;}if(bytes.length!==r.bytes||hash!==r.sha256)throw Error('제공 크레딧 자산 변경 '+r.file);}
+for(const r of records.files){const file=resolve(root,'credits',r.file);if(!existsSync(file))throw Error('없는 크레딧 파일 '+r.file);const bytes=readFileSync(file),hash=createHash('sha256').update(bytes).digest('hex');if(r.bundledSha256){if(hash!==r.bundledSha256||r.bundledBytes&&bytes.length!==r.bundledBytes)throw Error('기록 이후 크레딧 어댑터 변경 '+r.file);continue;}if(bytes.length!==r.bytes||hash!==r.sha256)throw Error('제공 크레딧 자산 변경 '+r.file);}
 if(D.images.length!==17||records.images!==17||D.scenes.reduce((sum,s)=>sum+s.duration,0)!==62)throw Error('크레딧 이미지/시간 변경');
 for(const file of readdirSync(resolve(root,'credits'),{recursive:true}))if(/source-art|preview|\.gif$|(?:cat|librarian)(?:-32)?\.(?:png|json)$/.test(file))throw Error('크레딧 배포에 불필요한 대안/원본 '+file);
 const run=JSON.parse(readFileSync(resolve(root,'credits/sprites/librarian-run-hd.json'),'utf8'));

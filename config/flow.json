@@ -49,16 +49,7 @@
     {
       "id": "after_letters04",
       "kind": "story",
-      "next": "travel05"
-    },
-    {
-      "id": "travel05",
-      "kind": "movement",
-      "requires": [
-        "book_letters_solved"
-      ],
-      "onArrival": "shelf05",
-      "setsOnArrival": "mark05_arrived"
+      "next": "shelf05"
     },
     {
       "id": "shelf05",
@@ -70,10 +61,19 @@
       "kind": "existing_minigame",
       "activity": "minigame03",
       "requires": [
-        "mark05_arrived"
+        "book_letters_solved"
       ],
-      "onVerifiedSuccess": "after_catch05",
+      "onVerifiedSuccess": "travel05",
       "setsOnSuccess": "book_catching_completed"
+    },
+    {
+      "id": "travel05",
+      "kind": "movement",
+      "requires": [
+        "book_catching_completed"
+      ],
+      "onArrival": "after_catch05",
+      "setsOnArrival": "mark05_arrived"
     },
     {
       "id": "after_catch05",

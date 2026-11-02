@@ -14,12 +14,15 @@
       "file": "credits-player.js",
       "bytes": 17711,
       "sha256": "a491ac32ae737b9b36fdd71d9d14e4e39680d89a8edb852c8c70b4fa50660733",
-      "bundledSha256": "e789f1c8febee2d3be6747df373af799c00946cd682706bd0e6e1c10c1058521"
+      "bundledSha256": "1fc7c8667079b90d3f6507d8e8876c7759d33fc6402891ab3e774f20d8cd6d5d",
+      "bundledBytes": 18179
     },
     {
       "file": "credits.css",
       "bytes": 1940,
-      "sha256": "b6e5e4e3549c9b7c557b43fd1b7a8f9df3259140097d87f819d2f740c47281b0"
+      "sha256": "b6e5e4e3549c9b7c557b43fd1b7a8f9df3259140097d87f819d2f740c47281b0",
+      "bundledSha256": "38b9a08015f883a595a0ae5a0026f79332ab623331af1928d0e4ea677029b5ca",
+      "bundledBytes": 1958
     },
     {
       "file": "backgrounds/bg01.png",
@@ -148,6 +151,7 @@
     }
   ],
   "adaptations": [
-    "credits-player.js: versioned data import, image-object cache, AbortSignal disposal; v5 animation/timings/assets retained"
+    "credits-player.js: versioned data import, image-object cache, AbortSignal disposal; v5 animation/timings/assets retained",
+    "2026-11-02 user copy change: remove only final credits heading; preserve its layout slot and v5 animations/closing lines"
   ]
 }

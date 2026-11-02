@@ -1,4 +1,4 @@
-import {migrateCourseSnapshot} from './course-migration.js?v=20261101-ending26';
+import {migrateCourseSnapshot} from './course-migration.js?v=20261102-mark05-location';
 import {validOrderProgress} from './games/book-order/letter-state.js';
 import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
@@ -113,6 +113,7 @@ export class StoryRuntime {
       locationHintLevel:Number.isInteger(state.locationHintLevel)?Math.max(0,Math.min(2,state.locationHintLevel)):0,
       arrived:state.arrived===true,gameEntered:state.gameEntered===true,gameReturned:state.gameReturned===true,
       feedback:typeof state.feedback==='string'?state.feedback.slice(0,300):'',
+      ...(Number.isInteger(state.locationGuideStep)?{locationGuideStep:Math.max(0,Math.min(1,state.locationGuideStep))}:{}),
       ...(impactProgress(state)?{impactVersion:1,impactElapsedMs:impactProgress(state).elapsedMs}:{})};
   }
   updateSceneState(patch) { this.sceneStates[this.currentId]=this.normalizeSceneState({...this.sceneState,...patch}); }
@@ -170,6 +171,7 @@ export class StoryRuntime {
     if(this.pendingSuccessId===s.id&&!review)return {ok:false,reason:'success-confirmation-required'};
     if (s.type === 'puzzle' && !this.solved.has(s.puzzleId) && !review) return {ok:false,reason:'answer-required'};
     if (s.type === 'move' && !arrived && !review) return {ok:false,reason:'arrival-required'};
+    if(s.locationGuide&&this.sceneState.locationGuideStep!==1&&!review)return {ok:false,reason:'guide-step-required'};
     if(s.type==='impact'&&!review&&(!this.solved.has(ENDING_PUZZLE_ID)||!this.flags.endingRescueComplete))return {ok:false,reason:'ending-required'};
     if(s.type==='cinematic'&&!review){
       if(s.cinematicPart==='approach'&&!this.flags.endingContactReached)return {ok:false,reason:'ending-required'};

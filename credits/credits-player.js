@@ -259,7 +259,7 @@ export async function mountCredits(root,options={}){
  if(disposed)return{destroy};
  const ctx=canvas.getContext('2d');ctx.setTransform(renderScale,0,0,renderScale,0,0);ctx.imageSmoothingEnabled=false;
  function updateText(){
-  title.textContent=finished?'고마웠어, 명예사서님!':DATA.scenes[sceneIndex].title;
+  title.textContent=finished?'':DATA.scenes[sceneIndex].title;title.setAttribute('aria-hidden',String(finished));
   label.textContent=finished?'오늘 함께한 모험을 기억해 줘':'오늘 함께 배운 것';
   caption.replaceChildren();const lines=finished?DATA.closing:[DATA.scenes[sceneIndex].caption];
   for(const [i,line]of lines.entries()){if(i)caption.append(doc.createElement('br'));caption.append(doc.createTextNode(line));}

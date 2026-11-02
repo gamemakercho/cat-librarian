@@ -75,8 +75,8 @@ test('충돌 컷인 포함 자동 연출은 작은/큰 프레임 간격과 동�
 test('일시정지는 영화 시간과 자동 이동을 함께 멈춘다',()=>{
  const e=new RescueEngine();e.start();e.advance(3);e.pause();const before=e.snapshot();directRescue(e,5);e.advance(5);assert.deepEqual(e.snapshot(),before);e.resume();directRescue(e,.1);e.advance(.1);assert(e.snapshot().totalTime>before.totalTime);
 });
-test('복귀 3대사와 포옹 3대사는 각각 같은 전체 삽화만 쓰고 인물을 중복하지 않는다',()=>{
- const scenes=createEndingScenes(),returned=['ending-returned','ending-cat','ending-returned-joke'],thanks=['ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
+test('복귀 개그와 기존 감사는 각각 같은 전체 삽화만 쓰고 인물을 중복하지 않는다',()=>{
+ const scenes=createEndingScenes(),returned=['ending-returned','ending-cat','ending-returned-joke','ending-returned-relief','ending-meow-question','ending-meow-embarrassed'],thanks=['ending-thanks','ending-promise','ending-complete'];
  for(const [ids,art]of [[returned,'ending-04-returned'],[thanks,'ending-05-thanks']])for(const id of ids){const s=scenes.find(s=>s.id===id);assert.equal(s.endingArt,art);assert(!s.actor&&!s.cat&&!s.background);}
  assert.equal(scenes.find(s=>s.id==='ending-cat').text,'야옹~!');
 });
@@ -152,7 +152,7 @@ test('실제 자산 로더는 정답 전에는 새 충돌 그림을 요청하지
 
 test('첨부 장면 순서/대사 데이터와 현재 엔딩 장면이 일치한다',()=>{
  const data=JSON.parse(readFileSync(new URL('../assets/ending/sequence.json',import.meta.url),'utf8'));
- const actual=createEndingScenes(),ids=['ending-impact','ending-returned','ending-cat','ending-returned-joke','ending-returned-relief','ending-thanks','ending-promise','ending-loan-joke','ending-complete'];
+ const actual=createEndingScenes(),ids=['ending-impact','ending-returned','ending-cat','ending-returned-joke','ending-returned-relief','ending-meow-question','ending-meow-embarrassed','ending-thanks','ending-promise','ending-complete'];
  const start=actual.findIndex(s=>s.id==='ending-impact');assert.deepEqual(actual.slice(start).map(s=>s.id),ids);
  for(const group of data.post_answer_sequence.filter(s=>s.dialogue)){
   const expected=group.dialogue.map(d=>d.text.replace(/\s/gu,''));

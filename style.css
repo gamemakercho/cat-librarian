@@ -393,6 +393,10 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="ending-illustration"] .ending-card .ending-thanks{font-size:4cqw;margin:2cqw 0}
 .stage[data-layout="ending-illustration"] .ending-card .ending-eyebrow,.stage[data-layout="ending-illustration"] .ending-card .ending-punctuation,.stage[data-layout="ending-illustration"] .ending-card .ending-credit{display:none}
 .stage[data-layout="ending-illustration"] .ending-card button{padding:1cqw;margin:.5cqw 0;font-size:3.8cqw;min-height:44px}
+.ending-credits-invite{font-size:clamp(13px,4.2cqw,20px);line-height:1.4;color:#355a4c;margin:1.5cqw 0 1cqw;word-break:keep-all}
+.ending-card #endingCredits{flex-shrink:0;min-height:52px;margin:0 0 1.5cqw;padding:9px 12px;border:2px solid #195e50;background:#287967;color:#fffbea;font-size:clamp(18px,5cqw,25px);box-shadow:0 3px 0 #194f44;transform-origin:center}
+.credits-invite-pulse{animation:credits-invite 1.8s ease-in-out 3}
+@keyframes credits-invite{0%,38%,100%{transform:scale(1)}18%{transform:scale(1.03)}}
 .retry-scene{position:absolute;z-index:25;top:64%;left:15%;width:70%;min-height:48px;font:inherit;background:#e2f0e4;color:#294c41;border:2px solid #6b947f;border-radius:12px}
 @keyframes ending-contact{0%{transform:scale(1)}8%{transform:scale(1.12)}11%{transform:translate(-2px,0) scale(1.12)}14%{transform:translate(2px,1px) scale(1.12)}17%,100%{transform:scale(1.12)}}
 @keyframes ending-star{0%,25%,53%,81%,100%{opacity:0;transform:scale(.7)}12%,40%,68%{opacity:1;transform:scale(1.1)}}
@@ -498,6 +502,31 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .stage[data-layout="room04-arrival"] .movement-controls{left:16px!important;top:auto!important;bottom:10px;width:calc(100% - 32px)!important;height:110px!important}
 .stage[data-layout="room04-arrival"] .movement-controls h2{font-size:23px;margin:0 0 8px}
 .stage[data-layout="room04-arrival"] .arrival-button{font-size:19px;min-height:48px;padding:8px}
+
+/* The two 05 photos are independent, uncropped images; short screens scroll. */
+.stage[data-layout="mark05-location"]{height:auto;max-height:var(--course-available-height,calc(100svh - 60px));aspect-ratio:auto;overflow-y:auto;overscroll-behavior:contain;padding:14px;background:#fff8e6}
+.stage[data-layout="mark05-location"] #dialogue,.stage[data-layout="mark05-location"] #movementControls,.stage[data-layout="mark05-location"] #characterLayer,.stage[data-layout="mark05-location"] #sceneLayer{display:none}
+.mark05-location{position:relative;z-index:6;color:var(--ink)}
+.mark05-location button,.mark05-hint-viewer button,#locationImageDialog button{-webkit-tap-highlight-color:transparent}
+.game-column:has(.stage[data-layout="mark05-location"]) .player-tools{flex-wrap:wrap}
+.mark05-location h2{font-size:clamp(21px,6cqw,28px);line-height:1.35;min-height:2.7em;margin:0 0 10px;display:grid;place-items:center;text-align:center;color:#355449;word-break:keep-all}
+.mark05-talk{display:flex;gap:10px;align-items:center;margin-bottom:12px;padding:12px;border:2px solid #806f52;border-radius:16px;background:#fff8df}
+.mark05-avatar{width:48px;height:58px;object-fit:contain;display:block;transform:scaleX(-1);filter:drop-shadow(2px 0 white) drop-shadow(-2px 0 white) drop-shadow(0 2px white) drop-shadow(0 -2px white)}
+.mark05-talk p{margin:0;font-size:18px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}
+.mark05-image-button{display:block;position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;padding:0;border:2px solid #a58d68;border-radius:12px;background:#f4e7cd;cursor:zoom-in}
+.mark05-guide-image,.mark05-hint-image{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:contain}
+.mark05-caption{font-size:17px;line-height:1.55;margin:12px 0 4px;word-break:keep-all}
+.mark05-zoom-note{font-size:14px;color:#72634c;margin:4px 0 12px;text-align:center}
+.mark05-status{font-size:16px;line-height:1.5;margin:8px 0}
+#mark05Primary,#mark05Retry{min-height:48px;width:100%;font-size:19px;padding:10px 12px;border-radius:12px}
+.mark05-hint-actions{display:flex;gap:10px;margin:8px 0}.mark05-hint-actions button{flex:1;min-height:44px;padding:8px;border:1px solid #8f785b;border-radius:10px;background:#f4e7cd;color:#3d493c;font:inherit}
+.mark05-hint-viewer>p{font-size:15px;text-align:center}
+.location-image-dialog{width:min(96vw,1000px);max-width:none;max-height:96svh;padding:10px;border:2px solid #8f785b;border-radius:14px;background:#fff8e6;color:#30291f}
+.location-image-dialog::backdrop{background:#211c14bd}.location-zoom-tools{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}
+.location-zoom-tools button{min-height:44px;border:1px solid #8f785b;border-radius:10px;padding:8px 12px;font:inherit;background:#e7f0df;color:#315349}
+.location-zoom-viewport{max-height:calc(96svh - 80px);overflow:auto;overscroll-behavior:contain;background:#f4e7cd;touch-action:pan-x pan-y pinch-zoom}
+.location-zoom-image{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:contain}
+.location-zoom-viewport.is-zoomed .location-zoom-image{width:1086px;max-width:none}
 
 .credits-dialog{inset:0;margin:0;padding:0;border:0;width:100vw;max-width:none;height:100dvh;max-height:none;overflow:auto;overscroll-behavior:contain;background:#fff6df;color:#3d3025;font:inherit}
 .credits-dialog::backdrop{background:#382a20b3}

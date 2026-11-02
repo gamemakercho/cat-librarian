@@ -21,10 +21,11 @@ export function createEndingScenes(){
  art('ending-returned','ending-04-returned','앗… 돌아왔다!','ending-cat'),
  art('ending-cat','ending-04-returned','야옹~!','ending-returned-joke','고양이'),
  art('ending-returned-joke','ending-04-returned','머리를 부딪혀서 돌아왔나 봐! :O','ending-returned-relief'),
- art('ending-returned-relief','ending-04-returned','휴. 이제 ‘고양이가 그랬어요’라고 해도 되겠다.','ending-thanks'),
+ art('ending-returned-relief','ending-04-returned','휴, 드디어 사람으로 돌아왔네. 야옹.','ending-meow-question'),
+ art('ending-meow-question','ending-04-returned','야옹?','ending-meow-embarrassed','고양이'),
+ art('ending-meow-embarrassed','ending-04-returned','…방금 건 못 들은 걸로 해줘.','ending-thanks'),
  art('ending-thanks','ending-05-thanks','도와줘서 정말 고마워.\n네 덕분에 책도 정리하고, 내 몸도 찾았어.','ending-promise'),
- art('ending-promise','ending-05-thanks','다음에 오면 내가 재미있는 책 골라줄게.','ending-loan-joke'),
- art('ending-loan-joke','ending-05-thanks','그때는 앉아서 보자. 오늘 너무 많이 뛰었다.','ending-complete'),
+ art('ending-promise','ending-05-thanks','다음에 오면 내가 재미있는 책 골라줄게.','ending-complete'),
  {id:'ending-complete',type:'ending',endingArt:'ending-05-thanks',background:null,layout:'ending-illustration',text:'고양이와 사서가 돌아왔다!',next:null}
  ].map(s=>({sourceNumber:null,location:s.endingArt?null:'2층 종합자료실',nextLabel:'다음으로',...s,geometry:{...talk,...s.geometry}}));
 }

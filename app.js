@@ -1,13 +1,14 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261101-landscape27';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-mark05-location';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261101-ending26';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-mark05-location';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261101-ending26';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-mark05-location';
+import {createMark05LocationUI} from './mark05-location.js?v=20261102-mark05-location';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261101-credits-v3';
-import {createCreditsUI} from './credits-ui.js?v=20261101-credits-v5';
+import {createEndingUI} from './ending-ui.js?v=20261102-ending-invite';
+import {createCreditsUI} from './credits-ui.js?v=20261102-ending-invite';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
-import {endingArtIds} from './ending-course.js?v=20261101-ending26';
+import {endingArtIds} from './ending-course.js?v=20261102-ending-invite';
 import {createIllustrationUI} from './ending-illustrations.js?v=20261101-ending26';
 import {impactProgress,canReuseEndingIllustration} from './ending-art-state.js';
 import {createEndingArtView} from './ending-art-view.js';
@@ -20,7 +21,7 @@ const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json?v=20261101-room04-24').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261102-mark05-location').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -56,6 +57,9 @@ const endingArtView=createEndingArtView({layer:$('endingArtLayer'),createImage,r
 const foldReference=createFoldReference({getScene:()=>runtime.scene});
 const progressUI=createProgressUI({getProgress:()=>runtime.progress,onRestart:()=>restart()});
 const markCourseUI=createMarkCourseUI({createImage});
+const mark05UI=createMark05LocationUI({getScene:()=>runtime.scene,getState:()=>runtime.sceneState,
+ onStep:step=>{if(runtime.sceneState.locationGuideStep!==step){runtime.updateSceneState({locationGuideStep:step});save();}$('backButton').textContent=step===1?'이전 그림':'이전 화면';$('backButton').disabled=step===0&&!runtime.history.length;},
+ onArrive:()=>advance({arrived:true}),loadImage,createImage});
 const creditsUI=createCreditsUI({canOpen:()=>runtime.scene.type==='ending'&&(review||runtime.flags.endingCompleted===true)});
 const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
   getPoster:()=>runtime.endingContactPoster,
@@ -121,6 +125,7 @@ function createImage(key,className,alt=''){
 }
 function sceneAssetKeys(s){
   const keys=[];
+  if(s.locationGuide)keys.push('cat:neutral');
   if(s.endingArt)keys.push(`ending:${s.endingArt}`);
   if(s.storyArt)keys.push(`story:${s.storyArt}`);
   if(s.shelfActor)keys.push('actor:shelf-librarian');
@@ -204,7 +209,7 @@ async function render(){
     illustrationUI.render(s);preloadNextEndingArt(s);return;
   }
   if(puzzles[s.puzzleId]?.answerMode==='icons'){runtime.getIconState();save();}
-  creditsUI.close();closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();
+  creditsUI.close();closeMinigame();endingUI.stop();illustrationUI.stop();stopShelfMotion();foldReference.stop();mark05UI.stop();
   const preserveText=Boolean(textComplete&&renderedScene?.textGroup&&renderedScene.textGroup===s.textGroup&&renderedScene.text===s.text);
   sceneReady=false;
   clearInterval(textTimer);textTimer=null;
@@ -306,8 +311,9 @@ async function render(){
   $('notYetButton').textContent=s.lostLabel||uiText.lostLabel;
   $('continuationControls').hidden=s.type!=='continuation';
   $('backButton').disabled=!runtime.history.length;
+  $('backButton').textContent='이전 화면';
   composing=false;$('answer').blur();$('answer').value=runtime.sceneState.answer||'';$('answerFeedback').textContent=s.layout==='notice05-expression'?runtime.sceneState.feedback||'':'';
-  $('hintButton').hidden=s.type!=='puzzle'||!puzzle?.hints?.length;
+  $('hintButton').hidden=!s.locationGuide&&(s.type!=='puzzle'||!puzzle?.hints?.length);
   $('hintButton').textContent=puzzle?.hintLabel||'힌트 보기';
   const p=puzzles[s.puzzleId],english=p?.answerMode==='english-four';
   $('answerForm').dataset.english=String(Boolean(english));
@@ -324,6 +330,7 @@ async function render(){
   if(!preserveText)typeText(s);
   renderedScene=s;layoutStoryFlow(stage,s);updateReview(s);endingUI.render(s);
   markCourseUI.render(s);
+  mark05UI.render(s);
   illustrationUI.render(s);foldReference.render(s);
   preloadNextEndingArt(s);
   for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
@@ -405,7 +412,8 @@ function showLocationHints(){
   $('moreLocationHint').hidden=locationHintLevel>=Math.min(hints.length,2);
   $('closeLocationHint').textContent=s.closeHintLabel||uiText.closeHintLabel;
   if(!$('locationHintDialog').open)$('locationHintDialog').showModal();
-  showGuideCat('locationHintIllustration','locationHintDialog');
+  if(s.locationGuide){$('locationHintIllustration').replaceChildren();mark05UI.showHints();}
+  else showGuideCat('locationHintIllustration','locationHintDialog');
 }
 async function showGuideCat(target,dialog){
   try{await loadImage('cat:neutral');if($(dialog).open)$(target).replaceChildren(createImage('cat:neutral',`hint-cat ${target}`));}catch{}
@@ -466,7 +474,7 @@ $('nextButton').addEventListener('click',e=>{if(performance.now()<nextReadyAt)re
 $('retryScene').addEventListener('click',()=>render());
 $('nextButton').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat)e.preventDefault();});
 $('dialogue').addEventListener('click',()=>{if(!textComplete)finishText();});
-$('backButton').addEventListener('click',()=>{if(runtime.back()){save();render();}});
+$('backButton').addEventListener('click',()=>{if(mark05UI.previous())return;if(runtime.back()){save();render();}});
 $('arrivedButton').addEventListener('click',()=>{if(runtime.scene.type!=='move'||performance.now()<arrivalReadyAt)return;arrivalReadyAt=performance.now()+400;advance({arrived:true});});
 $('checkIcons').addEventListener('click',()=>{
   if(!sceneReady||runtime.pendingSuccessId)return;
@@ -529,7 +537,7 @@ window.addEventListener('message',event=>{
 window.addEventListener('resize',sizeMinigame);
 $('notYetButton').addEventListener('click',showLocationHints);
 $('moreLocationHint').addEventListener('click',()=>{locationHintLevel+=1;showLocationHints();});
-$('closeLocationHint').addEventListener('click',()=>{$('locationHintDialog').close();$('notYetButton').focus();});
+$('closeLocationHint').addEventListener('click',()=>{$('locationHintDialog').close();(runtime.scene.locationGuide?$('hintButton'):$('notYetButton')).focus();});
 $('successDialog').addEventListener('cancel',e=>e.preventDefault());
 $('successDialog').addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
 $('successNextButton').addEventListener('click',()=>{
@@ -559,7 +567,7 @@ $('answer').addEventListener('focus',()=>{
   // document with the optional creator panel below the game stage.
   setTimeout(()=>{$('answerForm').scrollIntoView({block:'center',behavior:'instant'});},250);
 });
-$('hintButton').addEventListener('click',showPuzzleHints);
+$('hintButton').addEventListener('click',()=>runtime.scene.locationGuide?showLocationHints():showPuzzleHints());
 $('morePuzzleHint').addEventListener('click',()=>{hintLevel+=1;showPuzzleHints();});
 $('closePuzzleHint').addEventListener('click',()=>{$('puzzleHintDialog').close();$('hintButton').focus();});
 

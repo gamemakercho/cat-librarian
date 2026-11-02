@@ -7,7 +7,7 @@ const clear={kind:'book-catch',cleared:true,score:20,totalBooks:30,missed:10,ela
 test('all logical flow nodes map to live durable scenes, with one 04/05 and one expression puzzle',()=>{
  for(const node of MARK_FLOW.nodes){assert(MARK_SCENE_GROUPS[node.id],node.id);for(const id of MARK_SCENE_GROUPS[node.id])assert(byId.has(id),id);}
  const path=[],r=new StoryRuntime(chapters,puzzles);while(r.scene.next){path.push(r.currentId);assert(r.advance({review:true}).ok);assert(path.length<r.scenes.length);}
- const ordered=['sterilizer-repaired','after-repair-general','after-repair-classification','travel-to-general','general-room-intro','newbooks-order-game','newbooks-after-order','general-crash','general-shelf-arrival','general-book-drop','general-book-catch','general-return-notice','general-return-puzzle','general-notice-solved','travel-to-ending-lobby','lobby-ending-entry','ending-rescue','ending-fold-puzzle','ending-impact','ending-thanks'];
+ const ordered=['sterilizer-repaired','after-repair-general','after-repair-classification','travel-to-general','general-room-intro','newbooks-order-game','newbooks-after-order','general-crash','general-book-drop','general-book-catch','general-shelf-arrival','general-return-notice','general-return-puzzle','general-notice-solved','travel-to-ending-lobby','lobby-ending-entry','ending-rescue','ending-fold-puzzle','ending-impact','ending-thanks'];
  for(let i=1;i<ordered.length;i++)assert(path.indexOf(ordered[i-1])<path.indexOf(ordered[i]),ordered[i]);
  assert.equal(scenes.filter(s=>s.puzzleId==='return-notice-booksodong').length,1);assert.equal(ACTIVITIES.length,11);assert.equal(ACTIVITIES.filter(a=>a.puzzleId==='return-notice-booksodong').length,1);
  assert(!scenes.some(s=>s.markerNumber===6));
@@ -17,12 +17,12 @@ test('latest script lines appear once in their proper groups and human cat only 
  assert.equal(byId.get('general-flee-meow').speaker,'사서 몸의 고양이');assert.equal(byId.get('general-flee-meow').text,'냐아!');
  for(const s of scenes.filter(s=>s.speaker==='사서 몸의 고양이'))assert.equal(s.text,'냐아!');
 });
-test('04 uses the new baked-arrow background without an overlay; 05 hint stays editable and empty',()=>{
+test('04 uses the new baked-arrow background without an overlay; 05 has the provided concrete hint',()=>{
  assert.equal(byId.get('travel-to-general').background,'room04');assert.equal(byId.get('travel-to-general').guideOverlay,undefined);
- assert(!byId.get('newbooks-order-game').guideOverlay);assert.equal(markLocation(5).detailedHint,'');
- assert.deepEqual(locationHints(5),[markLocation(5).fallbackHint]);assert.equal(byId.get('general-shelf-arrival').destination,'서가 사이');
+ assert(!byId.get('newbooks-order-game').guideOverlay);assert.match(markLocation(5).detailedHint,/긴 테이블 끝.*노란 벤치/);
+ assert.deepEqual(locationHints(5),[markLocation(5).detailedHint]);assert.equal(byId.get('general-shelf-arrival').destination,'노란 벤치 옆 안내문');
  const r=new StoryRuntime(chapters,puzzles);r.jump('travel-to-general');assert.equal(r.advance().reason,'arrival-required');r.advance({arrived:true});assert(r.flags.mark04Arrived);assert.equal(r.progress.completed,0);
- r.jump('general-shelf-arrival');assert.equal(r.advance().reason,'arrival-required');r.advance({arrived:true});assert(r.flags.mark05Arrived);assert.equal(r.progress.completed,0);
+ r.jump('general-shelf-arrival');assert.equal(r.advance().reason,'arrival-required');assert.equal(r.advance({arrived:true}).reason,'guide-step-required');r.updateSceneState({locationGuideStep:1});r.advance({arrived:true});assert(r.flags.mark05Arrived);assert.equal(r.progress.completed,0);
  assert(r.sceneStates['travel-to-general'].arrived);assert(r.sceneStates['general-shelf-arrival'].arrived);
 });
 test('all expressions and physical instructions are fixed; no answer fragments in the view config',()=>{

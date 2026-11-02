@@ -12,9 +12,9 @@ export function createCreditsUI({canOpen}){
  }
  function loadResources(){
   if(resources)return resources;
-  const tag=document.createElement('link');tag.rel='stylesheet';tag.href='./credits/credits.css?v=20261101-credits-v5';tag.dataset.creditsStyle='true';
+  const tag=document.createElement('link');tag.rel='stylesheet';tag.href='./credits/credits.css?v=20261102-ending-invite';tag.dataset.creditsStyle='true';
   const css=new Promise((resolve,reject)=>{tag.onload=resolve;tag.onerror=()=>{tag.remove();reject(Error('크레딧 스타일 로딩 실패'));};});document.head.append(tag);
-  resources=Promise.all([import(`./credits/credits-player.js?v=20261101-credits-v5&attempt=${attempt++}`),css]).then(([module])=>module).catch(error=>{tag.remove();resources=null;throw error;});
+  resources=Promise.all([import(`./credits/credits-player.js?v=20261102-ending-invite&attempt=${attempt++}`),css]).then(([module])=>module).catch(error=>{tag.remove();resources=null;throw error;});
   return resources;
  }
  function close(){

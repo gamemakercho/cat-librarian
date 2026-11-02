@@ -7,7 +7,7 @@
   <title>고양이가 된 사서</title>
   <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261101-landscape27">
+  <link rel="stylesheet" href="style.css?v=20261102-mark05-location">
 </head>
 <body>
   <main id="appShell" class="app-shell">
@@ -21,6 +21,14 @@
       <div id="locationBanner" class="location-banner" hidden></div>
       <figure id="locationGuide" class="location-guide" hidden aria-label="04번 분류표 위치 안내"></figure>
       <section id="notice05Panel" class="notice05-panel" hidden aria-label="05번 엽서 표정 문제"></section>
+      <section id="mark05Location" class="mark05-location" hidden aria-labelledby="mark05Title">
+        <h2 id="mark05Title"></h2>
+        <div class="mark05-talk"><span id="mark05Avatar" aria-hidden="true"></span><p id="mark05Text"></p></div>
+        <button id="mark05Image" class="mark05-image-button" type="button" aria-label="장소 안내 그림 불러오는 중" aria-haspopup="dialog" aria-controls="locationImageDialog"></button>
+        <p id="mark05ImageStatus" class="mark05-status" role="status" hidden></p><button id="mark05Retry" class="dialog-action" type="button" hidden>그림 다시 불러오기</button>
+        <p id="mark05Caption" class="mark05-caption"></p><p class="mark05-zoom-note">그림을 누르면 크게 볼 수 있어요</p>
+        <button id="mark05Primary" class="dialog-action" type="button" disabled>뒤쪽 모습 보기</button>
+      </section>
       <p id="machineStatus" class="machine-status" role="status" hidden></p>
       <section id="cipherPanel" class="cipher-panel" hidden aria-label="책소독기 색깔 신호">
         <img id="sterilizerCipher" class="sterilizer-cipher" alt="" draggable="false">
@@ -96,6 +104,10 @@
         <button id="morePuzzleHint" class="hint-more-button" type="button">다음 힌트</button>
         <button id="closePuzzleHint" class="dialog-action" type="button">다시 풀어볼게!</button>
       </dialog>
+      <dialog id="locationImageDialog" class="location-image-dialog" aria-label="장소 안내 그림 크게 보기">
+        <div class="location-zoom-tools"><button id="locationZoomToggle" type="button">원본 크기로 보기</button><button id="locationZoomClose" type="button">닫기</button></div>
+        <div id="locationZoomViewport" class="location-zoom-viewport"></div>
+      </dialog>
       <dialog id="englishKeypadDialog" class="english-keypad-dialog" aria-labelledby="englishKeypadTitle">
         <h2 id="englishKeypadTitle">영어 키패드</h2>
         <p class="keypad-instruction">영어 4글자</p>
@@ -134,8 +146,9 @@
         <h1 id="endingTitle">고양이와 사서가<br>돌아왔다!</h1>
         <p class="ending-thanks">오늘 도서관을 지켜 줘서 고마워요</p>
         <p class="ending-credit">고양이가 된 사서 · 해미도서관</p>
+        <p id="endingCreditsInvite" class="ending-credits-invite">잠깐! 우리 마지막 인사도 보고 가!</p>
+        <button id="endingCredits" type="button" aria-haspopup="dialog" aria-controls="creditsDialog" aria-describedby="endingCreditsInvite">크레딧 보기 ▶</button>
         <button id="endingReplay" type="button">마지막 장면 다시 보기</button>
-        <button id="endingCredits" type="button" aria-haspopup="dialog" aria-controls="creditsDialog">크레딧</button>
         <button id="endingRestart" type="button">이야기 처음부터</button>
       </section>
     </section>
@@ -175,6 +188,6 @@
     <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
-  <script type="module" src="app.js?v=20261101-credits-v5"></script>
+  <script type="module" src="app.js?v=20261102-mark05-location"></script>
 </body>
 </html>

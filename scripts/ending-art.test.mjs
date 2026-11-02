@@ -26,6 +26,13 @@ test('a partial two-second impact survives normalization/reload; legacy saves re
 });
 
 test('art identity retains returned captions and thanks/end card, but not contact or another image',()=>{
- for(const [a,b]of [['ending-returned','ending-cat'],['ending-cat','ending-returned-joke'],['ending-returned-joke','ending-returned-relief'],['ending-thanks','ending-promise'],['ending-loan-joke','ending-complete'],['ending-complete','ending-loan-joke']])assert(canReuseEndingIllustration(byId.get(a),byId.get(b)));
+ for(const [a,b]of [['ending-returned','ending-cat'],['ending-cat','ending-returned-joke'],['ending-returned-joke','ending-returned-relief'],['ending-returned-relief','ending-meow-question'],['ending-meow-question','ending-meow-embarrassed'],['ending-thanks','ending-promise'],['ending-promise','ending-complete'],['ending-complete','ending-promise']])assert(canReuseEndingIllustration(byId.get(a),byId.get(b)));
  assert(!canReuseEndingIllustration(byId.get('ending-impact'),byId.get('ending-returned')));assert(!canReuseEndingIllustration(byId.get('ending-returned-relief'),byId.get('ending-thanks')));
+});
+
+test('three meow lines precede unchanged thanks; an old removed-joke save retains its completion evidence',()=>{
+ const ids=['ending-returned-relief','ending-meow-question','ending-meow-embarrassed'],texts=['휴, 드디어 사람으로 돌아왔네. 야옹.','야옹?','…방금 건 못 들은 걸로 해줘.'];
+ ids.forEach((id,i)=>{const s=byId.get(id);assert.equal(s.text,texts[i]);assert.equal(s.speaker,i===1?'고양이':'사서');assert.equal(s.next,ids[i+1]||'ending-thanks');assert.equal(s.type,'dialogue');});
+ assert(!scenes.some(s=>/고양이가 그랬|오늘.*많이 뛰었다/.test(s.text)));assert.equal(byId.get('ending-thanks').text,'도와줘서 정말 고마워.\n네 덕분에 책도 정리하고, 내 몸도 찾았어.');assert.equal(byId.get('ending-promise').next,'ending-complete');
+ const r=new StoryRuntime(chapters,puzzles,{currentId:'ending-loan-joke',history:['ending-thanks','ending-promise'],runId:'kept-ending-save',solved:['postcard-returned-v1'],flags:{endingRescueComplete:true,endingCompleted:true}});assert.equal(r.currentId,'ending-complete');assert.equal(r.runId,'kept-ending-save');assert(r.flags.endingCompleted);assert(r.solved.has('postcard-returned-v1'));assert(r.back());assert.equal(r.currentId,'ending-promise');
 });

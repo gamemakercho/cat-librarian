@@ -285,9 +285,9 @@ test('색 암호 SVG는 원본의 동일 크기6칸·세로/가로 좌표·최�
   ['209','60','80','80','#EA524A'],['289','60','80','80','#A165AF'],['438','60','80','80','#4AA470'],['518','60','80','80','#A165AF']]);
  assert.match(svg,/viewBox="0 0 634 219"/);assert.doesNotMatch(svg,/고치기|ㄱ|ㅗ|ㅊ|ㅣ/);
 });
-test('필수 동선은 책 정리→글자 문제→05 도착→책 받기→표정 문제→로비 도착→달리기다',()=>{
+test('필수 동선은 책 정리→글자 문제→책 받기→05 도착→표정 문제→로비 도착→달리기다',()=>{
  for(const showDeskInterlude of [false,true])for(const includeNewBooks of [false,true]){const r=new StoryRuntime(createChapters({showDeskInterlude,includeNewBooks}),puzzles),seen=[];r.jump('general-room-intro');while(r.currentId!=='ending-rescue'){seen.push(r.currentId);assert(r.advance({review:true}).ok);assert(seen.length<60);}
- assert(seen.indexOf('newbooks-order-game')<seen.indexOf('general-shelf-arrival'));assert(seen.indexOf('general-shelf-arrival')<seen.indexOf('general-book-catch'));assert(seen.indexOf('general-book-catch')<seen.indexOf('general-return-notice'));assert.equal(seen.at(-1),'ending-found');assert(seen.indexOf('general-return-puzzle')>seen.indexOf('general-book-catch'));assert(seen.indexOf('travel-to-ending-lobby')>seen.indexOf('general-return-puzzle'));assert(!seen.includes('ending-postcard-clue'));for(const id of ['general-room-puzzle','newbooks-puzzle','general-faces-clue'])assert(!seen.includes(id));}
+ assert(seen.indexOf('newbooks-order-game')<seen.indexOf('general-shelf-arrival'));assert(seen.indexOf('general-book-catch')<seen.indexOf('general-shelf-arrival'));assert(seen.indexOf('general-book-catch')<seen.indexOf('general-return-notice'));assert.equal(seen.at(-1),'ending-found');assert(seen.indexOf('general-return-puzzle')>seen.indexOf('general-book-catch'));assert(seen.indexOf('travel-to-ending-lobby')>seen.indexOf('general-return-puzzle'));assert(!seen.includes('ending-postcard-clue'));for(const id of ['general-room-puzzle','newbooks-puzzle','general-faces-clue'])assert(!seen.includes(id));}
 });
 
 test('옛 임시 숫자·얼굴 문제 저장은 더 이상 입력을 요구하지 않고 같은 동선으로 이전한다',()=>{
@@ -307,7 +307,7 @@ test('책 받기는20권 클리어 뒤 결과 확인에서만 진행하고 키�
  assert.equal(r.submit('뿌듯').reason,'game-clear-required');
  const restored=new StoryRuntime(chapters,puzzles,JSON.parse(JSON.stringify(r.snapshot())));assert.equal(restored.currentId,'general-book-catch');
  assert.deepEqual(restored.minigameResults['book-catch-keyword'],clear);assert.equal(restored.advance().reason,'game-clear-required');
- assert(restored.completeMinigame(clear).ok);assert.equal(restored.currentId,'general-book-catch');assert.equal(restored.advance().scene.id,'general-after-catch');assert(restored.solved.has('book-catch-keyword'));
+ assert(restored.completeMinigame(clear).ok);assert.equal(restored.currentId,'general-book-catch');assert.equal(restored.advance().scene.id,'general-shelf-arrival');assert(restored.solved.has('book-catch-keyword'));
  assert.equal(restored.confirmSuccess().reason,'no-pending-success');
 });
 test('정리10권만으로는 통과하지 않고 내부 문제의 팝업 다음 증거까지 필요하다',()=>{
@@ -320,7 +320,7 @@ test('정리10권만으로는 통과하지 않고 내부 문제의 팝업 다음
 test('책 정리만 마친 옛 저장은 글자 문제로, 이미 지난 저장은 그대로 이어진다',()=>{
  const result={kind:'book-order',cleared:true,complete:true,shelf:puzzles['book-order-keyword'].correctOrder,cart:Array(10).fill(null)};
  for(const id of ['newbooks-order-game','newbooks-after-order','general-breath']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,runId:'legacy-order-123456',minigameResults:{'book-order-keyword':result},solved:['learning-room-art','book-order-keyword']});assert.equal(r.currentId,'newbooks-order-game');assert(r.minigameProgress['book-order-keyword'].sortComplete);assert(!r.minigameResults['book-order-keyword']);assert(!r.solved.has('book-order-keyword'));assert.equal(r.runId,'legacy-order-123456');assert(r.solved.has('learning-room-art'));}
- for(const id of ['general-shelf-arrival','general-after-catch','travel-to-ending-lobby','ending-thanks']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,minigameResults:{'book-order-keyword':result},solved:['book-order-keyword']});const expected=id;assert.equal(r.currentId,expected);assert(r.solved.has('book-order-keyword'));const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,expected);}
+ for(const id of ['general-shelf-arrival','general-after-catch','travel-to-ending-lobby','ending-thanks']){const r=new StoryRuntime(chapters,puzzles,{currentId:id,minigameResults:{'book-order-keyword':result},solved:['book-order-keyword']});const expected=id==='general-shelf-arrival'?'general-book-drop':id;assert.equal(r.currentId,expected);assert(r.solved.has('book-order-keyword'));const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,expected);}
 });
 
 test('한 플레이의 설정/runId를 복구하고 새 전체 플레이는 새 미니게임 저장공간을 쓴다',()=>{
@@ -339,5 +339,5 @@ test('옛 수리 팝업은 수리 그림으로 이전하고 이미 지난 저장
 });
 
 test('정리 게임 목적·반납 안내·표정 문제와 로비의 추격 준비를 연결한다',()=>{
- const list=chapters.flatMap(c=>c.scenes),byId=new Map(list.map(s=>[s.id,s]));assert.match(byId.get('general-order-plan').text,/분류표/);assert.equal(byId.get('newbooks-order-game').gameStartLabel,'책 정리하기');assert.equal(byId.get('general-shelf-arrival').next,'general-book-drop');assert.equal(byId.get('general-cat-meow').text,'냐아!');assert(!byId.get('general-cat-meow').cat);assert.equal(byId.get('general-book-catch').gameStartLabel,'책 받기');assert.equal(byId.get('general-lobby-direction').next,'travel-to-ending-lobby');assert.equal(byId.get('travel-to-ending-lobby').type,'move');assert.equal(byId.get('general-return-puzzle').next,'general-notice-solved');assert.equal(byId.get('ending-rescue').actionLabel,'사서 따라잡기');
+ const list=chapters.flatMap(c=>c.scenes),byId=new Map(list.map(s=>[s.id,s]));assert.match(byId.get('general-order-plan').text,/분류표/);assert.equal(byId.get('newbooks-order-game').gameStartLabel,'책 정리하기');assert.equal(byId.get('general-shelf-arrival').next,'general-return-notice');assert.equal(byId.get('general-cat-meow').text,'냐아!');assert(!byId.get('general-cat-meow').cat);assert.equal(byId.get('general-book-catch').gameStartLabel,'책 받기');assert.equal(byId.get('general-lobby-direction').next,'travel-to-ending-lobby');assert.equal(byId.get('travel-to-ending-lobby').type,'move');assert.equal(byId.get('general-return-puzzle').next,'general-notice-solved');assert.equal(byId.get('ending-rescue').actionLabel,'사서 따라잡기');
 });

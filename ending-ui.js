@@ -1,6 +1,7 @@
 import {ENDING_READY,ENDING_CONTACT,ENDING_COMPLETE,ENDING_ERROR,isEndingMessage} from './ending-bridge.js';
 export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,onRestart,isCompleted}){
  const $=id=>document.getElementById(id);let active=null,timer=null,finished=false;
+ const invitedRuns=new Set();
  function stop(){
   clearTimeout(timer);timer=null;active=null;finished=false;$('endingCinemaOverlay').hidden=true;$('endingFrame').removeAttribute('src');
   document.body.classList.remove('ending-active');document.documentElement.classList.remove('ending-active');$('appShell').inert=false;
@@ -39,7 +40,11 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   else{$('endingContactStill').removeAttribute('src');$('inlineFoldGuide').removeAttribute('src');}
   $('endingCinemaActions').hidden=scene.type!=='cinematic';$('endingPlay').disabled=scene.cinematicPart==='restore'&&!canRestore();$('endingPlay').textContent=isCompleted()?'이어서 보기':scene.actionLabel||'마지막 장면 보기';
   $('endingCard').hidden=scene.type!=='ending';$('endingCard').classList.remove('is-visible');
-  if(scene.type==='ending'){requestAnimationFrame(()=>$('endingCard').classList.add('is-visible'));$('endingReplay').focus({preventScroll:true});}
+  if(scene.type!=='ending')$('endingCredits').classList.remove('credits-invite-pulse');
+  if(scene.type==='ending'){
+   if(!invitedRuns.has(getRunId())){invitedRuns.add(getRunId());$('endingCredits').classList.add('credits-invite-pulse');}
+   requestAnimationFrame(()=>$('endingCard').classList.add('is-visible'));$('endingCredits').focus({preventScroll:true});
+  }
   if(scene.autoPlay&&canRestore()&&!isCompleted())queueMicrotask(()=>{if(getScene().id===scene.id&&!active)play();});
  }
  return {render,stop,play};
