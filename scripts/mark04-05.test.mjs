@@ -28,7 +28,7 @@ test('04 uses the new baked-arrow background without an overlay; 05 has the prov
 test('all expressions and physical instructions are fixed; no answer fragments in the view config',()=>{
  assert.deepEqual(NOTICE05.steps.map(s=>[s.from,s.to]),[['angry','cry'],['smile','cry'],['cry','smile']]);
  assert(!JSON.stringify(NOTICE05).includes('책소동'));assert(!JSON.stringify(NOTICE05).includes('operatorOnlyLetter'));
- assert.equal(LETTER_PUZZLE.readingBookIds.map(id=>LETTER_PUZZLE.letters[id]).join(''),'정리완료');assert.equal(Object.keys(LETTER_PUZZLE.letters).length,10);
+ assert.equal(LETTER_PUZZLE.readingBookIds.map(id=>LETTER_PUZZLE.letters[id]).join(''),'도서정리');assert.equal(Object.keys(LETTER_PUZZLE.letters).length,10);
  assert.match(LETTER_PUZZLE.instruction,/현장의 십진분류표/);
 });
 test('catch success is required; exact normalized expression answers wait for common popup Next',()=>{

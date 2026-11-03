@@ -4,7 +4,7 @@ import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
 import {isMinigameClear} from './minigame-bridge.js';
 import {isEndingResult,isEndingContact,isEndingPoster,migrateEndingSnapshot,ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
-import {activityForPuzzle,progressSummary,restoreCompletedActivities} from './progress.js';
+import {activityForPuzzle,progressSummary,restoreCompletedActivities} from './progress.js?v=20261103-book-answer';
 import {impactProgress} from './ending-art-state.js';
 
 export const normalizeAnswer=normalizeKoreanAnswer;

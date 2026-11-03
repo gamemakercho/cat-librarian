@@ -1,5 +1,5 @@
 import {isMinigameClear} from './minigame-bridge.js';
-import {validOrderProgress} from './games/book-order/letter-state.js';
+import {validOrderProgress} from './games/book-order/letter-state.js?v=20261103-book-answer';
 
 // One ordered list owns both the denominator and the stable saved activity IDs.
 // Location markers and dialogue scenes are deliberately absent.

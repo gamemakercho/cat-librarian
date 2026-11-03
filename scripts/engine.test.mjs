@@ -314,7 +314,7 @@ test('정리10권만으로는 통과하지 않고 내부 문제의 팝업 다음
  const r=new StoryRuntime(chapters,puzzles);r.jump('newbooks-order-game');const result={kind:'book-order',cleared:true,complete:true,shelf:puzzles['book-order-keyword'].correctOrder,cart:Array(10).fill(null)};
  assert(!r.completeMinigame(result).ok);assert.equal(r.advance().reason,'game-clear-required');assert(r.recordMinigameProgress({...result,sortComplete:true,letters:null}));assert(!r.solved.has('book-order-keyword'));
  assert(!r.completeMinigame({...result,letterPuzzle:{id:'wrong',completed:true,stage:'complete'}}).ok);
- assert(r.completeMinigame({...result,letterPuzzle:{id:'book-order-paws-v1',completed:true,stage:'complete'}}).ok);assert.equal(r.advance().scene.id,'newbooks-after-order');assert.equal(r.submit('정리완료').reason,'not-a-puzzle');
+ assert(r.completeMinigame({...result,letterPuzzle:{id:'book-order-paws-v1',completed:true,stage:'complete'}}).ok);assert.equal(r.advance().scene.id,'newbooks-after-order');assert.equal(r.submit('도서정리').reason,'not-a-puzzle');
 });
 
 test('책 정리만 마친 옛 저장은 글자 문제로, 이미 지난 저장은 그대로 이어진다',()=>{

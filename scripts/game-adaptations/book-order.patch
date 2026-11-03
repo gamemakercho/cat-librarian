@@ -4,8 +4,8 @@ index 7c7c76a..c0d240f 100644
 +++ b/book-order/game.js
 @@ -1,14 +1,25 @@
 +import '../story-adapter.js';
-+import {createLetterUI} from './letter-ui.js?v=20261101-marks23';
-+import {validOrderProgress} from './letter-state.js';
++import {createLetterUI} from './letter-ui.js?v=20261103-book-answer';
++import {validOrderProgress} from './letter-state.js?v=20261103-book-answer';
  import {CONFIG} from './config.js';
 -import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
 +import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261030-integrated20';
@@ -123,6 +123,6 @@ index 42730dd..5b35ead 100644
    </main>
    <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
 -  <script type="module" src="./game.js?v=20261102-book-touch"></script>
-+  <script type="module" src="./game.js?v=20261102-howto30"></script>
++  <script type="module" src="./game.js?v=20261103-book-answer"></script>
  </body>
  </html>

@@ -41,7 +41,7 @@ test('sort and letter answer count separately, validate arrays and answer, persi
   assert.equal(r.progress.completed,0);
   assert(r.recordMinigameProgress(sorted(restoreLetters(null))));assert.equal(r.progress.completed,1);
   r.recordMinigameProgress(sorted(solveLetters(restoreLetters(null),'오답')));assert.equal(r.progress.completed,1);
-  const correct=solveLetters({...restoreLetters(null),revision:3},'정리 완료!');
+  const correct=solveLetters({...restoreLetters(null),revision:3},'도서 정리!');
   r.recordMinigameProgress(sorted(correct));assert.equal(r.progress.completed,2);
   assert.equal(runtime(r.snapshot()).progress.completed,2);
   assert(!r.recordMinigameProgress(sorted({...restoreLetters(null),revision:1})));
@@ -61,7 +61,7 @@ test('legacy completion evidence migrates without inferring from scene position'
   const s={currentId:'general-shelf-arrival',courseRevision:18,runId:'legacy-progress-123',
     solved:['postcard-heading','learning-room-art','sterilizer-color-command-v1'],
     minigameResults:{'cleaning-keyword':cleaning,'book-catch-keyword':catchResult},
-    minigameProgress:{'book-order-keyword':sorted(solveLetters(restoreLetters(null),'정리완료'))},
+    minigameProgress:{'book-order-keyword':sorted(solveLetters(restoreLetters(null),'도서정리'))},
     flags:{endingContactReached:true}};
   const r=runtime(s);assert.equal(r.currentId,s.currentId);assert.equal(r.runId,s.runId);
   assert.equal(r.progress.completed,8);assert.equal(runtime(r.snapshot()).progress.completed,8);

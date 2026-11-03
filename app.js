@@ -1,6 +1,6 @@
 import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261103-morning-cart';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-howto30';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261103-book-answer';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
 import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-howto30';
 import {howtoFor} from './howto-config.js?v=20261102-howto30';
@@ -507,7 +507,8 @@ async function openMinigame({howtoShown=false}={}){
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
     scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,viewportCeiling:window.visualViewport?.height||innerHeight,width:innerWidth};
-  url.searchParams.set('howto','shown');url.searchParams.set('v',runtime.scene.puzzleId==='book-catch-keyword'?'20261103-morning-cart':'20261102-howto30');
+  const gameVersion={'book-catch-keyword':'20261103-morning-cart','book-order-keyword':'20261103-book-answer'};
+  url.searchParams.set('howto','shown');url.searchParams.set('v',gameVersion[activeMinigame.gameId]||'20261102-howto30');
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);
   const config=puzzles[runtime.scene.puzzleId],keywordMode=config.completionMode==='keyword';
