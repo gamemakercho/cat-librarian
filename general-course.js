@@ -1,14 +1,14 @@
-import {createEndingScenes} from './ending-course.js?v=20261102-ending-invite';
+import {createEndingScenes} from './ending-course.js?v=20261103-dialogue-art';
 import {LETTER_PUZZLE} from './games/book-order/letter-puzzle-config.js';
-import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261102-howto30';
+import {markLines,markLocation,locationHints,NOTICE05,MARK_LOCATIONS,ROOM04_INTRO,ROOM04_INTRO_IDS} from './mark04-05-config.js?v=20261103-dialogue-art';
 const dialogue={cat:[38,310,145,154],dialogue:[32,490,436,235],nextButton:[138,790,224,63]};
 const movement={dialogue:[32,158,436,250],cat:[180,450,140,150],movementControls:[32,685,436,180]};
 const gameGeometry={cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,175]};
 const result=(kind,clearInstruction)=>({status:'confirmed',completionMode:'result',resultKind:kind,acceptedAnswers:[],hints:[],clearInstruction,keyword:null});
 export const generalPuzzles={
  'return-notice-booksodong':{status:'confirmed',acceptedAnswers:['책소동'],requiredGameId:'book-catch-keyword',placeholder:'정답 입력',answerLabel:'한글 3글자 · 띄어쓰기 상관없음',checkLabel:'정답 확인',hintLabel:'힌트',hints:NOTICE05.hints,incorrectMessage:NOTICE05.incorrect,successPopup:{title:'정답이야!',body:'잘했어! 이야기를 이어가 보자!',buttonLabel:'다음으로',cat:'happy',tone:'gold'}},
- 'book-catch-keyword':{...result('book-catch','20권 이상 정리하면 이야기를 이어갈 수 있어'),target:20},
- 'book-order-keyword':{...result('book-order','열 권을 정리한 뒤 같은 화면의 엽서 문제까지 풀어 줘'),requiresLetterPuzzle:true,letterPuzzleId:LETTER_PUZZLE.id,correctOrder:['000','100','200','300','400','500','600','700','800','900']}
+ 'book-catch-keyword':{...result('book-catch','20권 이상 정리하면 이야기를 이어갈 수 있어.'),target:20},
+ 'book-order-keyword':{...result('book-order','열 권을 정리한 뒤 같은 화면의 엽서 문제까지 풀어 줘.'),requiresLetterPuzzle:true,letterPuzzleId:LETTER_PUZZLE.id,correctOrder:['000','100','200','300','400','500','600','700','800','900']}
 };
 export function createGeneralScenes(){
  const scenes=[];
@@ -17,7 +17,7 @@ export function createGeneralScenes(){
  talk('general-order-bridge',intro[1],ROOM04_INTRO_IDS[0],'neutral','room04',room04);
  ROOM04_INTRO.dialogues.slice(0,3).forEach((line,i)=>talk(ROOM04_INTRO_IDS[i],line.text,ROOM04_INTRO_IDS[i+1],'neutral','room04',{...room04,nextLabel:line.button}));
  const instruction=ROOM04_INTRO.dialogues[3];
- scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'room04',cat:'neutral',layout:'room04-intro',text:instruction.text,waitForTextBeforeGame:true,gameUrl:'./games/book-order/',gameTitle:'책 정리와 엽서 발자국',gameStartLabel:instruction.button,next:'newbooks-after-order',geometry:{...dialogue,minigameControls:gameGeometry.minigameControls}});
+ scenes.push({id:'newbooks-order-game',type:'minigame',puzzleId:'book-order-keyword',background:'room04',cat:'neutral',layout:'room04-intro',text:instruction.text,waitForTextBeforeGame:true,gameUrl:'./games/book-order/',gameTitle:'책은 순서대로 제자리에',gameStartLabel:instruction.button,next:'newbooks-after-order',geometry:{...dialogue,minigameControls:gameGeometry.minigameControls}});
  const after=markLines('after_letters04');
  talk('newbooks-after-order',after.lines[0],'general-crash','happy','general-clean');
  talk('general-crash','쿠당탕!','general-no-rest','shocked','general-clean',{effect:'bump'});

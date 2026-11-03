@@ -6,7 +6,7 @@ import {impactProgress,IMPACT_DURATION_MS,canReuseEndingIllustration} from '../e
 const scenes=chapters.flatMap(c=>c.scenes),byId=new Map(scenes.map(s=>[s.id,s]));
 
 test('post-catch copy leads through the real location and two image captions to the unchanged answer',()=>{
- const expected=[['general-after-catch','휴, 책은 다 받았어! 북카트보다 내 심장이 더 덜컹거린다.'],['general-return-notice','이제 긴 테이블 끝의 나무 칸막이 뒤쪽으로 가 보자. 고양이 마크 05가 붙은 안내문을 찾아줘.'],['general-expression-intro','찾았다! 이번엔 이 안내문과 네 고양이 엽서 차례야.'],['general-expression-help','현장의 안내문에 엽서를 대서 고양이 표정을 바꿔 줘. 엽서의 화살표가 가리키는 글자를 순서대로 읽어 보는 거야!']];
+ const expected=[['general-after-catch','휴, 책은 다 받았어! 북카트보다 내 심장이 더 덜컹거린다.'],['general-return-notice','이제 긴 테이블 끝의 나무 칸막이 뒤쪽으로 가 보자. 고양이 마크 05가 붙은 안내문을 찾아줘.'],['general-expression-intro','찾았다! 이번엔 이 안내문과 네 고양이 엽서 차례야.'],['general-expression-help','엽서에도 고양이 얼굴이 있지? 안내문 위에 가져다 대서 표정을 바꿔보자. 엽서의 화살표가 가리키는 글자를 순서대로 읽어 보는 거야!']];
  for(const[id,text]of expected){assert.equal(byId.get(id).text,text);assert(!text.includes('책소동'));}assert.equal(byId.get('general-return-notice').next,'general-shelf-arrival');assert.equal(byId.get('general-shelf-arrival').next,'general-expression-intro');assert.equal(byId.get('general-expression-help').next,'general-return-puzzle');assert.deepEqual(puzzles['return-notice-booksodong'].acceptedAnswers,['책소동']);
  const r=new StoryRuntime(chapters,puzzles,{currentId:'general-return-joke',runId:'keep-this-run',solved:['postcard-heading']});assert.equal(r.currentId,'general-expression-intro');assert.equal(r.runId,'keep-this-run');assert(r.solved.has('postcard-heading'));
 });

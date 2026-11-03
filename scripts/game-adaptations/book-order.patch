@@ -1,13 +1,35 @@
+diff --git a/book-order/config.js b/book-order/config.js
+index f1d66c2..1d109ad 100644
+--- a/book-order/config.js
++++ b/book-order/config.js
+@@ -9,12 +9,14 @@ export const CONFIG = {
+   // (detail) => { ... } 또는 window.onGameComplete(detail)로 연결합니다.
+   onGameComplete: null,
+   text: {
+-    title: '책을 올바른 순서로 제자리에!',
++    title: '책은 순서대로 제자리에',
+     subtitle: '실제 서가의 책띠를 살펴보세요',
+     sign: '신간도서 코너',
+     start: '사서가 어지른 책을 정리해 주세요! 실제 서가의 책띠를 살펴보고, 책 10권을 왼쪽부터 올바른 순서로 꽂아 주세요.',
+     footer: '끌어서 꽂기 · 찬 자리에는 밀어 넣기',
+     incorrect: '아직 순서가 맞지 않아요',
+-    complete: '클리어!'
++    complete: '책이 제자리를 찾았어요!'
+   }
+ };
++
++if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='현장의 십진분류표와 책띠를 살펴보세요';CONFIG.text.start='현장의 십진분류표와 책띠 색·분류명을 보고 열 권을 주제 순서대로 정리해 주세요. 책을 끌거나, 책과 자리를 차례로 눌러 꽂아요.';}
 diff --git a/book-order/game.js b/book-order/game.js
-index 7c7c76a..c0d240f 100644
+index 7c7c76a..6b3b3a8 100644
 --- a/book-order/game.js
 +++ b/book-order/game.js
 @@ -1,14 +1,25 @@
+-import {CONFIG} from './config.js';
+-import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
 +import '../story-adapter.js';
 +import {createLetterUI} from './letter-ui.js?v=20261103-book-answer';
 +import {validOrderProgress} from './letter-state.js?v=20261103-book-answer';
- import {CONFIG} from './config.js';
--import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js';
++import {CONFIG} from './config.js?v=20261103-dialogue-art';
 +import {loadAssetBundle,drawBook,drawBookGlow,drawCart,drawCartForeground,drawIdlePaws,drawGripPaws,gripPlacement} from './assets-loader.js?v=20261030-integrated20';
  import {freshState,validState,locate,transition,shelfDropPlan} from './state.js';
  import {inside,localPoint,slotAt,shelfPlacement,cartPlacements} from './geometry.js';
@@ -84,33 +106,24 @@ index 7c7c76a..c0d240f 100644
 +  storyBridge?.error(error);console.error(error);document.querySelector('#load-text').textContent='이미지를 불러오지 못했어요. 연결을 확인한 뒤 다시 불러와 주세요.';
    document.querySelector('#retry').hidden=false;
  }
-diff --git a/book-order/config.js b/book-order/config.js
-index f1d66c2..68be986 100644
---- a/book-order/config.js
-+++ b/book-order/config.js
-@@ -15,6 +15,8 @@ export const CONFIG = {
-     start: '사서가 어지른 책을 정리해 주세요! 실제 서가의 책띠를 살펴보고, 책 10권을 왼쪽부터 올바른 순서로 꽂아 주세요.',
-     footer: '끌어서 꽂기 · 찬 자리에는 밀어 넣기',
-     incorrect: '아직 순서가 맞지 않아요',
--    complete: '클리어!'
-+    complete: '책이 제자리를 찾았어요!'
-   }
- };
-+
-+if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='현장의 십진분류표와 책띠를 살펴보세요';CONFIG.text.start='현장의 십진분류표와 책띠 색·분류명을 보고 열 권을 주제 순서대로 정리해 주세요. 책을 끌거나, 책과 자리를 차례로 눌러 꽂아요.';}
 diff --git a/book-order/index.html b/book-order/index.html
-index 42730dd..5b35ead 100644
+index 42730dd..4cb1807 100644
 --- a/book-order/index.html
 +++ b/book-order/index.html
-@@ -8,18 +8,21 @@
-   <title>책을 올바른 순서로 제자리에!</title>
+@@ -5,21 +5,24 @@
+   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+   <meta name="theme-color" content="#291d27">
+   <meta name="description" content="고양이 사서와 함께 책 10권을 올바른 순서로 꽂아 주세요.">
+-  <title>책을 올바른 순서로 제자리에!</title>
++  <title>책은 순서대로 제자리에</title>
    <link rel="icon" href="data:,">
    <link rel="stylesheet" href="./style.css">
 +  <link rel="stylesheet" href="../story-adapter.css"><link rel="stylesheet" href="./letter.css?v=20261030-integrated20">
  </head>
  <body>
-   <main id="game" aria-label="책을 올바른 순서로 제자리에!">
+-  <main id="game" aria-label="책을 올바른 순서로 제자리에!">
 -    <canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas>
++  <main id="game" aria-label="책은 순서대로 제자리에">
 +    <div id="boardViewport"><canvas id="board" width="941" height="1672" aria-label="북카트의 책을 중간 서가에 꽂는 게임. 책을 끌거나, 책과 빈자리를 차례로 누르세요."></canvas><div id="bookLetters" hidden aria-label="책 위 글자"></div><div class="sorted-intro" hidden><div class="letter-intro-row"><p id="letterIntro"></p><button id="letterIntroNext" class="intro-next" type="button">다음</button></div></div><div class="sorted-paws" hidden><div class="paw-window" aria-hidden="true"><img id="letterPaws" alt=""></div></div></div>
      <div id="message" role="status" aria-live="polite"></div>
      <div id="loading" class="overlay"><section class="card"><div class="eyebrow">고양이 사서의 도서관</div><h1>서가를 준비하고 있어요</h1><p id="load-text">책과 북카트를 불러오는 중…</p><button id="retry" hidden>다시 불러오기</button></section></div>
@@ -123,6 +136,6 @@ index 42730dd..5b35ead 100644
    </main>
    <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
 -  <script type="module" src="./game.js?v=20261102-book-touch"></script>
-+  <script type="module" src="./game.js?v=20261103-book-answer"></script>
++  <script type="module" src="./game.js?v=20261103-dialogue-art"></script>
  </body>
  </html>

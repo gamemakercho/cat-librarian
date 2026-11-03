@@ -1,4 +1,4 @@
-import {NOTICE05} from './mark04-05-config.js?v=20261102-howto30';
+import {NOTICE05} from './mark04-05-config.js?v=20261103-dialogue-art';
 export function createMarkCourseUI({createImage}){
  const $=id=>document.getElementById(id),figure=$('locationGuide'),question=$('notice05Panel');
  let lastSceneId=null;

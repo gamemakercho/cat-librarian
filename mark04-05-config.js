@@ -4,7 +4,7 @@ async function readConfig(name){
   const url=new URL(`./config/${name}.json`,import.meta.url);
   if(typeof window==='undefined')return JSON.parse(await (await import('node:fs/promises')).readFile(url,'utf8'));
   try{
-   url.searchParams.set('v','20261102-howto30');
+   url.searchParams.set('v','20261103-dialogue-art');
    const response=await fetch(url);if(!response.ok)throw Error(`진행 설정을 읽지 못했어요: ${name}`);
    return await response.json();
   }catch(error){

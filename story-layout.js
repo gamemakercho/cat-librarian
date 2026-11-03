@@ -1,5 +1,24 @@
 // Native scene coordinates remain unchanged. Only the main story flow is fitted here.
 export const usesStoryFlow=scene=>['dialogue','comic'].includes(scene.type)&&!scene.endingArt&&!['mark04-guide','room04-intro','mark05-location'].includes(scene.layout);
+export function writeDialogue(el,text,terms=[],revealed=text.length){
+ const escaped=terms.map(term=>term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+ const parts=terms.length?text.split(new RegExp('('+escaped.join('|')+')','g')):[text];
+ const content=document.createDocumentFragment();
+ for(const part of parts){
+  if(!part)continue;
+  const target=terms.includes(part)?document.createElement('em'):content;
+  const visible=part.slice(0,Math.max(0,revealed));
+  if(visible)target.append(visible);
+  if(visible.length<part.length){
+   const tail=document.createElement('span');
+   tail.className='unrevealed-dialogue';tail.setAttribute('aria-hidden','true');
+   tail.textContent=part.slice(visible.length);target.append(tail);
+  }
+  if(target!==content)content.append(target);
+  revealed-=part.length;
+ }
+ el.replaceChildren(content);
+}
 export function layoutStoryFlow(stage,scene){
  if(!usesStoryFlow(scene))return;
  const width=stage.clientWidth;stage.style.setProperty('--story-native-height',width*1.8+'px');
@@ -12,7 +31,7 @@ export function layoutStoryFlow(stage,scene){
  const d=rect(g.dialogue),n=rect(g.nextButton);n.h=Math.max(44,n.h);
  // Measure the complete line, never the transient typewriter text or previous scene.
  const probe=box.cloneNode(false);probe.removeAttribute('id');probe.setAttribute('aria-hidden','true');
- const paragraph=document.createElement('p');paragraph.textContent=scene.text||'';probe.append(paragraph);
+ const paragraph=document.createElement('p');writeDialogue(paragraph,scene.text||'',scene.emphasis);probe.append(paragraph);
  Object.assign(probe.style,{visibility:'hidden',pointerEvents:'none',left:'0',top:'0',width:d.w+'px',height:'auto',overflow:'visible'});stage.append(probe);
  const contentHeight=probe.getBoundingClientRect().height;probe.remove();
  d.h=Math.min(Math.max(d.h,contentHeight),height*.46);d.y+=shift;

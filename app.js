@@ -1,11 +1,11 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261103-morning-cart';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261103-dialogue-art';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261103-book-answer';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-howto30';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261103-dialogue-art';
 import {howtoFor} from './howto-config.js?v=20261102-howto30';
 import {createHowtoUI} from './howto-ui.js?v=20261102-howto30';
-import {createMark05LocationUI} from './mark05-location.js?v=20261102-howto30';
+import {createMark05LocationUI} from './mark05-location.js?v=20261103-arrival-photos';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
 import {createEndingUI} from './ending-ui.js?v=20261102-howto30';
 import {createCreditsUI} from './credits-ui.js?v=20261102-howto30';
@@ -16,14 +16,14 @@ import {impactProgress,canReuseEndingIllustration} from './ending-art-state.js';
 import {createEndingArtView} from './ending-art-view.js';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261102-howto30';
+import {usesStoryFlow,layoutStoryFlow,writeDialogue} from './story-layout.js?v=20261103-dialogue-art';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json?v=20261103-morning-cart').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261103-dialogue-art').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -165,31 +165,21 @@ function createMarker(s){
   marker.setAttribute('role','img');marker.setAttribute('aria-label',number?`${number}번 책 읽는 고양이 마크`:'책 읽는 고양이 마크');
   return marker;
 }
-function emphasize(text,s){
-  const el=$('dialogueText');el.replaceChildren();
-  const terms=s.emphasis||[];
-  if(!terms.length){el.textContent=text;return;}
-  const escaped=terms.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
-  const split=new RegExp(`(${escaped.join('|')})`,'g');
-  for(const part of text.split(split)){
-    if(terms.includes(part)){const em=document.createElement('em');em.textContent=part;el.append(em);}
-    else el.append(document.createTextNode(part));
-  }
-}
 function finishText(){
   if(textTimer)clearInterval(textTimer);textTimer=null;textComplete=true;
-  emphasize(activeText,runtime.scene);$('nextButton').textContent=runtime.scene.nextLabel||'다음';
+  writeDialogue($('dialogueText'),activeText,runtime.scene.emphasis);$('nextButton').textContent=runtime.scene.nextLabel||'다음';
 }
 function typeText(s){
   clearInterval(textTimer);textTimer=null;activeText=sceneMessage(s);
   const segments=typeof Intl.Segmenter==='function'
     ? [...new Intl.Segmenter('ko',{granularity:'grapheme'}).segment(activeText)].map(x=>x.segment)
     : [...activeText];
-  if(prefersReducedMotion||s.textMode==='static'||s.type==='puzzle'||s.type==='move'||s.type==='continuation'){textComplete=true;emphasize(activeText,s);return;}
-  textComplete=false;let index=0;$('dialogueText').textContent='';
+  if(!segments.length||prefersReducedMotion||s.textMode==='static'||s.type==='puzzle'||s.type==='move'||s.type==='continuation'){textComplete=true;writeDialogue($('dialogueText'),activeText,s.emphasis);return;}
+  textComplete=false;let index=0,revealed=0;const dialogue=$('dialogueText');
+  writeDialogue(dialogue,activeText,s.emphasis,revealed);
   textTimer=setInterval(()=>{
     if(progressUI.isOpen)return;
-    index+=1;emphasize(segments.slice(0,index).join(''),s);
+    revealed+=segments[index++].length;writeDialogue(dialogue,activeText,s.emphasis,revealed);
     if(index>=segments.length)finishText();
   },24);
 }
@@ -314,6 +304,7 @@ async function render(){
     puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
   $('arrivalQuestion').textContent=s.arrivalQuestion||uiText.arrivalQuestion;
+  renderArrivalPhoto(s,serial);
   $('arrivedButton').textContent=s.arrivedLabel||uiText.arrivedLabel;
   $('notYetButton').textContent=s.lostLabel||uiText.lostLabel;
   $('continuationControls').hidden=s.type!=='continuation';
@@ -403,6 +394,27 @@ function sizeMinigame(){
   activeMinigame.width=width;$('minigameOverlay').style.height=`${activeMinigame.height}px`;
 }
 
+function renderArrivalPhoto({arrivalPhoto:photo,emphasis},serial){
+  const guide=$('arrivalPhotoGuide'),button=$('arrivalPhotoButton'),status=$('arrivalPhotoStatus');
+  guide.hidden=!photo;button.hidden=true;button.replaceChildren();button.onclick=null;
+  status.hidden=true;
+  if(!photo)return;
+  $('stage').scrollTop=0;
+  writeDialogue($('arrivalPhotoText'),photo.text,emphasis);
+  const {width,height}=assets[photo.image];
+  button.dataset.wide=String(width>height);
+  status.textContent='사진을 불러오는 중…';status.hidden=false;
+  loadImage(photo.image).then(()=>{
+    if(serial!==renderSerial)return;
+    const image=createImage(photo.image,'arrival-photo-image',photo.alt);
+    image.width=width;image.height=height;button.replaceChildren(image);
+    button.setAttribute('aria-label',photo.alt+' 눌러 확대 보기');
+    button.onclick=()=>mark05UI.showReference(photo.image,photo.alt,button,{width,height});
+    status.hidden=true;button.hidden=false;
+  }).catch(()=>{
+    if(serial===renderSerial)status.textContent='사진을 불러오지 못했어요.';
+  });
+}
 function showLocationHints(){
   if(runtime.scene.type!=='move')return;
   const s=runtime.scene,hints=s.locationHints||[];
@@ -507,7 +519,7 @@ async function openMinigame({howtoShown=false}={}){
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
     scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,viewportCeiling:window.visualViewport?.height||innerHeight,width:innerWidth};
-  const gameVersion={'book-catch-keyword':'20261103-morning-cart','book-order-keyword':'20261103-book-answer'};
+  const gameVersion={'book-catch-keyword':'20261103-morning-cart','book-order-keyword':'20261103-dialogue-art'};
   url.searchParams.set('howto','shown');url.searchParams.set('v',gameVersion[activeMinigame.gameId]||'20261102-howto30');
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);

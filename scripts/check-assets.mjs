@@ -19,6 +19,7 @@ for(const s of chapters.flatMap(c=>c.scenes)){
   if(s.guideOverlay)used.add('prop:'+s.guideOverlay);
   if(s.layout==='notice05-expression')for(const key of ['prop:marker05','expression:angry','expression:smile','expression:cry','prop:postcard-pink-arrow'])used.add(key);
   for(const step of s.locationGuide||[])used.add(step.image);
+  if(s.arrivalPhoto)used.add(s.arrivalPhoto.image);
 }
 for(const key of used){if(!manifest[key])throw Error('없는 자산 '+key);const file=resolve(root,manifest[key].src);
   if(statSync(file).size!==manifest[key].bytes)throw Error('자산 크기 불일치 '+key);

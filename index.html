@@ -7,7 +7,7 @@
   <title>고양이가 된 사서</title>
   <meta name="description" content="고양이와 몸이 바뀐 사서의 우당탕 도서관 이야기. 실제 엽서와 도서관의 단서를 따라 마지막 이야기를 완성해 주세요.">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261102-howto30">
+  <link rel="stylesheet" href="style.css?v=20261103-dialogue-art">
 </head>
 <body>
   <main id="appShell" class="app-shell">
@@ -64,6 +64,11 @@
       </section>
       <section id="movementControls" class="movement-controls" hidden>
         <h2 id="arrivalQuestion">도착하였습니까?</h2>
+        <div id="arrivalPhotoGuide" class="arrival-photo-guide" hidden>
+          <p id="arrivalPhotoText"></p>
+          <button id="arrivalPhotoButton" class="mark05-image-button arrival-photo-button" type="button" hidden></button>
+          <p id="arrivalPhotoStatus" class="mark05-status" role="status" hidden></p>
+        </div>
         <div class="arrival-buttons">
           <button id="arrivedButton" class="arrival-button" type="button">도착했지!</button>
           <button id="notYetButton" class="arrival-button lost-button" type="button">못 찾겠어…</button>
@@ -194,6 +199,6 @@
     <div id="endingError" class="ending-error" role="alert" hidden><p>장면을 불러오지 못했어요<br>연결을 확인하고 다시 시도해 주세요</p><button id="endingRetry" type="button">다시 불러오기</button></div>
   </section>
   <noscript>이 게임은 자바스크립트를 켜야 진행할 수 있어요.</noscript>
-  <script type="module" src="app.js?v=20261103-book-answer"></script>
+  <script type="module" src="app.js?v=20261103-dialogue-art"></script>
 </body>
 </html>

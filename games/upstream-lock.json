@@ -57,13 +57,13 @@
           "file": "config.js",
           "sourceSha256": "afa7b93d56de2f45985438164366ba9a0328d06215c4513d389344acffb08563",
           "adapted": true,
-          "bundledSha256": "1941b010cf23334d31e7790450203ca03462be2834ac37e8e4b51151654ef802"
+          "bundledSha256": "059e874bc42fb7c245a6b196240b78b1e296719added2867c409172eaf966e3f"
         },
         {
           "file": "game.js",
           "sourceSha256": "1a470c5b76f7eeb9b5f5dbb6e610f1cf0c72ab5f2ed778621b86c0cac1b086da",
           "adapted": true,
-          "bundledSha256": "f068db5467c09b8e78c51a36d394eed32439ffa90101f5d8823d2577b2664f1d"
+          "bundledSha256": "23c0074bc7da29909142a1484ec593ea8fdc7ee935dd65fd61b0b5d8cd78ef5e"
         },
         {
           "file": "geometry.js",
@@ -75,7 +75,7 @@
           "file": "index.html",
           "sourceSha256": "bcce401e1455efb9e278ed974d5853a0d76d22a0f2530de54303faedbbc5ade9",
           "adapted": true,
-          "bundledSha256": "f82c03e01e6396ad190ca5d5a80aa31f878b378fa64783cf0a54ae5e36173826"
+          "bundledSha256": "422f70ca5a95bb77ddb8b3c45ad77b5f171f8917a713f10993c1dce70ee13c8f"
         },
         {
           "file": "layout.json",
