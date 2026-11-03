@@ -48,6 +48,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   { id: 'opening-librarian', sourceNumber: 4, type: 'dialogue', background: 'meeting', cat: 'disappointed',
     layout: 'meet', text: '나는 사실 이 도서관 사서야', next: 'opening-memory' },
   { id: 'opening-memory', sourceNumber: 5, type: 'dialogue', background: null, textGroup:'morning-memory',
+    comic:'morning-library', comicAlt:'출근한 사서가 해미도서관 입구 앞에서 고양이를 바라보는 모습',
     text: '오늘 아침에도 평소처럼 도서관에\n출근 중이었어', next: 'opening-comic-1' },
   ...[6,7,8,9].map((number, i) => ({
     id: `opening-comic-${i+1}`, sourceNumber: number, type: 'comic', background: null,

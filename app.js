@@ -1,4 +1,4 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-howto30';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261103-morning-cart';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
 import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-howto30';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
@@ -23,7 +23,7 @@ const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json?v=20261102-howto30').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261103-morning-cart').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -252,7 +252,7 @@ async function render(){
   if(s.cat){const im=createImage(`cat:${s.cat}`,'character cat');applyRect(im,s.geometry.cat);im.style.transform=s.flipCat?'scaleX(-1)':'';cl.append(im);}
   if(s.shelfActor){const canvas=document.createElement('canvas');canvas.className='character shelf-actor';canvas.setAttribute('aria-label','서가 위에서 책을 미는 사서 몸의 고양이');applyRect(canvas,s.geometry.shelfActor);cl.append(canvas);stopShelfMotion=showShelfActor(canvas,await loadImage('actor:shelf-librarian'),{animate:s.shelfMotion,reducedMotion:prefersReducedMotion});}
   if(s.actor){const im=createImage(`actor:${s.actor}`,'character ending-actor'+(s.actorMotion==='flee'?' story-flee':''));applyRect(im,s.geometry.actor);cl.append(im);}
-  if(s.comic){const im=createImage(`comic:${s.comic}`,'comic-panel'+(s.effect?' bump':''));applyRect(im,s.geometry.comic);cl.append(im);}
+  if(s.comic){const im=createImage(`comic:${s.comic}`,'comic-panel'+(s.effect?' bump':''),s.comicAlt);applyRect(im,s.geometry.comic);cl.append(im);}
   if(s.marker){const marker=createMarker(s);applyRect(marker,s.geometry.marker);$('effectLayer').append(marker);}
   if(s.noticeText){const notice=document.createElement('aside');notice.className='return-notice';const text=document.createElement('p');text.textContent=s.noticeText;notice.append(createImage('icon:rule_book_cart','return-notice-icon'),text);applyRect(notice,[145,155,310,150]);$('effectLayer').append(notice);}
   $('effectLayer').className='effect-layer';
@@ -507,7 +507,7 @@ async function openMinigame({howtoShown=false}={}){
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
     scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,viewportCeiling:window.visualViewport?.height||innerHeight,width:innerWidth};
-  url.searchParams.set('howto','shown');url.searchParams.set('v','20261102-howto30');
+  url.searchParams.set('howto','shown');url.searchParams.set('v',runtime.scene.puzzleId==='book-catch-keyword'?'20261103-morning-cart':'20261102-howto30');
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);
   const config=puzzles[runtime.scene.puzzleId],keywordMode=config.completionMode==='keyword';

@@ -6,8 +6,9 @@ const L = CONFIG.layout, game = new BookGame(CONFIG), images = {};
 let phase='loading', last=0, countdown=0, pausedPhase='', completed=false, assetsReady=false;
 const names=['library-background','empty-cart','pushing-cat','stack-red','stack-gold','stack-teal','librarian-idle','falling-book-red-trim','falling-book-teal-trim','floor-book-trim','cat-reshelve-5frames','librarian-drop-5frames','perfect-clear','clear-success','clear-failure'];
 const laneButtons=[...document.querySelectorAll('[data-lane]')];
+const shelveButton=$('#shelve'), shelveCallout=$('#shelve-callout');
 laneButtons.forEach((b,i)=>{b.style.left=(L.columns[i]/L.width*100)+'%';b.addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase==='playing')game.move(i);render();});});
-$('#shelve').addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase==='playing')game.shelve();render();});
+shelveButton.addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase==='playing')game.shelve();render();});
 canvas.addEventListener('pointerdown',e=>{e.preventDefault();sync();if(phase!=='playing')return;const x=(e.clientX-canvas.getBoundingClientRect().left)/canvas.getBoundingClientRect().width*L.width;if(x>855)return;let lane=L.columns.reduce((a,v,i)=>Math.abs(v-x)<Math.abs(L.columns[a]-x)?i:a,0);game.move(lane);render();});
 document.addEventListener('keydown',e=>{if(e.repeat)return;if(['1','2','3','4',' ','Escape'].includes(e.key)){e.preventDefault();sync();if(e.key==='Escape')pause();else if(phase==='playing'){if(e.key===' ')game.shelve();else game.move(Number(e.key)-1);}render();}});
 $('#primary').addEventListener('click',()=>{if(phase==='error')load();else if(phase==='paused')resume();else if(phase==='won'&&storyBridge?.embedded)storyBridge.returnToStory(storyResult());else if(phase==='won' && CONFIG.nextPuzzleUrl)location.href=CONFIG.nextPuzzleUrl;else start();});
@@ -102,9 +103,13 @@ function render(){
  $('#load').innerHTML=game.load+'<small>/'+CONFIG.capacity+'</small>';
  $('#timebar').style.width=(cleanup ? Math.min(1,Math.max(0,(game.finishAt-game.time)/CONFIG.cleanupGrace)) : Math.max(0,1-game.time/CONFIG.duration))*100+'%';
  laneButtons.forEach((b,i)=>{b.classList.toggle('selected',i===game.lane);b.disabled=phase!=='playing'||!!game.shelving;b.setAttribute('aria-pressed',String(i===game.lane));});
- $('#shelve').disabled=phase!=='playing'||!!game.shelving||!game.load;
+ shelveButton.disabled=phase!=='playing'||!!game.shelving||!game.load;
+ const cartFull=phase==='playing'&&game.load===CONFIG.capacity&&!game.shelving;
+ shelveButton.classList.toggle('cart-full',cartFull);
+ const callout=cartFull?'책을 꽂아줘!':'';
+ if(shelveCallout.textContent!==callout)shelveCallout.textContent=callout;
  $('#pause').disabled=!['playing','countdown'].includes(phase);
- const notice=game.shelving?'서가에 정리하는 중…':cleanup&&phase==='playing'?'마지막 책을 정리하세요! '+remaining+'초 남았어요.':game.time>=CONFIG.spawnUntil&&phase==='playing'?'새 책은 끝! 마지막 책을 받아 정리하세요.':game.load===CONFIG.capacity?'카트가 가득 찼어요! 책을 꽂아주세요.':'';
+ const notice=game.shelving?'서가에 정리하는 중…':cleanup&&phase==='playing'?'마지막 책을 정리하세요! '+remaining+'초 남았어요.':game.time>=CONFIG.spawnUntil&&phase==='playing'?'새 책은 끝! 마지막 책을 받아 정리하세요.':'';
  if($('#notice').textContent!==notice)$('#notice').textContent=notice;
 }
 function frame(now){sync(now);render();requestAnimationFrame(frame);}load();requestAnimationFrame(frame);

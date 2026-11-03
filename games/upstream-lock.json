@@ -207,13 +207,13 @@
           "file": "game.js",
           "sourceSha256": "ce61d30bffcbfb7daa7a4b1eb2288bcf9cda97835600efccb0f044c8bec127e7",
           "adapted": true,
-          "bundledSha256": "b164a5640856b3cb73b1c0db513b1c0b29279afc6938149760c4bbc4d00dc880"
+          "bundledSha256": "128267260267cfefbf9e2727abaead3088ab9695ae22446e5016428c8dc132a3"
         },
         {
           "file": "index.html",
           "sourceSha256": "e0b1eb156236a715033b04f759cda319d8a7b2f360547030b2f1b3b566103293",
           "adapted": true,
-          "bundledSha256": "511691b7f09e39a112fb1d166d13c74f7ede2e96e88a96ecd7fcb31694fe7b73"
+          "bundledSha256": "02a233948a3e6423d3c3f8d5aa9121b0cec7985e8f275aa8a5d58d1a040a72d7"
         },
         {
           "file": "motion-data.js",
