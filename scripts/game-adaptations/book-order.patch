@@ -1,4 +1,5 @@
 diff --git a/book-order/game.js b/book-order/game.js
+index 7c7c76a..c0d240f 100644
 --- a/book-order/game.js
 +++ b/book-order/game.js
 @@ -1,14 +1,25 @@
@@ -75,7 +76,7 @@ diff --git a/book-order/game.js b/book-order/game.js
    cartMask=maskFor(bundle.cartImage,bundle.cart.content_rect);
    const restored=readSave();state=restored||freshState(order,CONFIG.gameId);started=!!restored;completionSent=!!restored?.complete;completionStart=performance.now()-bundle.layout.sparkle.duration_ms;
 -  loading.hidden=true;intro.hidden=started;ready=true;render();syncAccess();
-+  loading.hidden=true;intro.hidden=started;ready=true;storyBridge?.ready();render();syncAccess();
++  loading.hidden=true;intro.hidden=started;ready=true;storyBridge?.ready();if(!started&&new URL(location.href).searchParams.get('howto')==='shown')document.querySelector('#start').click();render();syncAccess();
    // Read-only snapshot for integration monitoring and developer verification; never exposes state mutation.
    window.Bookband=Object.freeze({getState:()=>JSON.parse(JSON.stringify(state)),getInteraction:()=>({selected:selected?.id||null,side:selected?.side||gesture?.side||null,dragging:!!gesture?.dragging}),get ready(){return ready;},gameId:CONFIG.gameId});
  } catch(error) {
@@ -84,6 +85,7 @@ diff --git a/book-order/game.js b/book-order/game.js
    document.querySelector('#retry').hidden=false;
  }
 diff --git a/book-order/config.js b/book-order/config.js
+index f1d66c2..68be986 100644
 --- a/book-order/config.js
 +++ b/book-order/config.js
 @@ -15,6 +15,8 @@ export const CONFIG = {
@@ -97,9 +99,10 @@ diff --git a/book-order/config.js b/book-order/config.js
 +
 +if(globalThis.CatStoryBridge?.embedded){const run=globalThis.CatStoryBridge.runId;CONFIG.gameId+=':'+run;CONFIG.storageKey+=':'+run;CONFIG.nextUrl='';CONFIG.text.subtitle='현장의 십진분류표와 책띠를 살펴보세요';CONFIG.text.start='현장의 십진분류표와 책띠 색·분류명을 보고 열 권을 주제 순서대로 정리해 주세요. 책을 끌거나, 책과 자리를 차례로 눌러 꽂아요.';}
 diff --git a/book-order/index.html b/book-order/index.html
+index 42730dd..5b35ead 100644
 --- a/book-order/index.html
 +++ b/book-order/index.html
-@@ -8,15 +8,18 @@
+@@ -8,18 +8,21 @@
    <title>책을 올바른 순서로 제자리에!</title>
    <link rel="icon" href="data:,">
    <link rel="stylesheet" href="./style.css">
@@ -119,3 +122,7 @@ diff --git a/book-order/index.html b/book-order/index.html
      <div id="a11y" class="sr-only"></div>
    </main>
    <noscript>이 게임을 실행하려면 JavaScript를 켜 주세요.</noscript>
+-  <script type="module" src="./game.js?v=20261102-book-touch"></script>
++  <script type="module" src="./game.js?v=20261102-howto30"></script>
+ </body>
+ </html>

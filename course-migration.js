@@ -17,7 +17,8 @@ export function migrateCourseSnapshot(value={}){
   }else s.legacyOrderPassed=true;
  }
  const aliases={'general-breath':'newbooks-after-order','ending-postcard-clue':'ending-rescue','general-order-sequence':'newbooks-order-game','general-shelf-guide':'general-order-bridge','general-pc-guide':'general-order-bridge','general-pc-paint':'general-order-bridge','general-classification-clue':'general-order-bridge','general-room-puzzle':'newbooks-order-game','newbooks-intro':'general-book-drop','newbooks-disorder':'general-book-drop','general-faces-joke':'general-book-drop','general-faces-clue':'general-book-drop','newbooks-puzzle':'general-book-drop','general-face-easy':'general-book-drop','general-body-wait':'general-book-drop'};
- aliases['general-return-joke']='general-return-help';
+ Object.assign(aliases,{'general-return-joke':'general-expression-intro','general-return-help':'general-expression-intro','general-stay-still':'general-notice-solved','general-flee-meow':'general-lobby-direction','general-come-down':'general-lobby-direction','general-body-missed':'general-lobby-direction','travel-to-ending-lobby':'lobby-ending-entry'});
+ if(s.currentId==='general-return-notice'&&value.sceneStates?.['general-shelf-arrival']?.arrived===true)s.currentId='general-expression-intro';
  aliases['ending-loan-joke']='ending-complete';
  if(aliases[s.currentId])s.currentId=aliases[s.currentId];
  if(Array.isArray(s.history)){s.history=s.history.map(id=>aliases[id]||id).filter((id,i,all)=>id!==s.currentId&&id!==all[i-1]);}

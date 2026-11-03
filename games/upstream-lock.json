@@ -3,7 +3,7 @@
   "sources": {
     "book-order": {
       "repository": "https://github.com/gamemakercho/bookband",
-      "commit": "a4618a6d7bc0aecb23bc3ef30c86735dc496b845",
+      "commit": "63971dcfa41fb1cc832c46cf0a82c5ad3fabc03c",
       "files": [
         {
           "file": "assets/book-cart.json",
@@ -63,7 +63,7 @@
           "file": "game.js",
           "sourceSha256": "1a470c5b76f7eeb9b5f5dbb6e610f1cf0c72ab5f2ed778621b86c0cac1b086da",
           "adapted": true,
-          "bundledSha256": "bafb00c87c55fdb6e4e261e45aca4bcab06275135b51a9fedf9b1788f06d9f4b"
+          "bundledSha256": "4eb9a5fd80d04582679fd43e3e3b0b29b4f995393481d259b1bc49fef7f1d901"
         },
         {
           "file": "geometry.js",
@@ -75,7 +75,7 @@
           "file": "index.html",
           "sourceSha256": "bcce401e1455efb9e278ed974d5853a0d76d22a0f2530de54303faedbbc5ade9",
           "adapted": true,
-          "bundledSha256": "189afdf0e0678f3011173ea16879c68589b4a39dfad92ccbc2dd996e2d37ced7"
+          "bundledSha256": "eeb965376fe46bfd8ef453904628c0ae95212febef441709a9a3c7b65660194d"
         },
         {
           "file": "layout.json",
@@ -207,13 +207,13 @@
           "file": "game.js",
           "sourceSha256": "ce61d30bffcbfb7daa7a4b1eb2288bcf9cda97835600efccb0f044c8bec127e7",
           "adapted": true,
-          "bundledSha256": "da429c7644c9f1c474f34c334aebe644fb2da6507b15a170a808e16d5be0f027"
+          "bundledSha256": "b164a5640856b3cb73b1c0db513b1c0b29279afc6938149760c4bbc4d00dc880"
         },
         {
           "file": "index.html",
           "sourceSha256": "e0b1eb156236a715033b04f759cda319d8a7b2f360547030b2f1b3b566103293",
           "adapted": true,
-          "bundledSha256": "bd759c276a85240bfc3c49dc50011e8800cdf2414272cde74f85a9ef37d316a1"
+          "bundledSha256": "511691b7f09e39a112fb1d166d13c74f7ede2e96e88a96ecd7fcb31694fe7b73"
         },
         {
           "file": "motion-data.js",
@@ -231,7 +231,7 @@
     },
     "ending-chase": {
       "repository": "https://github.com/gamemakercho/catch-librarian",
-      "commit": "bc12b98d4a140eeb2ab8b14a2444571674818549",
+      "commit": "9b50e88a553e0039b2831bf7129ed7f02ebcba5d",
       "files": [
         {
           "file": "after-ending/after-ending.css",
@@ -253,9 +253,9 @@
         },
         {
           "file": "app.js",
-          "sourceSha256": "cc7a9c6b62c14414e7c90806740457a819e268f81cd5ef498e06df6a76214822",
+          "sourceSha256": "d7637c350d3c4ecb3a23693bad8d00ff715eafd7e3b37e165faa77153f436bfd",
           "adapted": true,
-          "bundledSha256": "b3c4944492080ca73d9067e292021dcb17208d081c344038fe3c6d04a82eee93"
+          "bundledSha256": "5ea95980d571b22b0aecee701068e9516b7bdba346d27844b6523103f0daa55f"
         },
         {
           "file": "assets/background/background-layout.json",
@@ -409,9 +409,9 @@
         },
         {
           "file": "index.html",
-          "sourceSha256": "e5970ca29eb76220bcadf72eae9e1c22c86a72467ff33df3c073465b4cd54c45",
+          "sourceSha256": "11a0113bc1c46eb79632f084b25887b1cea6116b48a7e21b8deccf59b225b320",
           "adapted": false,
-          "bundledSha256": "e5970ca29eb76220bcadf72eae9e1c22c86a72467ff33df3c073465b4cd54c45"
+          "bundledSha256": "11a0113bc1c46eb79632f084b25887b1cea6116b48a7e21b8deccf59b225b320"
         },
         {
           "file": "librarian-motion.js",
@@ -439,9 +439,93 @@
         },
         {
           "file": "styles.css",
-          "sourceSha256": "c6aeef7df890193190cd74f17021f6a597273c25a51315859439dcf2fa0390ec",
+          "sourceSha256": "95825a624bcca382b93c5d8fb4d5c23cd87fa5cd8da2abd7e847483233dad2a3",
           "adapted": false,
-          "bundledSha256": "c6aeef7df890193190cd74f17021f6a597273c25a51315859439dcf2fa0390ec"
+          "bundledSha256": "95825a624bcca382b93c5d8fb4d5c23cd87fa5cd8da2abd7e847483233dad2a3"
+        }
+      ]
+    },
+    "cleaning": {
+      "repository": "https://github.com/gamemakercho/cleaning-game",
+      "commit": "2bfda8dd6e67136d76c36e6a949c16589aaa4231",
+      "files": [
+        {
+          "file": "index.html",
+          "sourceSha256": "cc7fc203ce55f1dedadb878fa22906e9f154a63c3ce7af5090cae1b3636be735",
+          "adapted": true,
+          "bundledSha256": "890c818bc980d19f17e496f9fa3c9dc441bbb930d6a51aeb3dfc58acea64b61e"
+        },
+        {
+          "file": "app.js",
+          "sourceSha256": "e26554cc07d3b747703a2097f8016ec5208e0f86cdad7f27cfc5256f5da38217",
+          "adapted": true,
+          "bundledSha256": "9741a560069f15d5b7e736cb73ef2288712b3ac7c2ebb263fa3f320b88083005"
+        },
+        {
+          "file": "style.css",
+          "sourceSha256": "9c91dffdb729ce072e6e2042c37be05e554108c8f1d0f4fe917b53658fcbaa66",
+          "adapted": false,
+          "bundledSha256": "9c91dffdb729ce072e6e2042c37be05e554108c8f1d0f4fe917b53658fcbaa66"
+        },
+        {
+          "file": "engine.js",
+          "sourceSha256": "ac6735c98f1cfbea8f83b97e21ef1d4bbba19cd5e62cf5f8060fd03526bcec3e",
+          "adapted": false,
+          "bundledSha256": "ac6735c98f1cfbea8f83b97e21ef1d4bbba19cd5e62cf5f8060fd03526bcec3e"
+        },
+        {
+          "file": "config.js",
+          "sourceSha256": "6b25d0fce014c9d17a323000e51a5d3f5ec7e93ed57cb91b61c918cbb5d52757",
+          "adapted": false,
+          "bundledSha256": "6b25d0fce014c9d17a323000e51a5d3f5ec7e93ed57cb91b61c918cbb5d52757"
+        },
+        {
+          "file": "sprite-data.js",
+          "sourceSha256": "efaf75f49314bb6c3160419aeac57da88baa0dc812d3f295a67a4204dbacec37",
+          "adapted": false,
+          "bundledSha256": "efaf75f49314bb6c3160419aeac57da88baa0dc812d3f295a67a4204dbacec37"
+        },
+        {
+          "file": "story-bridge.js",
+          "sourceSha256": "9c28dd9955a7cb7bae74f83c5206da94fdb8f8303c3829b797b704e0cc95216a",
+          "adapted": false,
+          "bundledSha256": "9c28dd9955a7cb7bae74f83c5206da94fdb8f8303c3829b797b704e0cc95216a"
+        },
+        {
+          "file": "assets/librarian-walk.webp",
+          "sourceSha256": "2b69252867964ca8454dab0b6968c755fa0536a5f68bb431a7d778f8782e6dc7",
+          "adapted": false,
+          "bundledSha256": "2b69252867964ca8454dab0b6968c755fa0536a5f68bb431a7d778f8782e6dc7"
+        },
+        {
+          "file": "assets/librarian-run.webp",
+          "sourceSha256": "ce564340e01484e25b380dd1106c7e76dba3473db1103651458052ab332f2005",
+          "adapted": false,
+          "bundledSha256": "ce564340e01484e25b380dd1106c7e76dba3473db1103651458052ab332f2005"
+        },
+        {
+          "file": "assets/librarian-actions.webp",
+          "sourceSha256": "a192d9530870905c29ff7f9f1168ca4d7e2f2c8e4f91f87fe97be92e79e8666d",
+          "adapted": false,
+          "bundledSha256": "a192d9530870905c29ff7f9f1168ca4d7e2f2c8e4f91f87fe97be92e79e8666d"
+        },
+        {
+          "file": "assets/cat-cleaning-actions.webp",
+          "sourceSha256": "992a2fe79f579a1352780c047b645c495b7ab29d42feafa2495ea4e7148306b3",
+          "adapted": false,
+          "bundledSha256": "992a2fe79f579a1352780c047b645c495b7ab29d42feafa2495ea4e7148306b3"
+        },
+        {
+          "file": "assets/paint-cleaning-effects.webp",
+          "sourceSha256": "9f1fd1e2e11fec2a79904858211905869b665b35d81e71f3ad31e568bb46d12a",
+          "adapted": false,
+          "bundledSha256": "9f1fd1e2e11fec2a79904858211905869b665b35d81e71f3ad31e568bb46d12a"
+        },
+        {
+          "file": "assets/library-background.webp",
+          "sourceSha256": "3ebb9a861b9fb92af39932fb2f3bc0b2ddc4780d19a28ad522c5b4c309d45ed0",
+          "adapted": false,
+          "bundledSha256": "3ebb9a861b9fb92af39932fb2f3bc0b2ddc4780d19a28ad522c5b4c309d45ed0"
         }
       ]
     }

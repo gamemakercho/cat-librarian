@@ -2,8 +2,8 @@
 // sourceNumber: 사용자가 제공한 1~24번 시안과 연결하는 번호.
 import {sceneCopy} from './story-copy.js';
 import {iconCatalog} from './icon-catalog.js';
-import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261102-play-controls';
-import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261102-play-controls';
+import {createGeneralScenes,generalPuzzles} from './general-course.js?v=20261102-howto30';
+import {markLines,markLocation,locationHints} from './mark04-05-config.js?v=20261102-howto30';
 import {normalizeCourseOptions} from './course-config.js';
 import {endingPuzzle,endingPuzzleId} from './ending-course.js?v=20261102-ending-invite';
 export const STORY_VERSION = 'opening-source-24-integrated-v20-20261030';
@@ -136,7 +136,7 @@ const openingChapters = [{ id: 'opening', title: '고양이가 된 사서', scen
   { id:'infant-cleaning-bridge',sourceNumber:null,type:'minigame',puzzleId:'cleaning-keyword',background:'infant-mess',
     location:locations.infant.name,cat:'shocked',layout:'minigame',fontSize:27,
     text:'잠깐, 저 녀석 물감 묻은 발로\n돌아다니잖아!\n책까지 물감이 묻기 전에,\n얼른 바닥부터 닦자!',
-    gameUrl:'https://gamemakercho.github.io/cleaning-game/',gameStartLabel:'물감 청소하기',minigameClearKeyword:null,
+    gameUrl:'./games/cleaning/',gameStartLabel:'물감 청소하기',minigameClearKeyword:null,
     next:'opening-continuation',
     geometry:{cat:[38,168,145,170],dialogue:[32,350,436,240],minigameControls:[40,615,420,100],answerForm:[29,730,442,100]} },
   // Keep the previous post-cleaning holding ID so existing saves resume here.

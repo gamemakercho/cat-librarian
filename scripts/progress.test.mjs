@@ -101,5 +101,5 @@ test('new 05 notice question follows return dialogue, accepts 책소동 and wait
   const restored=runtime(r.snapshot());assert.equal(restored.progress.completed,2);
   assert.equal(restored.confirmSuccess().scene.id,'general-notice-solved');assert.equal(restored.progress.completed,2);
   const oldLate=runtime({currentId:'general-come-down',history:['general-return-joke']});
-  assert.equal(oldLate.currentId,'general-come-down');assert.equal(oldLate.progress.completed,0);
+  assert.equal(oldLate.currentId,'general-lobby-direction');assert.equal(oldLate.progress.completed,0);
 });

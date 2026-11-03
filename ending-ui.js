@@ -1,5 +1,5 @@
 import {ENDING_READY,ENDING_CONTACT,ENDING_COMPLETE,ENDING_ERROR,isEndingMessage} from './ending-bridge.js';
-export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,onRestart,isCompleted}){
+export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,onRestart,isCompleted,onApproach}){
  const $=id=>document.getElementById(id);let active=null,timer=null,finished=false;
  const invitedRuns=new Set();
  function stop(){
@@ -10,7 +10,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
  function play(replay=false){
   const part=replay?'full':getScene().cinematicPart||'approach';if(part!=='approach'&&!canRestore())return;
   stop();const url=new URL(part==='approach'?'./games/ending-chase/':'./ending/',location.href);
-  if(part==='approach')url.searchParams.set('v','20261102-retry-assist');
+  if(part==='approach'){url.searchParams.set('v','20261102-howto30');url.searchParams.set('howto','shown');}
   active={session:crypto.randomUUID(),runId:getRunId(),origin:url.origin,from:getScene().id,replay,part};
   $('endingCinemaOverlay').classList.toggle('is-runner',part==='approach');
   $('endingCinemaLabel').textContent=part==='approach'?'아직 끝나지 않은 이야기':'다시, 제자리로';
@@ -20,7 +20,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   document.body.classList.add('ending-active');document.documentElement.classList.add('ending-active');$('endingCinemaOverlay').hidden=false;
   $('endingFrame').src=url.href;$('endingClose').focus();timer=setTimeout(showError,25000);
  }
- $('endingPlay').addEventListener('click',()=>{if(isCompleted())onReplay();else play();});
+ $('endingPlay').addEventListener('click',()=>{if(isCompleted())onReplay();else if(getScene().cinematicPart==='approach'&&onApproach)onApproach();else play();});
  $('endingReplay').addEventListener('click',onReplay);$('endingRestart').addEventListener('click',onRestart);$('endingRetry').addEventListener('click',()=>play(Boolean(active?.replay)));
  $('endingClose').addEventListener('click',()=>{stop();(getScene().type==='ending'?$('endingReplay'):$('endingPlay')).focus();});
  window.addEventListener('message',async event=>{
@@ -39,7 +39,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   $('inlineFoldGuide').hidden=!fold;$('endingContactStill').hidden=true;
   if(fold){$('inlineFoldGuide').src='./assets/ending/postcard-fold-guide.svg';if(getPoster())$('endingContactStill').src=getPoster();}
   else{$('endingContactStill').removeAttribute('src');$('inlineFoldGuide').removeAttribute('src');}
-  $('endingCinemaActions').hidden=scene.type!=='cinematic';$('endingPlay').disabled=scene.cinematicPart==='restore'&&!canRestore();$('endingPlay').textContent=isCompleted()?'이어서 보기':scene.actionLabel||'마지막 장면 보기';
+  $('endingCinemaActions').hidden=scene.type!=='cinematic';$('endingPlay').disabled=scene.cinematicPart==='restore'&&!canRestore();$('endingPlay').textContent=isCompleted()?'이어서 보기':scene.cinematicPart==='approach'?'다음으로':scene.actionLabel||'마지막 장면 보기';
   $('endingCard').hidden=scene.type!=='ending';$('endingCard').classList.remove('is-visible');
   if(scene.type!=='ending')$('endingCredits').classList.remove('credits-invite-pulse');
   if(scene.type==='ending'){

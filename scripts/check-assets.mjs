@@ -5,6 +5,7 @@ import {chapters,puzzles,uiText} from '../story.js';
 const root=resolve(import.meta.dirname,'..');
 const manifest=JSON.parse(readFileSync(resolve(root,'assets.json'),'utf8'));
 const used=new Set();
+const {HOWTO}=await import('../howto-config.js');for(const item of Object.values(HOWTO))used.add(item.key);
 for(const config of [uiText.successPopup,...Object.values(puzzles).map(p=>p.successPopup)])if(config?.cat)used.add('cat:'+config.cat);
 for(const p of Object.values(puzzles))for(const icon of Object.values(p.icons||{}))used.add(icon.assetKey);
 used.add('cat:neutral');
@@ -31,7 +32,7 @@ for(const asset of Object.values(manifest))if(/(?:^|\/)references\//.test(asset.
 for(const file of readdirSync(root,{recursive:true}))if(/(?:01_door_sign|02_postcard|03_alignment_layer|04_solved_alignment|emerald-reading-cat-base|cat-library-notice|all-14-icons-index|objects-grid-original|actions-grid-original|library-notice-A3|physical-nameplate-latest|puzzle-original|MASTER_SCENARIO|general-pc-paint-original|game-code-snapshots)/.test(file))throw Error('배포 폴더에 새 제작 참고 원본이 있음: '+file);
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 if(new Set(ids).size!==ids.length)throw Error('중복 HTML id');
-const code=['app.js','progress-ui.js','mark04-05-ui.js','mark05-location.js','credits-ui.js'].map(file=>readFileSync(resolve(root,file),'utf8')).join('\n');
+const code=['app.js','progress-ui.js','mark04-05-ui.js','mark05-location.js','howto-ui.js','credits-ui.js'].map(file=>readFileSync(resolve(root,file),'utf8')).join('\n');
 for(const m of code.matchAll(/\$\('([^']+)'\)/g))if(!ids.includes(m[1]))throw Error('없는 UI '+m[1]);
 const sum=[...used].reduce((a,k)=>a+manifest[k].bytes,0);
 const allJpg=readFileSync(resolve(root,'reference-metadata.json'),'utf8');

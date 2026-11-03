@@ -234,7 +234,7 @@ try {
   for(const side of ['left','right'])pawMasks.set(side,maskFor(bundle.pawImage,bundle.pawFrames.get('grip_'+side).content_rect));
   cartMask=maskFor(bundle.cartImage,bundle.cart.content_rect);
   const restored=readSave();state=restored||freshState(order,CONFIG.gameId);started=!!restored;completionSent=!!restored?.complete;completionStart=performance.now()-bundle.layout.sparkle.duration_ms;
-  loading.hidden=true;intro.hidden=started;ready=true;storyBridge?.ready();render();syncAccess();
+  loading.hidden=true;intro.hidden=started;ready=true;storyBridge?.ready();if(!started&&new URL(location.href).searchParams.get('howto')==='shown')document.querySelector('#start').click();render();syncAccess();
   // Read-only snapshot for integration monitoring and developer verification; never exposes state mutation.
   window.Bookband=Object.freeze({getState:()=>JSON.parse(JSON.stringify(state)),getInteraction:()=>({selected:selected?.id||null,side:selected?.side||gesture?.side||null,dragging:!!gesture?.dragging}),get ready(){return ready;},gameId:CONFIG.gameId});
 } catch(error) {

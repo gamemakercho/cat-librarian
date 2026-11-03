@@ -1,0 +1,26 @@
+diff --git a/cleaning/index.html b/cleaning/index.html
+index a5d964c..b1266fc 100644
+--- a/cleaning/index.html
++++ b/cleaning/index.html
+@@ -31,6 +31,6 @@
+       </div>
+     </section>
+   </main>
+-  <script type="module" src="./app.js"></script>
++  <script type="module" src="./app.js?v=20261102-howto30"></script>
+ </body>
+ </html>
+diff --git a/cleaning/app.js b/cleaning/app.js
+index 39962b4..d187aee 100644
+--- a/cleaning/app.js
++++ b/cleaning/app.js
+@@ -43,7 +43,8 @@ async function preload() {
+       img.onerror = () => reject(new Error(`${name}.webp를 불러오지 못했어요.`)); img.src = new URL(`./assets/${name}.webp`, import.meta.url).href;
+     })));
+     game = new Game(sheets, { onComplete: result => { document.dispatchEvent(new CustomEvent('gamecomplete', { detail: result })); if (typeof window.onGameComplete === 'function') { try { window.onGameComplete(result); } catch (error) { console.error('onGameComplete callback:', error); } } } });
+-    loaded = true; shownPhase = ''; updateInterface();
++    loaded = true; shownPhase = '';if(storyHost)window.parent.postMessage({type:'cat-librarian:minigame-ready',version:1,session:storyHost.session,gameId:storyHost.gameId},storyHost.origin);
++    if(storyHost&&new URL(location.href).searchParams.get('howto')==='shown')startGame();else updateInterface();
+     // Read-only diagnostics are useful to hosts and browser QA; mutation is confined to ?debug.
+     window.cleaningGame = { snapshot: () => game.snapshot(), config: CONFIG, map: MAP_CONFIG };
+     if (debug) window.cleaningGame.debug = { game, sheets, step: seconds => game.advance(seconds) };

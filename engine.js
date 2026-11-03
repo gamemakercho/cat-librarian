@@ -1,4 +1,4 @@
-import {migrateCourseSnapshot} from './course-migration.js?v=20261102-play-controls';
+import {migrateCourseSnapshot} from './course-migration.js?v=20261102-howto30';
 import {validOrderProgress} from './games/book-order/letter-state.js';
 import {normalizeKoreanAnswer} from './answer-rules.js';
 import {initializePuzzle,toggleSelection,submitAnswer as submitIcons,confirmSuccess as confirmIcons,isCorrectSelection} from './icon-puzzle.js';
@@ -111,6 +111,7 @@ export class StoryRuntime {
     return {answer:typeof state.answer==='string'?state.answer.slice(0,80):'',
       hintLevel:Number.isInteger(state.hintLevel)?Math.max(0,Math.min(2,state.hintLevel)):0,
       locationHintLevel:Number.isInteger(state.locationHintLevel)?Math.max(0,Math.min(2,state.locationHintLevel)):0,
+      ...(state.howtoOpen===true?{howtoOpen:true}:{}),
       arrived:state.arrived===true,gameEntered:state.gameEntered===true,gameReturned:state.gameReturned===true,
       feedback:typeof state.feedback==='string'?state.feedback.slice(0,300):'',
       ...(Number.isInteger(state.locationGuideStep)?{locationGuideStep:Math.max(0,Math.min(1,state.locationGuideStep))}:{}),

@@ -1,12 +1,14 @@
-import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-play-controls';
+import { createChapters, puzzles, STORY_VERSION, palette, uiText } from './story.js?v=20261102-howto30';
 import {courseSettings,normalizeCourseOptions} from './course-config.js';
-import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-play-controls';
+import { StoryRuntime, formatMarkerNumber, normalizeArtAnswer } from './engine.js?v=20261102-howto30';
 import {createProgressUI} from './progress-ui.js?v=20261101-room04-24';
-import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-play-controls';
-import {createMark05LocationUI} from './mark05-location.js?v=20261102-play-controls';
+import {createMarkCourseUI} from './mark04-05-ui.js?v=20261102-howto30';
+import {howtoFor} from './howto-config.js?v=20261102-howto30';
+import {createHowtoUI} from './howto-ui.js?v=20261102-howto30';
+import {createMark05LocationUI} from './mark05-location.js?v=20261102-howto30';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261102-retry-assist';
-import {createCreditsUI} from './credits-ui.js?v=20261102-play-controls';
+import {createEndingUI} from './ending-ui.js?v=20261102-howto30';
+import {createCreditsUI} from './credits-ui.js?v=20261102-howto30';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
 import {endingArtIds} from './ending-course.js?v=20261102-ending-invite';
 import {createIllustrationUI} from './ending-illustrations.js?v=20261101-ending26';
@@ -14,14 +16,14 @@ import {impactProgress,canReuseEndingIllustration} from './ending-art-state.js';
 import {createEndingArtView} from './ending-art-view.js';
 import {createFoldReference} from './fold-reference.js?v=20261031-final21';
 import {showShelfActor} from './shelf-motion.js';
-import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261102-play-controls';
+import {usesStoryFlow,layoutStoryFlow} from './story-layout.js?v=20261102-howto30';
 
 const params = new URLSearchParams(location.search);
 const review = params.get('review') === '1';
 const SAVE_KEY = `haemi-cat-opening-${review ? 'review' : 'play'}-reference-v3`;
 const $ = id => document.getElementById(id);
 let assets;
-try{assets=await fetch('./assets.json?v=20261102-play-controls').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
+try{assets=await fetch('./assets.json?v=20261102-howto30').then(r=>{if(!r.ok)throw Error('자산 목록 오류');return r.json();});}
 catch(e){$('loading').hidden=false;$('loading').textContent='자산 목록을 읽지 못했어요. 새로고침해 주세요.';throw e;}
 let snapshot;
 try { snapshot=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{}; } catch {snapshot={};}
@@ -60,6 +62,10 @@ const markCourseUI=createMarkCourseUI({createImage});
 const mark05UI=createMark05LocationUI({getScene:()=>runtime.scene,getState:()=>runtime.sceneState,
  onStep:step=>{if(runtime.sceneState.locationGuideStep!==step){runtime.updateSceneState({locationGuideStep:step});save();}$('backButton').textContent=step===1?'이전 그림':'이전 화면';$('backButton').disabled=step===0&&!runtime.history.length;},
  onArrive:()=>advance({arrived:true}),loadImage,createImage});
+const howtoUI=createHowtoUI({loadImage,createImage,isCurrent:item=>item.sceneId===runtime.currentId&&item.runId===runtime.runId,
+ onDismiss:()=>{runtime.updateSceneState({howtoOpen:false});save();},
+ onStart:()=>{runtime.updateSceneState({howtoOpen:false});save();if(runtime.scene.type==='cinematic')endingUI.play();else openMinigame({howtoShown:true});}});
+function showHowto(){const info=howtoFor(runtime.scene);if(!info)return;runtime.updateSceneState({howtoOpen:true});save();howtoUI.open({...info,sceneId:runtime.currentId,runId:runtime.runId});}
 const creditsUI=createCreditsUI({canOpen:()=>runtime.scene.type==='ending'&&(review||runtime.flags.endingCompleted===true)});
 const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.runId,
   getPoster:()=>runtime.endingContactPoster,
@@ -67,7 +73,7 @@ const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.r
   isCompleted:()=>runtime.scene.cinematicPart==='approach'?runtime.flags.endingContactReached===true:runtime.flags.endingRescueComplete===true,
   onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
   onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
-  onReplay:()=>{if(runtime.scene.type==='ending'){runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({impactVersion:1,impactElapsedMs:0});runtime.flags.endingRescueComplete=false;runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
+  onApproach:showHowto,onReplay:()=>{if(runtime.scene.type==='ending'){runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({impactVersion:1,impactElapsedMs:0});runtime.flags.endingRescueComplete=false;runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
 const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),isPaused:()=>progressUI.isOpen,
  getProgress:()=>impactProgress(runtime.sceneStates['ending-impact']),
  onStart:()=>{runtime.flags.endingIllustrationStarted=true;runtime.flags.endingRescueComplete=false;runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({...runtime.sceneStates['ending-impact'],impactVersion:1,impactElapsedMs:impactProgress(runtime.sceneStates['ending-impact'])?.elapsedMs||0});save();},
@@ -251,6 +257,7 @@ async function render(){
   if(s.noticeText){const notice=document.createElement('aside');notice.className='return-notice';const text=document.createElement('p');text.textContent=s.noticeText;notice.append(createImage('icon:rule_book_cart','return-notice-icon'),text);applyRect(notice,[145,155,310,150]);$('effectLayer').append(notice);}
   $('effectLayer').className='effect-layer';
   if(s.effect&&!prefersReducedMotion){void $('effectLayer').offsetWidth;$('effectLayer').classList.add(s.effect);}
+  $('storyLocationNote').hidden=!s.realLocationNote;$('storyLocationNote').textContent=s.realLocationNote||'';
   $('locationBanner').hidden=!s.location;$('locationBanner').textContent=s.location||'';$('locationBanner').style.background=palette[s.layout==='arrival'?'pink':'yellow'];
   $('machineStatus').hidden=!s.machineState;$('machineStatus').dataset.state=s.machineState||'';
   $('machineStatus').textContent=s.machineState==='repaired'?'수리 완료':'작동 멈춤';
@@ -300,9 +307,9 @@ async function render(){
   const savedGameClear=s.type==='minigame'&&puzzle?.completionMode==='result'&&isMinigameClear(runtime.minigameResults[s.puzzleId],puzzle);
   $('continueMinigame').hidden=!savedGameClear;
   if(savedGameClear){const [x,y,w,h]=s.geometry.minigameControls;applyRect($('minigameControls'),[x,y,w,Math.max(h,160)]);}
-  $('startMinigame').textContent=savedGameClear?'다시하기':runtime.minigameProgress[s.puzzleId]?'발자국 문제 이어하기':s.gameStartLabel||'게임 시작';
+  $('startMinigame').textContent=savedGameClear?'다시하기':runtime.minigameProgress[s.puzzleId]?'발자국 문제 이어하기':howtoFor(s)?'다음으로':s.gameStartLabel||'게임 시작';
   $('startMinigame').classList.toggle('retry-small',savedGameClear);
-  $('minigameNote').hidden=keywordGame||savedGameClear||s.waitForTextBeforeGame===true;
+  $('minigameNote').hidden=Boolean(howtoFor(s))||keywordGame||savedGameClear||s.waitForTextBeforeGame===true;
   $('minigameNote').textContent=puzzle?.completionMode==='result'?(puzzle.clearInstruction||'B등급 이상으로 청소하면 이야기를 이어갈 수 있어'):
     puzzle?.acceptedAnswers?.length?'게임 클리어 키워드를 아래에 입력해 줘':'청소를 마치면 ‘이야기로 돌아가기’를 눌러줘';
   $('movementControls').hidden=s.type!=='move';
@@ -332,6 +339,7 @@ async function render(){
   markCourseUI.render(s);
   mark05UI.render(s);
   illustrationUI.render(s);foldReference.render(s);
+  if(runtime.sceneState.howtoOpen&&howtoFor(s))showHowto();else howtoUI.close();
   preloadNextEndingArt(s);
   for(const key of s.preloadAssets||[])loadImage(key).catch(()=>{});
   if(s.id==='ending-fold-puzzle')endingArtIds.forEach(id=>loadImage('ending:'+id).catch(()=>{}));
@@ -430,6 +438,7 @@ function showPuzzleHints(){
     const title=document.createElement('h3');title.textContent=`힌트 ${i+1}`;
     const body=document.createElement('p');body.textContent=text;card.append(title,body);list.append(card);
   });
+  if(runtime.scene.layout==='notice05-expression'){const button=document.createElement('button');button.type='button';button.className='dialog-action';button.textContent='안내문 위치 그림 다시 보기';button.onclick=()=>mark05UI.showNoticeReference(button);list.append(button);}
   $('morePuzzleHint').hidden=hintLevel>=Math.min(hints.length,2);
   if(!$('puzzleHintDialog').open)$('puzzleHintDialog').showModal();
   showGuideCat('puzzleHintIllustration','puzzleHintDialog');
@@ -481,9 +490,10 @@ $('checkIcons').addEventListener('click',()=>{
   if(runtime.getIconState()?.completed){advance();return;}
   const result=runtime.submit();save();updateIconPuzzle();if(result.ok)showSuccess();
 });
-async function openMinigame(){
+async function openMinigame({howtoShown=false}={}){
   if(openingMinigame||activeMinigame||!sceneReady||runtime.scene.type!=='minigame'||runtime.pendingSuccessId)return;
-  if(runtime.scene.waitForTextBeforeGame&&!textComplete){finishText();return;}
+  if(!textComplete){finishText();return;}
+  if(!howtoShown&&howtoFor(runtime.scene)){showHowto();return;}
   openingMinigame=true;const from=runtime.currentId;
   const keyboardWasOpen=document.activeElement===$('answer')||performance.now()-answerBlurAt<500;
   $('answer').blur();
@@ -497,6 +507,7 @@ async function openMinigame(){
   const url=new URL(runtime.scene.gameUrl,location.href);
   activeMinigame={session:crypto.randomUUID(),gameId:runtime.scene.puzzleId,origin:url.origin,
     scrollY:window.scrollY,height:window.visualViewport?.height||innerHeight,viewportCeiling:window.visualViewport?.height||innerHeight,width:innerWidth};
+  url.searchParams.set('howto','shown');url.searchParams.set('v','20261102-howto30');
   url.searchParams.set('storyBridge','1');url.searchParams.set('storyOrigin',location.origin);
   url.searchParams.set('storySession',activeMinigame.session);url.searchParams.set('storyGameId',activeMinigame.gameId);
   const config=puzzles[runtime.scene.puzzleId],keywordMode=config.completionMode==='keyword';
@@ -518,7 +529,7 @@ $('continueMinigame').addEventListener('click',()=>{
 });
 function returnFromKeywordGame(){runtime.updateSceneState({gameReturned:true});save();closeMinigame();$('startMinigame').focus();}
 $('returnToStory').addEventListener('click',()=>{if(activeMinigame)returnFromKeywordGame();});
-$('retryMinigame').addEventListener('click',()=>{closeMinigame();openMinigame();});
+$('retryMinigame').addEventListener('click',()=>{closeMinigame();openMinigame({howtoShown:true});});
 window.addEventListener('message',event=>{
   const config=puzzles[runtime.scene.puzzleId];
   if(isMinigameMessage(event,activeMinigame,$('minigameFrame').contentWindow,'cat-librarian:minigame-ready')){

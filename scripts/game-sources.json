@@ -102,5 +102,28 @@
     "adapted": [
       "app.js"
     ]
+  },
+  "cleaning": {
+    "source": "C:/Users/user/Documents/GitHub/cleaning-game",
+    "repository": "https://github.com/gamemakercho/cleaning-game",
+    "files": [
+      "index.html",
+      "app.js",
+      "style.css",
+      "engine.js",
+      "config.js",
+      "sprite-data.js",
+      "story-bridge.js",
+      "assets/librarian-walk.webp",
+      "assets/librarian-run.webp",
+      "assets/librarian-actions.webp",
+      "assets/cat-cleaning-actions.webp",
+      "assets/paint-cleaning-effects.webp",
+      "assets/library-background.webp"
+    ],
+    "adapted": [
+      "index.html",
+      "app.js"
+    ]
   }
 }

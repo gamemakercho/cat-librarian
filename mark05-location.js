@@ -3,11 +3,12 @@ export function createMark05LocationUI({getScene,getState,onStep,onArrive,loadIm
  const $=id=>document.getElementById(id),root=$('mark05Location'),zoom=$('locationImageDialog');
  let generation=0,busy=false,shownKey=null,zoomFocus=null,hintGeneration=0;
  const current=()=>getScene().layout==='mark05-location';
+ const viewerAllowed=()=>current()||getScene().layout==='notice05-expression';
  function guideImage(key,className,alt){const im=createImage(key,className,alt);if(!im.hasAttribute('width')){im.width=1086;im.height=1448;}return im;}
  function closeZoom(){zoom.close();$('locationZoomViewport').classList.remove('is-zoomed');if(zoomFocus?.isConnected)zoomFocus.focus({preventScroll:true});}
  function stop(){generation++;hintGeneration++;busy=false;if(zoom.open)closeZoom();}
  async function openZoom(key,alt,focus){
-  if(!current())return;const token=generation;try{await loadImage(key);}catch{return;}if(token!==generation||!current())return;
+  if(!viewerAllowed())return;const token=generation;try{await loadImage(key);}catch{return;}if(token!==generation||!viewerAllowed())return;
   zoomFocus=focus;$('locationZoomViewport').replaceChildren(guideImage(key,'location-zoom-image',alt));$('locationZoomViewport').classList.remove('is-zoomed');
   $('locationZoomToggle').textContent='원본 크기로 보기';zoom.showModal();$('locationZoomClose').focus({preventScroll:true});
  }
@@ -52,5 +53,5 @@ export function createMark05LocationUI({getScene,getState,onStep,onArrive,loadIm
   }
   prev.onclick=()=>display(Math.max(0,index-1));next.onclick=()=>display(Math.min(steps.length-1,index+1));display(index);
  }
- return {render,stop,showHints,previous(){if(!current()||getScene().locationGuideMode==='puzzle-intro'||(getState().locationGuideStep||0)===0)return false;showStep(0);return true;}};
+ return {render,stop,showHints,showNoticeReference(focus){openZoom('hint:mark05-notice','노란 벤치 옆 고양이 마크 05 안내문 위치 그림',focus);},previous(){if(!current()||getScene().locationGuideMode==='puzzle-intro'||(getState().locationGuideStep||0)===0)return false;showStep(0);return true;}};
 }

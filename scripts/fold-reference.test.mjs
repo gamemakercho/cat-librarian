@@ -16,7 +16,7 @@ test('packaged reference images retain the provided bytes and dimensions metadat
 test('restored lobby and surviving ending saves retain position, run and solved records',()=>{
  for(const id of ['travel-to-ending-lobby','lobby-ending-entry','ending-one-left','ending-found','ending-postcard-clue']){
   const r=new StoryRuntime(chapters,puzzles,{currentId:id,runId:'saved-current-game',solved:['postcard-heading','learning-room-art'],history:['general-after-catch'],sceneStates:{'ending-fold-puzzle':{answer:'고양이와'}}});
-  const expected=id==='ending-postcard-clue'?'ending-rescue':id;
+  const expected=id==='ending-postcard-clue'?'ending-rescue':id==='travel-to-ending-lobby'?'lobby-ending-entry':id;
   assert.equal(r.currentId,expected);assert.equal(r.runId,'saved-current-game');assert(r.solved.has('learning-room-art'));assert(!r.flags.endingCompleted);
   const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert.equal(restored.currentId,expected);assert(restored.back());assert.equal(restored.currentId,'general-after-catch');
  }

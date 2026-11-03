@@ -1,6 +1,6 @@
 {
   "source": "C:/Users/user/Documents/Codex/2026-10-23/codex-prompt-md-x20/outputs/github/catch-librarian",
-  "version": "retry-assist29",
+  "version": "howto30",
   "adaptation": "app.js: exact-origin story contact/ready/error only; original runner physics and five comics retained; final rescue comic held as postcard still, not the empty runner canvas",
   "unchanged": [
     {
@@ -32,6 +32,6 @@
       "sha256": "ea1516c3729b156bc769e025aa69b7eeeb2d5a1f2a83603aeebaafef73db0ab9"
     }
   ],
-  "commit": "bc12b98d4a140eeb2ab8b14a2444571674818549",
-  "localChanges": "2026-11-02 opt-in retry health after two failures; one extra health per later failure, per-run persistence; original jump/obstacle physics retained; source and bundle match"
+  "commit": "9b50e88a553e0039b2831bf7129ed7f02ebcba5d",
+  "localChanges": "2026-11-02 parent-owned howto start gate and jump/double-jump label; retry health and all physics retained; source and bundle match"
 }

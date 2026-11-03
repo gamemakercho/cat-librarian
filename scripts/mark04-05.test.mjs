@@ -7,14 +7,14 @@ const clear={kind:'book-catch',cleared:true,score:20,totalBooks:30,missed:10,ela
 test('all logical flow nodes map to live durable scenes, with one 04/05 and one expression puzzle',()=>{
  for(const node of MARK_FLOW.nodes){assert(MARK_SCENE_GROUPS[node.id],node.id);for(const id of MARK_SCENE_GROUPS[node.id])assert(byId.has(id),id);}
  const path=[],r=new StoryRuntime(chapters,puzzles);while(r.scene.next){path.push(r.currentId);assert(r.advance({review:true}).ok);assert(path.length<r.scenes.length);}
- const ordered=['sterilizer-repaired','after-repair-general','after-repair-classification','travel-to-general','general-room-intro','newbooks-order-game','newbooks-after-order','general-crash','general-book-drop','general-book-catch','general-shelf-arrival','general-return-notice','general-return-puzzle','general-notice-solved','travel-to-ending-lobby','lobby-ending-entry','ending-rescue','ending-fold-puzzle','ending-impact','ending-thanks'];
+ const ordered=['sterilizer-repaired','after-repair-general','after-repair-classification','travel-to-general','general-room-intro','newbooks-order-game','newbooks-after-order','general-crash','general-book-drop','general-book-catch','general-after-catch','general-return-notice','general-shelf-arrival','general-return-puzzle','general-notice-solved','general-lobby-direction','lobby-ending-entry','ending-rescue','ending-fold-puzzle','ending-impact','ending-thanks'];
  for(let i=1;i<ordered.length;i++)assert(path.indexOf(ordered[i-1])<path.indexOf(ordered[i]),ordered[i]);
  assert.equal(scenes.filter(s=>s.puzzleId==='return-notice-booksodong').length,1);assert.equal(ACTIVITIES.length,11);assert.equal(ACTIVITIES.filter(a=>a.puzzleId==='return-notice-booksodong').length,1);
  assert(!scenes.some(s=>s.markerNumber===6));
 });
 test('latest script lines appear once in their proper groups and human cat only meows',()=>{
  for(const key of ['after_catch05','intro04'])for(const text of MARK_STORY.scenes.find(s=>s.id===key).lines)assert.equal(scenes.filter(s=>s.text===text).length,1,text);
- assert.equal(byId.get('general-flee-meow').speaker,'사서 몸의 고양이');assert.equal(byId.get('general-flee-meow').text,'냐아!');
+ assert.equal(byId.get('general-cat-meow').speaker,'사서 몸의 고양이');assert.equal(byId.get('general-cat-meow').text,'냐아!');
  for(const s of scenes.filter(s=>s.speaker==='사서 몸의 고양이'))assert.equal(s.text,'냐아!');
 });
 test('04 uses the new baked-arrow background without an overlay; 05 has the provided concrete hint',()=>{
@@ -40,12 +40,9 @@ test('catch success is required; exact normalized expression answers wait for co
  }
  for(const answer of ['2','책동소','책소동.','책소동추가','']){const r=new StoryRuntime(chapters,puzzles,{currentId:'general-return-puzzle',minigameResults:{'book-catch-keyword':clear}});assert(!r.submit(answer).ok);assert.equal(r.progress.completed,1);}
 });
-test('new lobby arrival is required and stored separately without a numbered marker',()=>{
- const r=new StoryRuntime(chapters,puzzles);r.jump('travel-to-ending-lobby');assert.equal(r.scene.markerNumber,undefined);assert.equal(r.advance().reason,'arrival-required');
- r.advance({arrived:true});assert.equal(r.currentId,'lobby-ending-entry');assert(r.flags.lobbyArrived);assert.equal(r.progress.completed,0);
- const restored=new StoryRuntime(chapters,puzzles,r.snapshot());assert(restored.sceneStates['travel-to-ending-lobby'].arrived);
-});
-test('old pending notice popup continues into new script; completed ending saves are not rewound',()=>{
+test('removed physical lobby arrival resumes in the story lobby without adding activity or clearing saves',()=>{
+ const r=new StoryRuntime(chapters,puzzles,{currentId:'travel-to-ending-lobby',runId:'kept-lobby-run',solved:['postcard-heading'],history:['general-lobby-direction']});assert.equal(r.currentId,'lobby-ending-entry');assert.equal(r.scene.type,'dialogue');assert.equal(r.scene.location,'1층 로비');assert.match(r.scene.realLocationNote,/실제로는 2층/);assert.equal(r.scene.markerNumber,undefined);assert.equal(r.progress.completed,1);assert(r.advance().ok);assert.equal(r.currentId,'general-no-chance');assert.equal(r.flags.lobbyArrived,undefined);assert.equal(new StoryRuntime(chapters,puzzles,r.snapshot()).runId,'kept-lobby-run');
+});test('old pending notice popup continues into new script; completed ending saves are not rewound',()=>{
  const r=new StoryRuntime(chapters,puzzles,{currentId:'general-return-puzzle',pendingSuccess:{fromSceneId:'general-return-puzzle',puzzleId:'return-notice-booksodong',nextSceneId:'general-come-down',popup:{title:'정답이야!'}},minigameResults:{'book-catch-keyword':clear}});
  assert.equal(r.pendingSuccess.nextSceneId,'general-notice-solved');assert.equal(r.confirmSuccess().scene.id,'general-notice-solved');
  const done=new StoryRuntime(chapters,puzzles,{currentId:'ending-complete',solved:['postcard-returned-v1'],flags:{endingCompleted:true,endingContactReached:true}});

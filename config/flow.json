@@ -63,7 +63,7 @@
       "requires": [
         "book_letters_solved"
       ],
-      "onVerifiedSuccess": "travel05",
+      "onVerifiedSuccess": "after_catch05",
       "setsOnSuccess": "book_catching_completed"
     },
     {
@@ -72,13 +72,13 @@
       "requires": [
         "book_catching_completed"
       ],
-      "onArrival": "after_catch05",
+      "onArrival": "notice05_prepare",
       "setsOnArrival": "mark05_arrived"
     },
     {
       "id": "after_catch05",
       "kind": "story",
-      "next": "notice05_expression_puzzle"
+      "next": "travel05"
     },
     {
       "id": "notice05_expression_puzzle",
@@ -103,9 +103,8 @@
     },
     {
       "id": "travel_lobby",
-      "kind": "existing_movement",
-      "onArrival": "before_runner",
-      "setsOnArrival": "lobby_arrived"
+      "kind": "story_transition",
+      "next": "before_runner"
     },
     {
       "id": "before_runner",
@@ -117,7 +116,7 @@
       "kind": "existing_minigame",
       "activity": "minigame04",
       "requires": [
-        "lobby_arrived"
+        "notice05_solved"
       ],
       "onVerifiedSuccess": "existing_runner_aftermath"
     },
@@ -137,6 +136,11 @@
     {
       "id": "existing_ending",
       "kind": "existing_ending"
+    },
+    {
+      "id": "notice05_prepare",
+      "kind": "story",
+      "next": "notice05_expression_puzzle"
     }
   ]
 }
