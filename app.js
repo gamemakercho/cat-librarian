@@ -7,7 +7,7 @@ import {howtoFor} from './howto-config.js?v=20261102-howto30';
 import {createHowtoUI} from './howto-ui.js?v=20261102-howto30';
 import {createMark05LocationUI} from './mark05-location.js?v=20261103-arrival-photos';
 import {isMinigameReturn,isMinigameMessage,isMinigameClear,MINIGAME_CLEAR} from './minigame-bridge.js';
-import {createEndingUI} from './ending-ui.js?v=20261102-howto30';
+import {createEndingUI} from './ending-ui.js?v=20261110-ending-controls';
 import {createCreditsUI} from './credits-ui.js?v=20261102-howto30';
 import {ENDING_PUZZLE_ID} from './ending-bridge.js?v=20261101-ending26';
 import {endingArtIds} from './ending-course.js?v=20261102-ending-invite';
@@ -73,7 +73,7 @@ const endingUI=createEndingUI({getScene:()=>runtime.scene,getRunId:()=>runtime.r
   isCompleted:()=>runtime.scene.cinematicPart==='approach'?runtime.flags.endingContactReached===true:runtime.flags.endingRescueComplete===true,
   onContact:result=>{if(runtime.completeEndingApproach(result).ok){save();advance();}},
   onComplete:result=>{if(runtime.completeCinematic(result).ok){save();advance();}},
-  onApproach:showHowto,onReplay:()=>{if(runtime.scene.type==='ending'){runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({impactVersion:1,impactElapsedMs:0});runtime.flags.endingRescueComplete=false;runtime.jump('ending-impact');save();render();}else advance();},onRestart:()=>restart()});
+  onApproach:showHowto,onReplay:()=>{if(runtime.scene.type==='ending'){runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({impactVersion:1,impactElapsedMs:0});runtime.flags.endingRescueComplete=false;runtime.jump('ending-impact');save();render();}else advance();}});
 const illustrationUI=createIllustrationUI({getScene:()=>runtime.scene,canStart:()=>runtime.solved.has(ENDING_PUZZLE_ID),isPaused:()=>progressUI.isOpen,
  getProgress:()=>impactProgress(runtime.sceneStates['ending-impact']),
  onStart:()=>{runtime.flags.endingIllustrationStarted=true;runtime.flags.endingRescueComplete=false;runtime.sceneStates['ending-impact']=runtime.normalizeSceneState({...runtime.sceneStates['ending-impact'],impactVersion:1,impactElapsedMs:impactProgress(runtime.sceneStates['ending-impact'])?.elapsedMs||0});save();},

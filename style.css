@@ -362,7 +362,6 @@ body.minigame-active{position:fixed;top:var(--story-scroll-top,0);left:0;right:0
 .ending-punctuation{display:flex;gap:7cqw;align-items:center;font-size:18cqw;line-height:1;margin:7cqw 0 5cqw}.ending-punctuation span:first-child{color:#aab8af}.ending-punctuation span:nth-child(2){font-size:8cqw;color:#9fac9c}.ending-punctuation strong{color:#e38548;font-weight:400}
 .ending-card h1{font-size:10cqw;line-height:1.3;margin:0;letter-spacing:-.02em}.ending-thanks{font-size:4.7cqw;line-height:1.6;margin-top:6cqw}.ending-credit{font-size:3.4cqw;color:#798979;margin:1cqw 0 9cqw}
 .ending-card button{font:inherit;min-height:44px;width:100%;font-size:4.2cqw;border:1px solid #81a18d;color:#315b49;background:#fafff2;border-radius:12px;padding:2.6cqw;margin:1.3cqw 0}
-.ending-card #endingRestart{font-size:3.5cqw;color:#6d7b70;border-color:transparent;background:transparent}
 .ending-cinema-overlay{position:fixed;z-index:100;inset:0;background:#171c19;color:#fff9e9;display:flex;flex-direction:column;height:100dvh}
 .ending-cinema-overlay>header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;min-height:56px;padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));font-size:16px}
 .ending-cinema-overlay button{font:inherit;border:1px solid #aabb9f;border-radius:12px;background:#263b31;color:#fffbe8;min-height:44px;padding:8px 14px}

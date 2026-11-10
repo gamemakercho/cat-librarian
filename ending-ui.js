@@ -1,5 +1,5 @@
 import {ENDING_READY,ENDING_CONTACT,ENDING_COMPLETE,ENDING_ERROR,isEndingMessage} from './ending-bridge.js';
-export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,onRestart,isCompleted,onApproach}){
+export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact,onComplete,onReplay,isCompleted,onApproach}){
  const $=id=>document.getElementById(id);let active=null,timer=null,finished=false;
  const invitedRuns=new Set();
  function stop(){
@@ -21,7 +21,7 @@ export function createEndingUI({getScene,getRunId,getPoster,canRestore,onContact
   $('endingFrame').src=url.href;$('endingClose').focus();timer=setTimeout(showError,25000);
  }
  $('endingPlay').addEventListener('click',()=>{if(isCompleted())onReplay();else if(getScene().cinematicPart==='approach'&&onApproach)onApproach();else play();});
- $('endingReplay').addEventListener('click',onReplay);$('endingRestart').addEventListener('click',onRestart);$('endingRetry').addEventListener('click',()=>play(Boolean(active?.replay)));
+ $('endingReplay').addEventListener('click',onReplay);$('endingRetry').addEventListener('click',()=>play(Boolean(active?.replay)));
  $('endingClose').addEventListener('click',()=>{stop();(getScene().type==='ending'?$('endingReplay'):$('endingPlay')).focus();});
  window.addEventListener('message',async event=>{
   const frame=$('endingFrame').contentWindow;
